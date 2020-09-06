@@ -223,4 +223,7 @@ $RECYCLE.BIN/
 # TypeScript build files
 build/
 *.tsbuildinfo
+
+# react-scripts files
+react-app-env.d.ts
 #endregion repo ΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛ
