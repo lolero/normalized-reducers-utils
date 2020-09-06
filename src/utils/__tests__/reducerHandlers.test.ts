@@ -1,0 +1,465 @@
+import {
+  testInitialReducerMetadata,
+  TestEntity,
+  testEntity1,
+  testEntity2,
+  testEntity3,
+  testPkSchema,
+  TestReducer,
+} from '../tests.utils';
+import { getPkOfEntity } from '../pk.utils';
+import {
+  DeleteEntitiesAction,
+  FailAction,
+  RequestAction,
+  SaveWholeEntitiesAction,
+  SavePartialEntitiesAction,
+  SavePartialReducerMetadataAction,
+  SavePartialPatternToEntitiesAction,
+} from '../../types/actions.types';
+import { createInitialState } from '../initialState.utils';
+import * as ReducerHandlersUtils from '../reducerHandlers.utils';
+import {
+  handleDeleteEntities,
+  handleFail,
+  handleRequest,
+  handleSaveWholeEntities,
+  handleSavePartialEntities,
+  handleSavePartialReducerMetadata,
+  handleSavePartialPatternToEntities,
+} from '../reducerHandlers';
+
+describe('reducerHandlers', () => {
+  let state: TestReducer;
+  let duplicatedState: TestReducer;
+  let duplicateStateSpy: jest.SpyInstance;
+  let handleCommonFieldsSpy: jest.SpyInstance;
+  let updateCompletedRequestsCacheSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    state = createInitialState<TestReducer['metadata'], TestEntity>(
+      testInitialReducerMetadata,
+      {},
+      testPkSchema,
+    );
+    duplicatedState = createInitialState<TestReducer['metadata'], TestEntity>(
+      testInitialReducerMetadata,
+      {},
+      testPkSchema,
+    );
+    duplicateStateSpy = jest
+      .spyOn(ReducerHandlersUtils, 'duplicateState')
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      .mockImplementation(() => duplicatedState);
+    handleCommonFieldsSpy = jest
+      .spyOn(ReducerHandlersUtils, 'handleCommonFields')
+      .mockImplementation((stateTemp) => stateTemp);
+    updateCompletedRequestsCacheSpy = jest
+      .spyOn(ReducerHandlersUtils, 'updateCompletedRequestsCache')
+      .mockImplementation((stateTemp) => stateTemp);
+  });
+
+  afterEach(() => {
+    duplicateStateSpy.mockRestore();
+    handleCommonFieldsSpy.mockRestore();
+    updateCompletedRequestsCacheSpy.mockRestore();
+  });
+
+  describe('handleRequest', () => {
+    let testRequestAction: RequestAction<'testRequestAction', never, never>;
+
+    beforeEach(() => {
+      testRequestAction = {
+        type: 'testRequestAction',
+        requestId: 'testRequestActionRequestId',
+      };
+    });
+
+    it('Should handle request', () => {
+      const newState = handleRequest<
+        'testRequestAction',
+        never,
+        TestEntity,
+        TestReducer['metadata']
+      >(state, testRequestAction);
+
+      expect(duplicateStateSpy).toHaveBeenCalledWith(state);
+      expect(newState).toEqual({
+        ...duplicatedState,
+        requests: {
+          [testRequestAction.requestId]: {
+            id: testRequestAction.requestId,
+            timestamp: {
+              created: {
+                unixMilliseconds: expect.any(Number),
+              },
+            },
+            pending: true,
+          },
+        },
+      });
+    });
+
+    describe('state.config.requestsPrettyTimestamp', () => {
+      it("Should format string of request's timestamp to ISO string with UTC timezone", () => {
+        state.config = {
+          requestsPrettyTimestamp: {
+            format: 'utc',
+            timezone: 'utc',
+          },
+        };
+
+        const newState = handleRequest<
+          'testRequestAction',
+          never,
+          TestEntity,
+          TestReducer['metadata']
+        >(state, testRequestAction);
+
+        const requestCreatedTimestamp = newState.requests[
+          testRequestAction.requestId as string
+        ].timestamp.created as {
+          unixMilliseconds: number;
+          formattedString?: string;
+        };
+        const createdDate = new Date(requestCreatedTimestamp.unixMilliseconds);
+        expect(requestCreatedTimestamp.formattedString).toBe(
+          createdDate.toISOString(),
+        );
+      });
+    });
+  });
+
+  describe('handleSavePartialReducerMetadata', () => {
+    it('Should handle save partial reducer metadata', () => {
+      const testSavePartialReducerMetadataAction: SavePartialReducerMetadataAction<
+        'testSavePartialReducerMetadataAction',
+        TestReducer['metadata']
+      > = {
+        type: 'testSavePartialReducerMetadataAction',
+        partialReducerMetadata: {},
+      };
+
+      handleSavePartialReducerMetadata<
+        'testSavePartialReducerMetadataAction',
+        TestEntity,
+        TestReducer['metadata']
+      >(state, testSavePartialReducerMetadataAction);
+
+      expect(duplicateStateSpy).toHaveBeenCalledWith(state);
+      expect(handleCommonFieldsSpy).toHaveBeenCalledWith(
+        duplicatedState,
+        testSavePartialReducerMetadataAction,
+      );
+      expect(updateCompletedRequestsCacheSpy).toHaveBeenCalledWith(
+        duplicatedState,
+      );
+    });
+  });
+
+  describe('handleSaveWholeEntities', () => {
+    it('Should handle save whole entities without flushing reducer', () => {
+      duplicatedState.data = {
+        [getPkOfEntity(testEntity1, testPkSchema)]: testEntity1,
+      };
+      const testSaveWholeEntitiesAction: SaveWholeEntitiesAction<
+        'testSaveWholeEntitiesAction',
+        TestEntity,
+        never
+      > = {
+        type: 'testSaveWholeEntitiesAction',
+        wholeEntities: {
+          [state.getPk(testEntity2)]: testEntity2,
+          [state.getPk(testEntity3)]: testEntity3,
+        },
+      };
+
+      const newState = handleSaveWholeEntities<
+        'testSaveWholeEntitiesAction',
+        TestEntity,
+        TestReducer['metadata']
+      >(state, testSaveWholeEntitiesAction);
+
+      expect(duplicateStateSpy).toHaveBeenCalledWith(state);
+      expect(handleCommonFieldsSpy).toHaveBeenCalledWith(
+        duplicatedState,
+        testSaveWholeEntitiesAction,
+      );
+      expect(updateCompletedRequestsCacheSpy).toHaveBeenCalledWith(
+        duplicatedState,
+      );
+      expect(newState).toEqual({
+        ...duplicatedState,
+        data: {
+          ...duplicatedState.data,
+          ...testSaveWholeEntitiesAction.wholeEntities,
+        },
+      });
+    });
+
+    it('Should handle save whole entities with flushing reducer', () => {
+      duplicatedState.data = {
+        [state.getPk(testEntity1)]: testEntity1,
+      };
+      const testSaveWholeEntitiesAction: SaveWholeEntitiesAction<
+        'testSaveWholeEntitiesAction',
+        TestEntity,
+        never
+      > = {
+        type: 'testSaveWholeEntitiesAction',
+        wholeEntities: {
+          [state.getPk(testEntity2)]: testEntity2,
+          [state.getPk(testEntity3)]: testEntity3,
+        },
+        flush: true,
+      };
+
+      const newState = handleSaveWholeEntities<
+        'testSaveWholeEntitiesAction',
+        TestEntity,
+        TestReducer['metadata']
+      >(state, testSaveWholeEntitiesAction);
+
+      expect(duplicateStateSpy).toHaveBeenCalledWith(state);
+      expect(handleCommonFieldsSpy).toHaveBeenCalledWith(
+        duplicatedState,
+        testSaveWholeEntitiesAction,
+      );
+      expect(updateCompletedRequestsCacheSpy).toHaveBeenCalledWith(
+        duplicatedState,
+      );
+      expect(newState).toEqual({
+        ...duplicatedState,
+        data: {
+          ...testSaveWholeEntitiesAction.wholeEntities,
+        },
+      });
+    });
+  });
+
+  describe('handleSavePartialEntities', () => {
+    it('Should handle save partial entities', () => {
+      duplicatedState.data = {
+        [state.getPk(testEntity1)]: testEntity1,
+        [state.getPk(testEntity2)]: testEntity2,
+      };
+      const testSavePartialEntitiesAction: SavePartialEntitiesAction<
+        'testSavePartialEntitiesAction',
+        TestEntity,
+        never
+      > = {
+        type: 'testSavePartialEntitiesAction',
+        partialEntities: {
+          [state.getPk(testEntity1)]: {
+            name: 'newTestName1',
+            isTrue: false,
+            __edges__: {
+              parent: {
+                entity: 'testEntity',
+                pks: ['newTestParent'],
+              },
+              children: {
+                entity: 'testEntity',
+                pks: ['testEntityId2', 'testEntityId3', 'newTestChild'],
+              },
+            },
+          },
+          [state.getPk(testEntity2)]: {
+            name: 'newTestName2',
+            __edges__: {
+              children: {
+                entity: 'testEntity',
+                pks: ['newTestChild'],
+              },
+            },
+          },
+        },
+      };
+
+      const newState = handleSavePartialEntities<
+        'testSavePartialEntitiesAction',
+        TestEntity,
+        TestReducer['metadata']
+      >(state, testSavePartialEntitiesAction);
+
+      expect(duplicateStateSpy).toHaveBeenCalledWith(state);
+      expect(handleCommonFieldsSpy).toHaveBeenCalledWith(
+        duplicatedState,
+        testSavePartialEntitiesAction,
+      );
+      expect(updateCompletedRequestsCacheSpy).toHaveBeenCalledWith(
+        duplicatedState,
+      );
+      expect(newState).toEqual({
+        ...duplicatedState,
+        data: {
+          ...duplicatedState.data,
+          [state.getPk(testEntity1)]: {
+            ...testEntity1,
+            ...testSavePartialEntitiesAction.partialEntities[
+              state.getPk(testEntity1)
+            ],
+            __edges__: {
+              ...testEntity1.__edges__,
+              ...testSavePartialEntitiesAction.partialEntities[
+                state.getPk(testEntity1)
+              ].__edges__,
+            },
+          },
+          [state.getPk(testEntity2)]: {
+            ...testEntity2,
+            ...testSavePartialEntitiesAction.partialEntities[
+              state.getPk(testEntity2)
+            ],
+            __edges__: {
+              ...testEntity2.__edges__,
+              ...testSavePartialEntitiesAction.partialEntities[
+                state.getPk(testEntity2)
+              ].__edges__,
+            },
+          },
+        },
+      });
+    });
+  });
+
+  describe('handleSavePartialPatternToEntities', () => {
+    it('Should handle save partial pattern to entities', () => {
+      duplicatedState.data = {
+        [state.getPk(testEntity1)]: testEntity1,
+        [state.getPk(testEntity2)]: testEntity2,
+        [state.getPk(testEntity3)]: testEntity3,
+      };
+      const testSavePartialPatternToEntitiesAction: SavePartialPatternToEntitiesAction<
+        'testSavePartialPatternToEntitiesAction',
+        TestEntity,
+        never
+      > = {
+        type: 'testSavePartialPatternToEntitiesAction',
+        entityPks: [
+          state.getPk(testEntity1),
+          state.getPk(testEntity2),
+          state.getPk(testEntity3),
+        ],
+        partialEntity: {
+          isTrue: true,
+          number: 10,
+          __edges__: {
+            sibling: {
+              entity: 'testEntity',
+              pks: ['testSibling'],
+            },
+          },
+        },
+      };
+
+      const newState = handleSavePartialPatternToEntities<
+        'testSavePartialPatternToEntitiesAction',
+        TestEntity,
+        TestReducer['metadata']
+      >(state, testSavePartialPatternToEntitiesAction);
+
+      expect(duplicateStateSpy).toHaveBeenCalledWith(state);
+      expect(handleCommonFieldsSpy).toHaveBeenCalledWith(
+        duplicatedState,
+        testSavePartialPatternToEntitiesAction,
+      );
+      expect(updateCompletedRequestsCacheSpy).toHaveBeenCalledWith(
+        duplicatedState,
+      );
+      expect(newState).toEqual({
+        ...duplicatedState,
+        data: {
+          ...duplicatedState.data,
+          [getPkOfEntity(testEntity1, testPkSchema)]: {
+            ...testEntity1,
+            ...testSavePartialPatternToEntitiesAction.partialEntity,
+            __edges__: {
+              ...testEntity1.__edges__,
+              ...testSavePartialPatternToEntitiesAction.partialEntity.__edges__,
+            },
+          },
+          [getPkOfEntity(testEntity2, testPkSchema)]: {
+            ...testEntity2,
+            ...testSavePartialPatternToEntitiesAction.partialEntity,
+            __edges__: {
+              ...testEntity2.__edges__,
+              ...testSavePartialPatternToEntitiesAction.partialEntity.__edges__,
+            },
+          },
+          [getPkOfEntity(testEntity3, testPkSchema)]: {
+            ...testEntity3,
+            ...testSavePartialPatternToEntitiesAction.partialEntity,
+            __edges__: {
+              ...testEntity3.__edges__,
+              ...testSavePartialPatternToEntitiesAction.partialEntity.__edges__,
+            },
+          },
+        },
+      });
+    });
+  });
+
+  describe('handleDeleteEntities', () => {
+    it('Should handle delete entities', () => {
+      duplicatedState.data = {
+        [state.getPk(testEntity1)]: testEntity1,
+        [state.getPk(testEntity2)]: testEntity2,
+        [state.getPk(testEntity3)]: testEntity3,
+      };
+      const testDeleteEntitiesAction: DeleteEntitiesAction<
+        'testDeleteEntitiesAction',
+        never
+      > = {
+        type: 'testDeleteEntitiesAction',
+        entityPks: [state.getPk(testEntity1), state.getPk(testEntity3)],
+      };
+
+      const newState = handleDeleteEntities<
+        'testDeleteEntitiesAction',
+        TestEntity,
+        TestReducer['metadata']
+      >(state, testDeleteEntitiesAction);
+
+      expect(duplicateStateSpy).toHaveBeenCalledWith(state);
+      expect(handleCommonFieldsSpy).toHaveBeenCalledWith(
+        duplicatedState,
+        testDeleteEntitiesAction,
+      );
+      expect(updateCompletedRequestsCacheSpy).toHaveBeenCalledWith(
+        duplicatedState,
+      );
+      expect(newState).toEqual({
+        ...duplicatedState,
+        data: {
+          [state.getPk(testEntity2)]: testEntity2,
+        },
+      });
+    });
+  });
+
+  describe('handleFail', () => {
+    it('Should handle fail', () => {
+      const testFailAction: FailAction<'testFailAction'> = {
+        type: 'testFailAction',
+        error: 'testRequestActionRequestId',
+        requestId: 'testRequestId',
+      };
+
+      handleFail<'testFailAction', TestEntity, TestReducer['metadata']>(
+        state,
+        testFailAction,
+      );
+
+      expect(duplicateStateSpy).toHaveBeenCalledWith(state);
+      expect(handleCommonFieldsSpy).toHaveBeenCalledWith(
+        duplicatedState,
+        testFailAction,
+      );
+      expect(updateCompletedRequestsCacheSpy).toHaveBeenCalledWith(
+        duplicatedState,
+      );
+    });
+  });
+});
