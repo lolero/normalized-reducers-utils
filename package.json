@@ -1,0 +1,15 @@
+{
+  "name": "normalized-reducers-utils",
+  "description": "Utility functions and types for normalized reducers architectures",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lolero/normalized-reducers-utils"
+  },
+  "version": "0.0.0",
+  "license": "MIT",
+  "author": "Dr. Rodrigo Segura <lolero@gmail.com> (https://github.com/lolero)",
+  "main": "build/index",
+  "files": [
+    "build"
+  ]
+}
