@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+  - lts/*
+
+install:
+  - yarn reset
+
+script:
+  - yarn lint:fix
+  - yarn test:coverage
+  - yarn build
+
+after_success:
+  - semantic-release
