@@ -1,7 +1,8 @@
-import _ from 'lodash';
+import { keyBy, orderBy } from 'lodash';
 import {
   DeleteEntitiesAction,
   FailAction,
+  RequestAction,
   SavePartialEntitiesAction,
   SavePartialPatternToEntitiesAction,
   SavePartialReducerMetadataAction,
@@ -11,39 +12,74 @@ import { Entity, Reducer, ReducerMetadata } from '../types/reducers.types';
 
 /**
  * Duplicates the state object with shallow copies of the 'data', 'metadata',
- * and 'requests' fields
+ * and 'requests' props
  *
  * @param {Reducer} state - The current state of the reducer
- *
+ * @param {RequestAction
+ *        | SavePartialReducerMetadataAction
+ *        | SaveWholeEntitiesAction
+ *        | SavePartialEntitiesAction
+ *        | SavePartialPatternToEntitiesAction
+ *        | DeleteEntitiesAction
+ *        | FailAction} action - Action to handle
  * @returns {Reducer} Duplicated state object
  */
 export function duplicateState<
-  EntityT extends Entity,
-  ReducerMetadataT extends ReducerMetadata
+  ActionTypeT extends string,
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity
 >(
   state: Reducer<ReducerMetadataT, EntityT>,
+  action: // @typescript-eslint/no-explicit-any disabled because the
+  // RequestMetadata type is irrelevant for this function and it needs to be
+  // able to take any request action regardless of its RequestMetadata
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | RequestAction<ActionTypeT, any, ReducerMetadataT>
+    | SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>
+    | SaveWholeEntitiesAction<ActionTypeT, EntityT, ReducerMetadataT>
+    | SavePartialEntitiesAction<ActionTypeT, EntityT, ReducerMetadataT>
+    | SavePartialPatternToEntitiesAction<ActionTypeT, EntityT, ReducerMetadataT>
+    | DeleteEntitiesAction<ActionTypeT, ReducerMetadataT>
+    | FailAction<ActionTypeT>,
 ): Reducer<ReducerMetadataT, EntityT> {
-  return {
+  // The metadata object is not duplicated here since it gets duplicated in the
+  // 'handleCommonProps' function, which should get called by every handler
+  // that completes an action.
+  const newState = {
     ...state,
     requests: { ...state.requests },
-    metadata: { ...state.metadata },
-    data: Object.entries(state.data).reduce(
-      (stateData, [entityPk, entity]) => ({
+    data: Object.entries(state.data).reduce((stateData, [entityPk, entity]) => {
+      let shouldDuplicateEntity = false;
+
+      if ('wholeEntities' in action) {
+        shouldDuplicateEntity = Object.keys(action.wholeEntities).includes(
+          entityPk,
+        );
+      } else if ('partialEntities' in action) {
+        shouldDuplicateEntity = Object.keys(action.partialEntities).includes(
+          entityPk,
+        );
+      } else if ('entityPks' in action) {
+        shouldDuplicateEntity = action.entityPks.includes(entityPk);
+      }
+
+      return {
         ...stateData,
-        [entityPk]: { ...entity },
-      }),
-      {},
-    ),
+        [entityPk]: shouldDuplicateEntity ? { ...entity } : entity,
+      };
+    }, {}),
   };
+
+  return newState;
 }
 
 /**
- * Updates a normalized reducer's fields other than the 'data' field for success
- * and fail actions.
+ * Updates a reducer's props other than the 'data' prop for success and fail
+ * actions.
  * The function mutates the passed state for two reasons:
  * 1. Because it is exclusively used by the other handlers in this file, all of
  * which have already created a copy of the redux state.
- * 2. To avoid an additional and unnecessary duplicaton of the redux state,
+ * 2. To avoid an additional and unnecessary duplication of the redux state,
  * which could result in a reduction in performance in the application.
  *
  * @param {Reducer} newState - A copy of the redux state
@@ -54,7 +90,7 @@ export function duplicateState<
  *        | DeleteEntitiesAction
  *        | FailAction} action - Success or fail action
  */
-export function handleCommonFields<
+export function handleCommonProps<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
   EntityT extends Entity
@@ -84,18 +120,15 @@ export function handleCommonFields<
     newState.requests[action.requestId] = {
       ...newState.requests[action.requestId],
       id: action.requestId,
-      timestamp: {
-        ...newState.requests[action.requestId].timestamp,
-        completed: {
-          unixMilliseconds: completedDate.valueOf(),
-        },
+      completedAt: {
+        unixMilliseconds: completedDate.valueOf(),
       },
-      pending: false,
-      ok: !('error' in action),
+      isPending: false,
+      isOk: !('error' in action),
     };
 
-    if (newState.config.requestsPrettyTimestamp) {
-      (newState.requests[action.requestId].timestamp.completed as {
+    if (newState.config.requestsPrettyTimestamps) {
+      (newState.requests[action.requestId].completedAt as {
         unixMilliseconds: number;
         formattedString?: string;
       }).formattedString = completedDate.toISOString();
@@ -127,9 +160,9 @@ export function handleCommonFields<
 }
 
 /**
- * Updates a normalized reducer's completed requests cache. That is, removes
- * the oldest completed requests beyond the quantity set in the reducer config's
- * 'completedRequestsCache' param.
+ * Updates a reducer's completed requests cache. That is, removes the oldest
+ * completed requests according to the reducer config's 'successRequestsCache'
+ * and 'failRequestsCache' params.
  *
  * @param {Reducer} newState - A copy of the redux state
  */
@@ -137,35 +170,65 @@ export function updateCompletedRequestsCache<
   ReducerMetadataT extends ReducerMetadata,
   EntityT extends Entity
 >(newState: Reducer<ReducerMetadataT, EntityT>): void {
-  if (newState.config.completedRequestsCache !== undefined) {
-    const pendingRequestIds = Object.values(newState.requests)
-      .filter((request) => request.pending)
-      .map((request) => request.id);
-    const pendingRequests = _.pick(newState.requests, pendingRequestIds);
+  if (
+    newState.config.successRequestsCache === null &&
+    newState.config.failRequestsCache === null
+  ) {
+    return;
+  }
 
-    const completedRequestIds = _.without(
-      Object.keys(newState.requests),
-      ...pendingRequestIds,
-    );
-    const completedRequests = _.pick(newState.requests, completedRequestIds);
+  const pendingRequests = Object.values(newState.requests).filter(
+    (request) => request.isPending,
+  );
+  const completedRequests = Object.values(newState.requests).filter(
+    (request) => !request.isPending,
+  );
+  let successRequests = completedRequests.filter((request) => request.isOk);
+  let failRequests = completedRequests.filter((request) => !request.isOk);
 
-    const sortedCompletedRequests = _.orderBy(
-      completedRequests,
-      (request) => request.timestamp.completed?.unixMilliseconds,
+  if (
+    newState.config.successRequestsCache !== null &&
+    successRequests.length > newState.config.successRequestsCache
+  ) {
+    const sortedSuccessRequests = orderBy(
+      successRequests,
+      (successRequest) => successRequest.completedAt?.unixMilliseconds,
       'desc',
     );
-    const completedRequestsCache = sortedCompletedRequests.slice(
+
+    const successRequestsCache = sortedSuccessRequests.slice(
       0,
-      newState.config.completedRequestsCache,
+      newState.config.successRequestsCache,
     );
 
-    // no-param-reassign is disabled because the state has already been
-    // duplicated in the respective handler that calls this function hence the
-    // risk of mutating the state object is already mitigated.
-    // eslint-disable-next-line no-param-reassign
-    newState.requests = {
-      ..._.keyBy(pendingRequests, 'id'),
-      ..._.keyBy(completedRequestsCache, 'id'),
-    };
+    successRequests = successRequestsCache;
   }
+
+  if (
+    newState.config.failRequestsCache !== null &&
+    failRequests.length > newState.config.failRequestsCache
+  ) {
+    const sortedFailRequests = orderBy(
+      failRequests,
+      (failRequest) => failRequest.completedAt?.unixMilliseconds,
+      'desc',
+    );
+
+    const failRequestsCache = sortedFailRequests.slice(
+      0,
+      newState.config.failRequestsCache,
+    );
+
+    failRequests = failRequestsCache;
+  }
+
+  // no-param-reassign is disabled because the state has already been
+  // duplicated in the respective handler that calls this function hence the
+  // risk of mutating the state object is already mitigated.
+  // eslint-disable-next-line no-param-reassign
+  newState.requests = {
+    ...keyBy(pendingRequests, 'id'),
+    ...keyBy(successRequests, 'id'),
+    ...keyBy(failRequests, 'id'),
+  };
 }

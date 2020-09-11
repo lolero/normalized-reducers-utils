@@ -4,7 +4,7 @@ import { getPkOfEntity } from './pk.utils';
 /**
  * Convert entity array into a normalized entities object
  *
- * @param {PkSchema} pkSchema - PK schema of normalized reducer entities
+ * @param {PkSchema} pkSchema - PK schema of reducer's entities
  * @param {Entity[]} entityArray - Entity array
  *
  * @returns {ReducerData} Normalized entities object

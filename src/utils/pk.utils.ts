@@ -1,12 +1,12 @@
-import { PkSchema, Entity, FieldsFromPk } from '../types/reducers.types';
+import { PkSchema, Entity, DestructuredPk } from '../types/reducers.types';
 
 /**
- * Get PK of normalized reducer entity
+ * Get PK of entity
  *
  * @param {Entity} entity - Entity
- * @param {PkSchema} pkSchema - PK schema of normalized reducer entity
+ * @param {PkSchema} pkSchema - PK schema of reducer's entities
  *
- * @returns {string} PK of normalized reducer entity
+ * @returns {string} PK of entity
  */
 export function getPkOfEntity<EntityT extends Entity>(
   entity: EntityT,
@@ -23,18 +23,18 @@ export function getPkOfEntity<EntityT extends Entity>(
 }
 
 /**
- * Get fields from normalized reducer entity's PK
+ * Get fields and edges from entity's PK
  *
- * @param {string} pk - Normalized reducer entity's PK
- * @param {PkSchema} pkSchema - PK schema of normalized reducer entity
+ * @param {string} pk - Entity's PK
+ * @param {PkSchema} pkSchema - PK schema of reducer's entities
  *
- * @returns {FieldsFromPk} Fields from normalized reducer entity node's PK
+ * @returns {DestructuredPk} Fields and edges from entity's PK
  */
-export function getFieldsFromPk<EntityT extends Entity>(
+export function destructurePk<EntityT extends Entity>(
   pk: string,
   pkSchema: PkSchema<EntityT>,
-): FieldsFromPk<EntityT> {
-  const fieldsFromPk = {
+): DestructuredPk<EntityT> {
+  const fieldsAndEdgesFromPk = {
     fields: pk
       .split(pkSchema.separator)
       .slice(0, pkSchema.fields.length)
@@ -60,5 +60,5 @@ export function getFieldsFromPk<EntityT extends Entity>(
         {},
       ),
   };
-  return fieldsFromPk;
+  return fieldsAndEdgesFromPk;
 }

@@ -4,7 +4,7 @@ export type PkSchema<EntityT extends Entity> = {
   separator: string;
 };
 
-export type FieldsFromPk<EntityT extends Entity> = {
+export type DestructuredPk<EntityT extends Entity> = {
   fields: { [field in keyof EntityT]?: string };
   edges: { [edge in keyof EntityT['__edges__']]?: string };
 };
@@ -14,21 +14,19 @@ export type SubRequest = {
   requestId: string;
 };
 
-type Request = {
+export type Request = {
   id: string;
-  timestamp: {
-    created: {
-      unixMilliseconds: number;
-      formattedString?: string;
-    };
-    completed?: {
-      unixMilliseconds: number;
-      formattedString?: string;
-    };
+  createdAt: {
+    unixMilliseconds: number;
+    formattedString?: string;
   };
-  pending: boolean;
+  completedAt?: {
+    unixMilliseconds: number;
+    formattedString?: string;
+  };
+  isPending: boolean;
+  isOk?: boolean;
   entityPks?: string[];
-  ok?: boolean;
   statusCode?: number;
   error?: string;
   subRequests?: SubRequest[];
@@ -70,8 +68,9 @@ export type ReducerMetadata = {
 };
 
 export type ReducerConfig = {
-  completedRequestsCache?: number;
-  requestsPrettyTimestamp?: {
+  successRequestsCache: number | null;
+  failRequestsCache: number | null;
+  requestsPrettyTimestamps?: {
     format: string;
     timezone: string;
   };
@@ -86,6 +85,6 @@ export type Reducer<
   data: ReducerData<EntityT>;
   pkSchema: PkSchema<EntityT>;
   getPk: (entity: EntityT) => string;
-  getFieldsFromPk: (pk: string) => FieldsFromPk<EntityT>;
+  destructurePk: (pk: string) => DestructuredPk<EntityT>;
   config: ReducerConfig;
 };

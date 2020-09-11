@@ -17,7 +17,10 @@ import {
   SavePartialReducerMetadataAction,
   SavePartialPatternToEntitiesAction,
 } from '../../types/actions.types';
-import { createInitialState } from '../initialState.utils';
+import {
+  createInitialState,
+  defaultReducerConfig,
+} from '../initialState.utils';
 import * as ReducerHandlersUtils from '../reducerHandlers.utils';
 import {
   handleDeleteEntities,
@@ -33,7 +36,7 @@ describe('reducerHandlers', () => {
   let state: TestReducer;
   let duplicatedState: TestReducer;
   let duplicateStateSpy: jest.SpyInstance;
-  let handleCommonFieldsSpy: jest.SpyInstance;
+  let handleCommonPropsSpy: jest.SpyInstance;
   let updateCompletedRequestsCacheSpy: jest.SpyInstance;
 
   beforeEach(() => {
@@ -52,8 +55,8 @@ describe('reducerHandlers', () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
       // @ts-ignore
       .mockImplementation(() => duplicatedState);
-    handleCommonFieldsSpy = jest
-      .spyOn(ReducerHandlersUtils, 'handleCommonFields')
+    handleCommonPropsSpy = jest
+      .spyOn(ReducerHandlersUtils, 'handleCommonProps')
       .mockImplementation((stateTemp) => stateTemp);
     updateCompletedRequestsCacheSpy = jest
       .spyOn(ReducerHandlersUtils, 'updateCompletedRequestsCache')
@@ -62,7 +65,7 @@ describe('reducerHandlers', () => {
 
   afterEach(() => {
     duplicateStateSpy.mockRestore();
-    handleCommonFieldsSpy.mockRestore();
+    handleCommonPropsSpy.mockRestore();
     updateCompletedRequestsCacheSpy.mockRestore();
   });
 
@@ -84,27 +87,26 @@ describe('reducerHandlers', () => {
         TestReducer['metadata']
       >(state, testRequestAction);
 
-      expect(duplicateStateSpy).toHaveBeenCalledWith(state);
+      expect(duplicateStateSpy).toHaveBeenCalledWith(state, testRequestAction);
       expect(newState).toEqual({
         ...duplicatedState,
         requests: {
           [testRequestAction.requestId]: {
             id: testRequestAction.requestId,
-            timestamp: {
-              created: {
-                unixMilliseconds: expect.any(Number),
-              },
+            createdAt: {
+              unixMilliseconds: expect.any(Number),
             },
-            pending: true,
+            isPending: true,
           },
         },
       });
     });
 
-    describe('state.config.requestsPrettyTimestamp', () => {
-      it("Should format string of request's timestamp to ISO string with UTC timezone", () => {
+    describe('state.config.requestsPrettyTimestamps', () => {
+      it("Should format string of request's timestamps to ISO string with UTC timezone", () => {
         state.config = {
-          requestsPrettyTimestamp: {
+          ...defaultReducerConfig,
+          requestsPrettyTimestamps: {
             format: 'utc',
             timezone: 'utc',
           },
@@ -117,14 +119,14 @@ describe('reducerHandlers', () => {
           TestReducer['metadata']
         >(state, testRequestAction);
 
-        const requestCreatedTimestamp = newState.requests[
+        const requestCreatedAt = newState.requests[
           testRequestAction.requestId as string
-        ].timestamp.created as {
+        ].createdAt as {
           unixMilliseconds: number;
           formattedString?: string;
         };
-        const createdDate = new Date(requestCreatedTimestamp.unixMilliseconds);
-        expect(requestCreatedTimestamp.formattedString).toBe(
+        const createdDate = new Date(requestCreatedAt.unixMilliseconds);
+        expect(requestCreatedAt.formattedString).toBe(
           createdDate.toISOString(),
         );
       });
@@ -147,8 +149,11 @@ describe('reducerHandlers', () => {
         TestReducer['metadata']
       >(state, testSavePartialReducerMetadataAction);
 
-      expect(duplicateStateSpy).toHaveBeenCalledWith(state);
-      expect(handleCommonFieldsSpy).toHaveBeenCalledWith(
+      expect(duplicateStateSpy).toHaveBeenCalledWith(
+        state,
+        testSavePartialReducerMetadataAction,
+      );
+      expect(handleCommonPropsSpy).toHaveBeenCalledWith(
         duplicatedState,
         testSavePartialReducerMetadataAction,
       );
@@ -181,8 +186,11 @@ describe('reducerHandlers', () => {
         TestReducer['metadata']
       >(state, testSaveWholeEntitiesAction);
 
-      expect(duplicateStateSpy).toHaveBeenCalledWith(state);
-      expect(handleCommonFieldsSpy).toHaveBeenCalledWith(
+      expect(duplicateStateSpy).toHaveBeenCalledWith(
+        state,
+        testSaveWholeEntitiesAction,
+      );
+      expect(handleCommonPropsSpy).toHaveBeenCalledWith(
         duplicatedState,
         testSaveWholeEntitiesAction,
       );
@@ -221,8 +229,11 @@ describe('reducerHandlers', () => {
         TestReducer['metadata']
       >(state, testSaveWholeEntitiesAction);
 
-      expect(duplicateStateSpy).toHaveBeenCalledWith(state);
-      expect(handleCommonFieldsSpy).toHaveBeenCalledWith(
+      expect(duplicateStateSpy).toHaveBeenCalledWith(
+        state,
+        testSaveWholeEntitiesAction,
+      );
+      expect(handleCommonPropsSpy).toHaveBeenCalledWith(
         duplicatedState,
         testSaveWholeEntitiesAction,
       );
@@ -283,8 +294,11 @@ describe('reducerHandlers', () => {
         TestReducer['metadata']
       >(state, testSavePartialEntitiesAction);
 
-      expect(duplicateStateSpy).toHaveBeenCalledWith(state);
-      expect(handleCommonFieldsSpy).toHaveBeenCalledWith(
+      expect(duplicateStateSpy).toHaveBeenCalledWith(
+        state,
+        testSavePartialEntitiesAction,
+      );
+      expect(handleCommonPropsSpy).toHaveBeenCalledWith(
         duplicatedState,
         testSavePartialEntitiesAction,
       );
@@ -360,8 +374,11 @@ describe('reducerHandlers', () => {
         TestReducer['metadata']
       >(state, testSavePartialPatternToEntitiesAction);
 
-      expect(duplicateStateSpy).toHaveBeenCalledWith(state);
-      expect(handleCommonFieldsSpy).toHaveBeenCalledWith(
+      expect(duplicateStateSpy).toHaveBeenCalledWith(
+        state,
+        testSavePartialPatternToEntitiesAction,
+      );
+      expect(handleCommonPropsSpy).toHaveBeenCalledWith(
         duplicatedState,
         testSavePartialPatternToEntitiesAction,
       );
@@ -422,8 +439,11 @@ describe('reducerHandlers', () => {
         TestReducer['metadata']
       >(state, testDeleteEntitiesAction);
 
-      expect(duplicateStateSpy).toHaveBeenCalledWith(state);
-      expect(handleCommonFieldsSpy).toHaveBeenCalledWith(
+      expect(duplicateStateSpy).toHaveBeenCalledWith(
+        state,
+        testDeleteEntitiesAction,
+      );
+      expect(handleCommonPropsSpy).toHaveBeenCalledWith(
         duplicatedState,
         testDeleteEntitiesAction,
       );
@@ -452,8 +472,8 @@ describe('reducerHandlers', () => {
         testFailAction,
       );
 
-      expect(duplicateStateSpy).toHaveBeenCalledWith(state);
-      expect(handleCommonFieldsSpy).toHaveBeenCalledWith(
+      expect(duplicateStateSpy).toHaveBeenCalledWith(state, testFailAction);
+      expect(handleCommonPropsSpy).toHaveBeenCalledWith(
         duplicatedState,
         testFailAction,
       );

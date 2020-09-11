@@ -6,7 +6,7 @@ import {
   ReducerData,
   ReducerConfig,
 } from '../types/reducers.types';
-import { getFieldsFromPk, getPkOfEntity } from './pk.utils';
+import { destructurePk, getPkOfEntity } from './pk.utils';
 
 export const emptyGenericPkSchema: PkSchema<Entity> = {
   fields: [],
@@ -14,17 +14,20 @@ export const emptyGenericPkSchema: PkSchema<Entity> = {
   separator: '',
 };
 
-export const defaultReducerConfig: ReducerConfig = {};
+export const defaultReducerConfig: ReducerConfig = {
+  successRequestsCache: 10,
+  failRequestsCache: 10,
+};
 
 /**
- * Creates initial state of normalized reducer
+ * Creates initial state of reducer
  *
  * @param {ReducerMetadata} initialReducerMetadata - Initial reducer metadata
  * @param {ReducerData} initialReducerData - Initial reducer data
- * @param {PkSchema} pkSchema - PK schema of normalized reducer entities
+ * @param {PkSchema} pkSchema - PK schema of reducer's entities
  * @param {ReducerConfig} [config] - Custom config params
  *
- * @returns {Reducer} Normalized reducer initial state
+ * @returns {Reducer} Reducer's initial state
  */
 export function createInitialState<
   ReducerMetadataT extends ReducerMetadata,
@@ -41,7 +44,7 @@ export function createInitialState<
     data: initialReducerData,
     pkSchema,
     getPk: (entity): string => getPkOfEntity(entity, pkSchema),
-    getFieldsFromPk: (pk) => getFieldsFromPk(pk, pkSchema),
+    destructurePk: (pk) => destructurePk(pk, pkSchema),
     config: {
       ...defaultReducerConfig,
       ...config,

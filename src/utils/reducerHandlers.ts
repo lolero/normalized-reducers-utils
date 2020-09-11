@@ -11,12 +11,12 @@ import {
 } from '../types/actions.types';
 import {
   duplicateState,
-  handleCommonFields,
+  handleCommonProps,
   updateCompletedRequestsCache,
 } from './reducerHandlers.utils';
 
 /**
- * Accessory function that simply calls handleCommonFields and
+ * Accessory function that simply calls handleCommonProps and
  * updateCompletedRequestsCache
  *
  * @param {Reducer} newState - A copy of the redux state
@@ -41,13 +41,13 @@ function handleCompletedRequest<
     | DeleteEntitiesAction<ActionTypeT, ReducerMetadataT>
     | FailAction<ActionTypeT>,
 ): void {
-  handleCommonFields<ActionTypeT, ReducerMetadataT, EntityT>(newState, action);
+  handleCommonProps<ActionTypeT, ReducerMetadataT, EntityT>(newState, action);
   updateCompletedRequestsCache<ReducerMetadataT, EntityT>(newState);
 }
 
 /**
- * Updates a normalized reducer's 'requests' field and sets the loading property
- * of the request object, corresponding to the action's request id, to true.
+ * Updates a reducer's 'requests' prop and sets the 'isPending' property of
+ * the request object, corresponding to the action's request id, to true.
  *
  * @param {Reducer} state - The current state of the reducer
  * @param {RequestAction} action - Request action
@@ -64,29 +64,30 @@ export function handleRequest<
   action: RequestAction<ActionTypeT, RequestMetadataT, ReducerMetadataT>,
 ): Reducer<ReducerMetadataT, EntityT> {
   const createdDate = new Date();
-  const newState = duplicateState<EntityT, ReducerMetadataT>(state);
+  const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
+    state,
+    action,
+  );
   newState.requests[action.requestId] = {
     id: action.requestId,
-    timestamp: {
-      created: {
-        unixMilliseconds: createdDate.valueOf(),
-      },
+    createdAt: {
+      unixMilliseconds: createdDate.valueOf(),
     },
-    pending: true,
+    isPending: true,
   };
 
-  if (state.config.requestsPrettyTimestamp) {
+  if (state.config.requestsPrettyTimestamps) {
     newState.requests[
       action.requestId
-    ].timestamp.created.formattedString = createdDate.toISOString();
+    ].createdAt.formattedString = createdDate.toISOString();
   }
 
   return newState;
 }
 
 /**
- * Updates a subset of properties in a normalized reducer's 'metadata' field,
- * as well as the 'requests' field to reflect that the corresponding request
+ * Updates a subset of properties in a reducer's 'metadata' prop,
+ * as well as the 'requests' prop to reflect that the corresponding request
  * has been completed successfully.
  *
  * @param {Reducer} state - The current state of the reducer
@@ -103,7 +104,10 @@ export function handleSavePartialReducerMetadata<
   state: Reducer<ReducerMetadataT, EntityT>,
   action: SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>,
 ): Reducer<ReducerMetadataT, EntityT> {
-  const newState = duplicateState<EntityT, ReducerMetadataT>(state);
+  const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
+    state,
+    action,
+  );
   handleCompletedRequest<ActionTypeT, ReducerMetadataT, EntityT>(
     newState,
     action,
@@ -113,9 +117,9 @@ export function handleSavePartialReducerMetadata<
 }
 
 /**
- * Updates a normalized reducer's 'data' field with whole entities' data,
- * the 'metadata' field with the corresponding partial reducer metadata,
- * and the 'requests' field to reflect that the corresponding request has been
+ * Updates a reducer's 'data' prop with whole entities' data,
+ * the 'metadata' prop with the corresponding partial reducer metadata,
+ * and the 'requests' prop to reflect that the corresponding request has been
  * completed successfully.
  *
  * @param {Reducer} state - The current state of the reducer
@@ -131,7 +135,10 @@ export function handleSaveWholeEntities<
   state: Reducer<ReducerMetadataT, EntityT>,
   action: SaveWholeEntitiesAction<ActionTypeT, EntityT, ReducerMetadataT>,
 ): Reducer<ReducerMetadataT, EntityT> {
-  const newState = duplicateState<EntityT, ReducerMetadataT>(state);
+  const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
+    state,
+    action,
+  );
   newState.data = action.flush
     ? action.wholeEntities
     : { ...newState.data, ...action.wholeEntities };
@@ -144,9 +151,9 @@ export function handleSaveWholeEntities<
 }
 
 /**
- * Updates a subset of properties in a normalized reducer's entities,
- * as well as the 'requests' field to reflect that the corresponding request
- * has been completed successfully. The '__edges__' field of the entities are
+ * Updates a subset of props in a reducer's entities,
+ * as well as the 'requests' prop to reflect that the corresponding request
+ * has been completed successfully. The '__edges__' prop of the entities is
  * not replaced completely. Instead, only the provided subset of __edges__ is
  * updated.
  *
@@ -164,7 +171,10 @@ export function handleSavePartialEntities<
   state: Reducer<ReducerMetadataT, EntityT>,
   action: SavePartialEntitiesAction<ActionTypeT, EntityT, ReducerMetadataT>,
 ): Reducer<ReducerMetadataT, EntityT> {
-  const newState = duplicateState<EntityT, ReducerMetadataT>(state);
+  const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
+    state,
+    action,
+  );
   Object.keys(action.partialEntities).forEach((entityPk) => {
     newState.data[entityPk] = {
       ...newState.data[entityPk],
@@ -187,9 +197,9 @@ export function handleSavePartialEntities<
 }
 
 /**
- * Updates one subset of properties in many normalized reducer's entities,
- * as well as the 'requests' field to reflect that the corresponding request
- * has been completed successfully. The '__edges__' field of the entities are
+ * Updates one subset of props in many reducers' entities,
+ * as well as the 'requests' prop to reflect that the corresponding request
+ * has been completed successfully. The '__edges__' prop of the entities is
  * not replaced completely. Instead, only the provided subset of __edges__ is
  * updated.
  *
@@ -211,7 +221,10 @@ export function handleSavePartialPatternToEntities<
     ReducerMetadataT
   >,
 ): Reducer<ReducerMetadataT, EntityT> {
-  const newState = duplicateState<EntityT, ReducerMetadataT>(state);
+  const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
+    state,
+    action,
+  );
   action.entityPks.forEach((entityPk) => {
     newState.data[entityPk] = {
       ...newState.data[entityPk],
@@ -234,8 +247,8 @@ export function handleSavePartialPatternToEntities<
 }
 
 /**
- * Deletes a set of a normalized reducer's entities,
- * as well as the 'requests' field to reflect that the corresponding request
+ * Deletes a set of a reducer's entities,
+ * as well as the 'requests' prop to reflect that the corresponding request
  * has been completed successfully.
  *
  * @param {Reducer} state - The current state of the reducer
@@ -251,7 +264,10 @@ export function handleDeleteEntities<
   state: Reducer<ReducerMetadataT, EntityT>,
   action: DeleteEntitiesAction<ActionTypeT, ReducerMetadataT>,
 ): Reducer<ReducerMetadataT, EntityT> {
-  const newState = duplicateState<EntityT, ReducerMetadataT>(state);
+  const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
+    state,
+    action,
+  );
   action.entityPks.forEach((entityPk) => delete newState.data[entityPk]);
   handleCompletedRequest<ActionTypeT, ReducerMetadataT, EntityT>(
     newState,
@@ -262,8 +278,8 @@ export function handleDeleteEntities<
 }
 
 /**
- * Updates a normalized reducer's 'requests' field to reflect that the
- * corresponding request has failed.
+ * Updates a reducer's 'requests' prop to reflect that the corresponding
+ * request has failed.
  *
  * @param {Reducer} state - The current state of the reducer
  * @param {FailAction} action - Fail action
@@ -278,7 +294,10 @@ export function handleFail<
   state: Reducer<ReducerMetadataT, EntityT>,
   action: FailAction<ActionTypeT>,
 ): Reducer<ReducerMetadataT, EntityT> {
-  const newState = duplicateState<EntityT, ReducerMetadataT>(state);
+  const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
+    state,
+    action,
+  );
   handleCompletedRequest<ActionTypeT, ReducerMetadataT, EntityT>(
     newState,
     action,

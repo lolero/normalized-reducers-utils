@@ -5,11 +5,15 @@ import {
   testEntity2,
   testPkSchema,
   TestReducer,
+  testEntity3,
 } from '../tests.utils';
-import { createInitialState } from '../initialState.utils';
+import {
+  createInitialState,
+  defaultReducerConfig,
+} from '../initialState.utils';
 import {
   duplicateState,
-  handleCommonFields,
+  handleCommonProps,
   updateCompletedRequestsCache,
 } from '../reducerHandlers.utils';
 import {
@@ -19,7 +23,8 @@ import {
   SavePartialPatternToEntitiesAction,
   DeleteEntitiesAction,
   FailAction,
-} from '../..';
+  RequestAction,
+} from '../../types/actions.types';
 import { getPkOfEntity } from '../pk.utils';
 
 describe('reducerHandlers', () => {
@@ -36,25 +41,236 @@ describe('reducerHandlers', () => {
   });
 
   describe('duplicateState', () => {
-    it('Should duplicate state', () => {
-      state.data = { [state.getPk(testEntity1)]: testEntity1 };
+    beforeEach(() => {
+      state.data = {
+        [getPkOfEntity(testEntity1, testPkSchema)]: testEntity1,
+        [getPkOfEntity(testEntity2, testPkSchema)]: testEntity2,
+        [getPkOfEntity(testEntity3, testPkSchema)]: testEntity3,
+      };
+    });
 
-      const newState = duplicateState<TestEntity, TestReducer['metadata']>(
-        state,
-      );
+    it('Should duplicate state', () => {
+      const testRequestAction: RequestAction<
+        'testRequestAction',
+        never,
+        never
+      > = {
+        type: 'testRequestAction',
+        requestId: 'testRequestActionRequestId',
+      };
+
+      const newState = duplicateState<
+        'testRequestAction',
+        TestReducer['metadata'],
+        TestEntity
+      >(state, testRequestAction);
 
       expect(newState).toEqual(state);
       expect(newState).not.toBe(state);
       expect(newState.requests).not.toBe(state.requests);
-      expect(newState.metadata).not.toBe(state.metadata);
+      expect(newState.metadata).toBe(state.metadata);
       expect(newState.data).not.toBe(state.data);
+    });
+
+    it('Should not duplicate entities for request action', () => {
+      const testRequestAction: RequestAction<
+        'testRequestAction',
+        never,
+        never
+      > = {
+        type: 'testRequestAction',
+        requestId: 'testRequestActionRequestId',
+      };
+
+      const newState = duplicateState<
+        'testRequestAction',
+        TestReducer['metadata'],
+        TestEntity
+      >(state, testRequestAction);
+
+      expect(newState.data[state.getPk(testEntity1)]).toBe(
+        state.data[state.getPk(testEntity1)],
+      );
+      expect(newState.data[state.getPk(testEntity2)]).toBe(
+        state.data[state.getPk(testEntity2)],
+      );
+      expect(newState.data[state.getPk(testEntity3)]).toBe(
+        state.data[state.getPk(testEntity3)],
+      );
+    });
+
+    it('Should not duplicate entities for save partial reducer metadata action', () => {
+      const testSavePartialReducerMetadataAction: SavePartialReducerMetadataAction<
+        'testSavePartialReducerMetadataAction',
+        TestReducer['metadata']
+      > = {
+        type: 'testSavePartialReducerMetadataAction',
+        partialReducerMetadata: {},
+      };
+
+      const newState = duplicateState<
+        'testSavePartialReducerMetadataAction',
+        TestReducer['metadata'],
+        TestEntity
+      >(state, testSavePartialReducerMetadataAction);
+
+      expect(newState.data[state.getPk(testEntity1)]).toBe(
+        state.data[state.getPk(testEntity1)],
+      );
+      expect(newState.data[state.getPk(testEntity2)]).toBe(
+        state.data[state.getPk(testEntity2)],
+      );
+      expect(newState.data[state.getPk(testEntity3)]).toBe(
+        state.data[state.getPk(testEntity3)],
+      );
+    });
+
+    it('Should duplicate affected entities by save whole entities action', () => {
+      const testSaveWholeEntitiesAction: SaveWholeEntitiesAction<
+        'testSaveWholeEntitiesAction',
+        TestEntity,
+        TestReducer['metadata']
+      > = {
+        type: 'testSaveWholeEntitiesAction',
+        wholeEntities: {
+          [getPkOfEntity(testEntity1, testPkSchema)]: testEntity1,
+          [getPkOfEntity(testEntity2, testPkSchema)]: testEntity2,
+        },
+      };
+
+      const newState = duplicateState<
+        'testSaveWholeEntitiesAction',
+        TestReducer['metadata'],
+        TestEntity
+      >(state, testSaveWholeEntitiesAction);
+
       expect(newState.data[state.getPk(testEntity1)]).not.toBe(
         state.data[state.getPk(testEntity1)],
+      );
+      expect(newState.data[state.getPk(testEntity2)]).not.toBe(
+        state.data[state.getPk(testEntity2)],
+      );
+      expect(newState.data[state.getPk(testEntity3)]).toBe(
+        state.data[state.getPk(testEntity3)],
+      );
+    });
+
+    it('Should duplicate affected entities by save partial entities action', () => {
+      const testSavePartialEntitiesAction: SavePartialEntitiesAction<
+        'testSavePartialEntitiesAction',
+        TestEntity,
+        TestReducer['metadata']
+      > = {
+        type: 'testSavePartialEntitiesAction',
+        partialEntities: {
+          [getPkOfEntity(testEntity1, testPkSchema)]: testEntity1,
+          [getPkOfEntity(testEntity3, testPkSchema)]: testEntity3,
+        },
+      };
+
+      const newState = duplicateState<
+        'testSavePartialEntitiesAction',
+        TestReducer['metadata'],
+        TestEntity
+      >(state, testSavePartialEntitiesAction);
+
+      expect(newState.data[state.getPk(testEntity1)]).not.toBe(
+        state.data[state.getPk(testEntity1)],
+      );
+      expect(newState.data[state.getPk(testEntity2)]).toBe(
+        state.data[state.getPk(testEntity2)],
+      );
+      expect(newState.data[state.getPk(testEntity3)]).not.toBe(
+        state.data[state.getPk(testEntity3)],
+      );
+    });
+
+    it('Should duplicate affected entities by save partial pattern to entities action', () => {
+      const testSavePartialPatternToEntitiesAction: SavePartialPatternToEntitiesAction<
+        'testSavePartialPatternToEntitiesAction',
+        TestEntity,
+        TestReducer['metadata']
+      > = {
+        type: 'testSavePartialPatternToEntitiesAction',
+        entityPks: [
+          getPkOfEntity(testEntity2, testPkSchema),
+          getPkOfEntity(testEntity3, testPkSchema),
+        ],
+        partialEntity: {},
+      };
+
+      const newState = duplicateState<
+        'testSavePartialPatternToEntitiesAction',
+        TestReducer['metadata'],
+        TestEntity
+      >(state, testSavePartialPatternToEntitiesAction);
+
+      expect(newState.data[state.getPk(testEntity1)]).toBe(
+        state.data[state.getPk(testEntity1)],
+      );
+      expect(newState.data[state.getPk(testEntity2)]).not.toBe(
+        state.data[state.getPk(testEntity2)],
+      );
+      expect(newState.data[state.getPk(testEntity3)]).not.toBe(
+        state.data[state.getPk(testEntity3)],
+      );
+    });
+
+    it('Should duplicate affected entities by delete entities action', () => {
+      const testDeleteEntitiesAction: DeleteEntitiesAction<
+        'testDeleteEntitiesAction',
+        TestReducer['metadata']
+      > = {
+        type: 'testDeleteEntitiesAction',
+        entityPks: [
+          getPkOfEntity(testEntity1, testPkSchema),
+          getPkOfEntity(testEntity2, testPkSchema),
+        ],
+      };
+
+      const newState = duplicateState<
+        'testDeleteEntitiesAction',
+        TestReducer['metadata'],
+        TestEntity
+      >(state, testDeleteEntitiesAction);
+
+      expect(newState.data[state.getPk(testEntity1)]).not.toBe(
+        state.data[state.getPk(testEntity1)],
+      );
+      expect(newState.data[state.getPk(testEntity2)]).not.toBe(
+        state.data[state.getPk(testEntity2)],
+      );
+      expect(newState.data[state.getPk(testEntity3)]).toBe(
+        state.data[state.getPk(testEntity3)],
+      );
+    });
+
+    it('Should not duplicate entities for fail action', () => {
+      const testFailAction: FailAction<'testFailAction'> = {
+        type: 'testFailAction',
+        error: 'test fail action error',
+        requestId: 'testFailActionRequestId',
+      };
+
+      const newState = duplicateState<
+        'testFailAction',
+        TestReducer['metadata'],
+        TestEntity
+      >(state, testFailAction);
+
+      expect(newState.data[state.getPk(testEntity1)]).toBe(
+        state.data[state.getPk(testEntity1)],
+      );
+      expect(newState.data[state.getPk(testEntity2)]).toBe(
+        state.data[state.getPk(testEntity2)],
+      );
+      expect(newState.data[state.getPk(testEntity3)]).toBe(
+        state.data[state.getPk(testEntity3)],
       );
     });
   });
 
-  describe('handleCommonFields', () => {
+  describe('handleCommonProps', () => {
     it('Should handle SavePartialReducerMetadataAction', () => {
       const testSavePartialReducerMetadataAction: SavePartialReducerMetadataAction<
         'testSavePartialReducerMetadataAction',
@@ -75,15 +291,19 @@ describe('reducerHandlers', () => {
         testSavePartialReducerMetadataAction.requestId as string
       ] = {
         id: testSavePartialReducerMetadataAction.requestId as string,
-        timestamp: {
-          created: {
-            unixMilliseconds: createdDate.valueOf(),
-          },
+        createdAt: {
+          unixMilliseconds: createdDate.valueOf(),
         },
-        pending: true,
+        isPending: true,
       };
 
-      handleCommonFields<
+      const initialRequest =
+        state.requests[
+          testSavePartialReducerMetadataAction.requestId as string
+        ];
+      const initialMetadata = state.metadata;
+
+      handleCommonProps<
         'testSavePartialReducerMetadataAction',
         TestReducer['metadata'],
         TestEntity
@@ -94,16 +314,14 @@ describe('reducerHandlers', () => {
           requests: {
             [testSavePartialReducerMetadataAction.requestId as string]: {
               id: testSavePartialReducerMetadataAction.requestId as string,
-              timestamp: {
-                created: {
-                  unixMilliseconds: createdDate.valueOf(),
-                },
-                completed: {
-                  unixMilliseconds: expect.any(Number),
-                },
+              createdAt: {
+                unixMilliseconds: createdDate.valueOf(),
               },
-              pending: false,
-              ok: true,
+              completedAt: {
+                unixMilliseconds: expect.any(Number),
+              },
+              isPending: false,
+              isOk: true,
               statusCode: testSavePartialReducerMetadataAction.statusCode,
               subRequests: testSavePartialReducerMetadataAction.subRequests,
             },
@@ -112,9 +330,14 @@ describe('reducerHandlers', () => {
             ...testInitialReducerMetadata,
             ...testSavePartialReducerMetadataAction.partialReducerMetadata,
           },
-          data: {},
         }),
       );
+      expect(
+        state.requests[
+          testSavePartialReducerMetadataAction.requestId as string
+        ],
+      ).not.toBe(initialRequest);
+      expect(state.metadata).not.toBe(initialMetadata);
     });
 
     it('Should handle SaveWholeEntitiesAction', () => {
@@ -126,7 +349,7 @@ describe('reducerHandlers', () => {
         type: 'testSaveWholeEntitiesAction',
         wholeEntities: {
           [getPkOfEntity(testEntity1, testPkSchema)]: testEntity1,
-          [getPkOfEntity(testEntity1, testPkSchema)]: testEntity2,
+          [getPkOfEntity(testEntity2, testPkSchema)]: testEntity2,
         },
         partialReducerMetadata: {
           reducerStatus: 'savedWholeEntities',
@@ -140,15 +363,13 @@ describe('reducerHandlers', () => {
 
       state.requests[testSaveWholeEntitiesAction.requestId as string] = {
         id: testSaveWholeEntitiesAction.requestId as string,
-        timestamp: {
-          created: {
-            unixMilliseconds: createdDate.valueOf(),
-          },
+        createdAt: {
+          unixMilliseconds: createdDate.valueOf(),
         },
-        pending: true,
+        isPending: true,
       };
 
-      handleCommonFields<
+      handleCommonProps<
         'testSaveWholeEntitiesAction',
         TestReducer['metadata'],
         TestEntity
@@ -159,17 +380,15 @@ describe('reducerHandlers', () => {
           requests: {
             [testSaveWholeEntitiesAction.requestId as string]: {
               id: testSaveWholeEntitiesAction.requestId as string,
-              timestamp: {
-                created: {
-                  unixMilliseconds: createdDate.valueOf(),
-                },
-                completed: {
-                  unixMilliseconds: expect.any(Number),
-                },
+              createdAt: {
+                unixMilliseconds: createdDate.valueOf(),
               },
-              pending: false,
+              completedAt: {
+                unixMilliseconds: expect.any(Number),
+              },
+              isPending: false,
+              isOk: true,
               entityPks: Object.keys(testSaveWholeEntitiesAction.wholeEntities),
-              ok: true,
               statusCode: testSaveWholeEntitiesAction.statusCode,
               subRequests: testSaveWholeEntitiesAction.subRequests,
             },
@@ -191,7 +410,7 @@ describe('reducerHandlers', () => {
         type: 'testSavePartialEntitiesAction',
         partialEntities: {
           [getPkOfEntity(testEntity1, testPkSchema)]: testEntity1,
-          [getPkOfEntity(testEntity1, testPkSchema)]: testEntity2,
+          [getPkOfEntity(testEntity2, testPkSchema)]: testEntity2,
         },
         partialReducerMetadata: {
           reducerStatus: 'savedPartialEntities',
@@ -205,15 +424,13 @@ describe('reducerHandlers', () => {
 
       state.requests[testSavePartialEntitiesAction.requestId as string] = {
         id: testSavePartialEntitiesAction.requestId as string,
-        timestamp: {
-          created: {
-            unixMilliseconds: createdDate.valueOf(),
-          },
+        createdAt: {
+          unixMilliseconds: createdDate.valueOf(),
         },
-        pending: true,
+        isPending: true,
       };
 
-      handleCommonFields<
+      handleCommonProps<
         'testSavePartialEntitiesAction',
         TestReducer['metadata'],
         TestEntity
@@ -224,19 +441,17 @@ describe('reducerHandlers', () => {
           requests: {
             [testSavePartialEntitiesAction.requestId as string]: {
               id: testSavePartialEntitiesAction.requestId as string,
-              timestamp: {
-                created: {
-                  unixMilliseconds: createdDate.valueOf(),
-                },
-                completed: {
-                  unixMilliseconds: expect.any(Number),
-                },
+              createdAt: {
+                unixMilliseconds: createdDate.valueOf(),
               },
-              pending: false,
+              completedAt: {
+                unixMilliseconds: expect.any(Number),
+              },
+              isPending: false,
+              isOk: true,
               entityPks: Object.keys(
                 testSavePartialEntitiesAction.partialEntities,
               ),
-              ok: true,
               statusCode: testSavePartialEntitiesAction.statusCode,
               subRequests: testSavePartialEntitiesAction.subRequests,
             },
@@ -275,15 +490,13 @@ describe('reducerHandlers', () => {
         testSavePartialPatternToEntitiesAction.requestId as string
       ] = {
         id: testSavePartialPatternToEntitiesAction.requestId as string,
-        timestamp: {
-          created: {
-            unixMilliseconds: createdDate.valueOf(),
-          },
+        createdAt: {
+          unixMilliseconds: createdDate.valueOf(),
         },
-        pending: true,
+        isPending: true,
       };
 
-      handleCommonFields<
+      handleCommonProps<
         'testSavePartialPatternToEntitiesAction',
         TestReducer['metadata'],
         TestEntity
@@ -295,17 +508,15 @@ describe('reducerHandlers', () => {
             ...state.requests,
             [testSavePartialPatternToEntitiesAction.requestId as string]: {
               id: testSavePartialPatternToEntitiesAction.requestId as string,
-              timestamp: {
-                created: {
-                  unixMilliseconds: createdDate.valueOf(),
-                },
-                completed: {
-                  unixMilliseconds: expect.any(Number),
-                },
+              createdAt: {
+                unixMilliseconds: createdDate.valueOf(),
               },
-              pending: false,
+              completedAt: {
+                unixMilliseconds: expect.any(Number),
+              },
+              isPending: false,
+              isOk: true,
               entityPks: testSavePartialPatternToEntitiesAction.entityPks,
-              ok: true,
               statusCode: testSavePartialPatternToEntitiesAction.statusCode,
               subRequests: testSavePartialPatternToEntitiesAction.subRequests,
             },
@@ -340,15 +551,13 @@ describe('reducerHandlers', () => {
 
       state.requests[testDeleteEntitiesAction.requestId as string] = {
         id: testDeleteEntitiesAction.requestId as string,
-        timestamp: {
-          created: {
-            unixMilliseconds: createdDate.valueOf(),
-          },
+        createdAt: {
+          unixMilliseconds: createdDate.valueOf(),
         },
-        pending: true,
+        isPending: true,
       };
 
-      handleCommonFields<
+      handleCommonProps<
         'testDeleteEntitiesAction',
         TestReducer['metadata'],
         TestEntity
@@ -360,17 +569,15 @@ describe('reducerHandlers', () => {
             ...state.requests,
             [testDeleteEntitiesAction.requestId as string]: {
               id: testDeleteEntitiesAction.requestId as string,
-              timestamp: {
-                created: {
-                  unixMilliseconds: createdDate.valueOf(),
-                },
-                completed: {
-                  unixMilliseconds: expect.any(Number),
-                },
+              createdAt: {
+                unixMilliseconds: createdDate.valueOf(),
               },
-              pending: false,
+              completedAt: {
+                unixMilliseconds: expect.any(Number),
+              },
+              isPending: false,
+              isOk: true,
               entityPks: testDeleteEntitiesAction.entityPks,
-              ok: true,
               statusCode: testDeleteEntitiesAction.statusCode,
               subRequests: testDeleteEntitiesAction.subRequests,
             },
@@ -393,15 +600,13 @@ describe('reducerHandlers', () => {
 
       state.requests[testFailAction.requestId as string] = {
         id: testFailAction.requestId as string,
-        timestamp: {
-          created: {
-            unixMilliseconds: createdDate.valueOf(),
-          },
+        createdAt: {
+          unixMilliseconds: createdDate.valueOf(),
         },
-        pending: true,
+        isPending: true,
       };
 
-      handleCommonFields<'testFailAction', TestReducer['metadata'], TestEntity>(
+      handleCommonProps<'testFailAction', TestReducer['metadata'], TestEntity>(
         state,
         testFailAction,
       );
@@ -411,16 +616,14 @@ describe('reducerHandlers', () => {
           requests: {
             [testFailAction.requestId as string]: {
               id: testFailAction.requestId as string,
-              timestamp: {
-                created: {
-                  unixMilliseconds: createdDate.valueOf(),
-                },
-                completed: {
-                  unixMilliseconds: expect.any(Number),
-                },
+              createdAt: {
+                unixMilliseconds: createdDate.valueOf(),
               },
-              pending: false,
-              ok: false,
+              completedAt: {
+                unixMilliseconds: expect.any(Number),
+              },
+              isPending: false,
+              isOk: false,
               statusCode: testFailAction.statusCode,
               error: testFailAction.error,
             },
@@ -429,7 +632,7 @@ describe('reducerHandlers', () => {
       );
     });
 
-    describe('state.config.requestsPrettyTimestamp', () => {
+    describe('state.config.requestsPrettyTimestamps', () => {
       let testFailAction: FailAction<'testFailAction'>;
 
       beforeEach(() => {
@@ -442,39 +645,36 @@ describe('reducerHandlers', () => {
 
         state.requests[testFailAction.requestId as string] = {
           id: testFailAction.requestId as string,
-          timestamp: {
-            created: {
-              unixMilliseconds: createdDate.valueOf(),
-            },
+          createdAt: {
+            unixMilliseconds: createdDate.valueOf(),
           },
-          pending: true,
+          isPending: true,
         };
       });
 
-      it("Should format string of request's timestamp to ISO string with UTC timezone", () => {
+      it("Should format string of request's timestamps to ISO string with UTC timezone", () => {
         state.config = {
-          requestsPrettyTimestamp: {
+          ...defaultReducerConfig,
+          requestsPrettyTimestamps: {
             format: 'utc',
             timezone: 'utc',
           },
         };
 
-        handleCommonFields<
+        handleCommonProps<
           'testFailAction',
           TestReducer['metadata'],
           TestEntity
         >(state, testFailAction);
 
-        const requestCompletedTimestamp = state.requests[
+        const requestCompletedAt = state.requests[
           testFailAction.requestId as string
-        ].timestamp.completed as {
+        ].completedAt as {
           unixMilliseconds: number;
           formattedString?: string;
         };
-        const completedDate = new Date(
-          requestCompletedTimestamp.unixMilliseconds,
-        );
-        expect(requestCompletedTimestamp.formattedString).toBe(
+        const completedDate = new Date(requestCompletedAt.unixMilliseconds);
+        expect(requestCompletedAt.formattedString).toBe(
           completedDate.toISOString(),
         );
       });
@@ -486,54 +686,114 @@ describe('reducerHandlers', () => {
       state.requests = {
         request1: {
           id: 'request1',
-          timestamp: {
-            created: {
-              unixMilliseconds: 1,
-            },
+          createdAt: {
+            unixMilliseconds: 1,
           },
-          pending: true,
+          isPending: true,
         },
         request2: {
           id: 'request2',
-          timestamp: {
-            created: {
-              unixMilliseconds: 2,
-            },
-            completed: {
-              unixMilliseconds: 2,
-            },
+          createdAt: {
+            unixMilliseconds: 2,
           },
-          pending: false,
+          completedAt: {
+            unixMilliseconds: 2,
+          },
+          isPending: false,
+          isOk: true,
         },
         request3: {
           id: 'request3',
-          timestamp: {
-            created: {
-              unixMilliseconds: 3,
-            },
-            completed: {
-              unixMilliseconds: 3,
-            },
+          createdAt: {
+            unixMilliseconds: 3,
           },
-          pending: false,
+          completedAt: {
+            unixMilliseconds: 3,
+          },
+          isPending: false,
+          isOk: true,
         },
         request4: {
           id: 'request4',
-          timestamp: {
-            created: {
-              unixMilliseconds: 4,
-            },
-            completed: {
-              unixMilliseconds: 4,
-            },
+          createdAt: {
+            unixMilliseconds: 4,
           },
-          pending: false,
+          completedAt: {
+            unixMilliseconds: 4,
+          },
+          isPending: false,
+          isOk: true,
+        },
+        request5: {
+          id: 'request5',
+          createdAt: {
+            unixMilliseconds: 5,
+          },
+          completedAt: {
+            unixMilliseconds: 5,
+          },
+          isPending: false,
+          isOk: false,
+        },
+        request6: {
+          id: 'request6',
+          createdAt: {
+            unixMilliseconds: 6,
+          },
+          completedAt: {
+            unixMilliseconds: 6,
+          },
+          isPending: false,
+          isOk: false,
+        },
+        request7: {
+          id: 'request7',
+          createdAt: {
+            unixMilliseconds: 7,
+          },
+          completedAt: {
+            unixMilliseconds: 7,
+          },
+          isPending: false,
+          isOk: false,
         },
       };
     });
 
-    it('Should keep all completed requests', () => {
-      state.config.completedRequestsCache = undefined;
+    it('Should keep all success and fail requests', () => {
+      state.config.successRequestsCache = null;
+      state.config.failRequestsCache = null;
+
+      updateCompletedRequestsCache<TestReducer['metadata'], TestEntity>(state);
+
+      expect(Object.keys(state.requests).sort()).toEqual([
+        'request1',
+        'request2',
+        'request3',
+        'request4',
+        'request5',
+        'request6',
+        'request7',
+      ]);
+    });
+
+    it('Should keep 0 success requests', () => {
+      state.config.successRequestsCache = 0;
+      state.config.failRequestsCache = null;
+
+      updateCompletedRequestsCache<TestReducer['metadata'], TestEntity>(state);
+
+      expect(Object.keys(state.requests).sort()).toEqual([
+        'request1',
+        'request5',
+        'request6',
+        'request7',
+      ]);
+    });
+
+    it('Should keep 0 fail requests', () => {
+      state.config.successRequestsCache = null;
+      state.config.failRequestsCache = 0;
 
       updateCompletedRequestsCache<TestReducer['metadata'], TestEntity>(state);
 
@@ -545,16 +805,9 @@ describe('reducerHandlers', () => {
       ]);
     });
 
-    it('Should keep 0 completed requests', () => {
-      state.config.completedRequestsCache = 0;
-
-      updateCompletedRequestsCache<TestReducer['metadata'], TestEntity>(state);
-
-      expect(Object.keys(state.requests).sort()).toEqual(['request1']);
-    });
-
-    it('Should keep the 2 latest completed requests', () => {
-      state.config.completedRequestsCache = 2;
+    it('Should keep the 2 latest success and fail requests', () => {
+      state.config.successRequestsCache = 2;
+      state.config.failRequestsCache = 2;
 
       updateCompletedRequestsCache<TestReducer['metadata'], TestEntity>(state);
 
@@ -562,6 +815,8 @@ describe('reducerHandlers', () => {
         'request1',
         'request3',
         'request4',
+        'request6',
+        'request7',
       ]);
     });
   });

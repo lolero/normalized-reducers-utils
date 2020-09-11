@@ -7,7 +7,7 @@ import {
   ReducerConfig,
 } from '../types/reducers.types';
 
-interface TestReducerMetadata extends ReducerMetadata {
+export interface TestReducerMetadata extends ReducerMetadata {
   reducerStatus: string;
   entityCount: number;
 }
@@ -85,8 +85,9 @@ export const testInitialReducerMetadata: TestReducerMetadata = {
 };
 
 export const testReducerConfig: ReducerConfig = {
-  completedRequestsCache: 10,
-  requestsPrettyTimestamp: {
+  successRequestsCache: 10,
+  failRequestsCache: 10,
+  requestsPrettyTimestamps: {
     format: 'utc',
     timezone: 'utc',
   },
