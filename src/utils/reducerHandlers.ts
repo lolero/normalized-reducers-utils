@@ -1,9 +1,13 @@
-import { Entity, Reducer, ReducerMetadata } from '../types/reducers.types';
+import {
+  Entity,
+  Reducer,
+  ReducerMetadata,
+  RequestMetadata,
+} from '../types/reducers.types';
 import {
   DeleteEntitiesAction,
   FailAction,
   RequestAction,
-  RequestMetadata,
   SavePartialEntitiesAction,
   SavePartialPatternToEntitiesAction,
   SavePartialReducerMetadataAction,
@@ -61,7 +65,7 @@ export function handleRequest<
   ReducerMetadataT extends ReducerMetadata
 >(
   state: Reducer<ReducerMetadataT, EntityT>,
-  action: RequestAction<ActionTypeT, RequestMetadataT, ReducerMetadataT>,
+  action: RequestAction<ActionTypeT, RequestMetadataT>,
 ): Reducer<ReducerMetadataT, EntityT> {
   const createdDate = new Date();
   const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
@@ -74,6 +78,7 @@ export function handleRequest<
       unixMilliseconds: createdDate.valueOf(),
     },
     isPending: true,
+    metadata: action.requestMetadata,
   };
 
   if (state.config.requestsPrettyTimestamps) {

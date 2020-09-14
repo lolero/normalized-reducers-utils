@@ -1,5 +1,9 @@
-import { ReducerData, Entity, ReducerPartialData } from './reducers.types';
-import { RequestMetadata } from './actions.types';
+import {
+  ReducerData,
+  Entity,
+  ReducerPartialData,
+  RequestMetadata,
+} from './reducers.types';
 
 export interface CreateOneRequestMetadata<EntityT extends Entity>
   extends RequestMetadata {

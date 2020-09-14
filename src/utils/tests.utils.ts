@@ -5,7 +5,12 @@ import {
   Reducer,
   ReducerMetadata,
   ReducerConfig,
+  RequestMetadata,
 } from '../types/reducers.types';
+
+export interface TestRequestMetadata extends RequestMetadata {
+  testRequestMetadata: string;
+}
 
 export interface TestReducerMetadata extends ReducerMetadata {
   reducerStatus: string;

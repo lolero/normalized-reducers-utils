@@ -34,7 +34,7 @@ export function duplicateState<
   // RequestMetadata type is irrelevant for this function and it needs to be
   // able to take any request action regardless of its RequestMetadata
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  | RequestAction<ActionTypeT, any, ReducerMetadataT>
+  | RequestAction<ActionTypeT, any>
     | SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>
     | SaveWholeEntitiesAction<ActionTypeT, EntityT, ReducerMetadataT>
     | SavePartialEntitiesAction<ActionTypeT, EntityT, ReducerMetadataT>
@@ -119,7 +119,6 @@ export function handleCommonProps<
     const completedDate = new Date();
     newState.requests[action.requestId] = {
       ...newState.requests[action.requestId],
-      id: action.requestId,
       completedAt: {
         unixMilliseconds: completedDate.valueOf(),
       },

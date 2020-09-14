@@ -1,5 +1,5 @@
 import { TestEntity, testEntity2 } from '../tests.utils';
-import { destructurePk, getPkOfEntity } from '../pk.utils';
+import { destructPk, getPkOfEntity } from '../pk.utils';
 import { PkSchema } from '../../types/reducers.types';
 
 describe('pkUtils', () => {
@@ -44,8 +44,8 @@ describe('pkUtils', () => {
     });
   });
 
-  describe('destructurePk', () => {
-    it('Should destructure PK with only fields', () => {
+  describe('destructPk', () => {
+    it('Should destruct PK with only fields', () => {
       const testPkSchema: PkSchema<TestEntity> = {
         fields: ['id', 'name'],
         edges: [],
@@ -53,9 +53,9 @@ describe('pkUtils', () => {
       };
       const entityPk = getPkOfEntity(testEntity2, testPkSchema);
 
-      const destructuredPk = destructurePk(entityPk, testPkSchema);
+      const destructedPk = destructPk(entityPk, testPkSchema);
 
-      expect(destructuredPk).toEqual({
+      expect(destructedPk).toEqual({
         fields: {
           id: testEntity2.id,
           name: testEntity2.name,
@@ -64,7 +64,7 @@ describe('pkUtils', () => {
       });
     });
 
-    it('Should destructure PK with only edges', () => {
+    it('Should destruct PK with only edges', () => {
       const testPkSchema: PkSchema<TestEntity> = {
         fields: [],
         edges: ['parent', 'sibling'],
@@ -72,9 +72,9 @@ describe('pkUtils', () => {
       };
       const entityPk = getPkOfEntity(testEntity2, testPkSchema);
 
-      const destructuredPk = destructurePk(entityPk, testPkSchema);
+      const destructedPk = destructPk(entityPk, testPkSchema);
 
-      expect(destructuredPk).toEqual({
+      expect(destructedPk).toEqual({
         fields: {},
         edges: {
           parent: testEntity2.__edges__.parent?.pks[0],
@@ -83,7 +83,7 @@ describe('pkUtils', () => {
       });
     });
 
-    it('Should destructure PK with fields and edges', () => {
+    it('Should destruct PK with fields and edges', () => {
       const testPkSchema: PkSchema<TestEntity> = {
         fields: ['id', 'name'],
         edges: ['parent', 'sibling'],
@@ -91,9 +91,9 @@ describe('pkUtils', () => {
       };
       const entityPk = getPkOfEntity(testEntity2, testPkSchema);
 
-      const destructuredPk = destructurePk(entityPk, testPkSchema);
+      const destructedPk = destructPk(entityPk, testPkSchema);
 
-      expect(destructuredPk).toEqual({
+      expect(destructedPk).toEqual({
         fields: {
           id: testEntity2.id,
           name: testEntity2.name,

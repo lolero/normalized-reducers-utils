@@ -1,4 +1,4 @@
-import { PkSchema, Entity, DestructuredPk } from '../types/reducers.types';
+import { PkSchema, Entity, DestructedPk } from '../types/reducers.types';
 
 /**
  * Get PK of entity
@@ -28,12 +28,12 @@ export function getPkOfEntity<EntityT extends Entity>(
  * @param {string} pk - Entity's PK
  * @param {PkSchema} pkSchema - PK schema of reducer's entities
  *
- * @returns {DestructuredPk} Fields and edges from entity's PK
+ * @returns {DestructedPk} Fields and edges from entity's PK
  */
-export function destructurePk<EntityT extends Entity>(
+export function destructPk<EntityT extends Entity>(
   pk: string,
   pkSchema: PkSchema<EntityT>,
-): DestructuredPk<EntityT> {
+): DestructedPk<EntityT> {
   const fieldsAndEdgesFromPk = {
     fields: pk
       .split(pkSchema.separator)

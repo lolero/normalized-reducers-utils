@@ -6,6 +6,7 @@ import {
   testPkSchema,
   TestReducer,
   testEntity3,
+  TestRequestMetadata,
 } from '../tests.utils';
 import {
   createInitialState,
@@ -52,11 +53,13 @@ describe('reducerHandlers', () => {
     it('Should duplicate state', () => {
       const testRequestAction: RequestAction<
         'testRequestAction',
-        never,
-        never
+        TestRequestMetadata
       > = {
         type: 'testRequestAction',
         requestId: 'testRequestActionRequestId',
+        requestMetadata: {
+          testRequestMetadata: 'testRequestMetadata',
+        },
       };
 
       const newState = duplicateState<
@@ -75,11 +78,13 @@ describe('reducerHandlers', () => {
     it('Should not duplicate entities for request action', () => {
       const testRequestAction: RequestAction<
         'testRequestAction',
-        never,
-        never
+        TestRequestMetadata
       > = {
         type: 'testRequestAction',
         requestId: 'testRequestActionRequestId',
+        requestMetadata: {
+          testRequestMetadata: 'testRequestMetadata',
+        },
       };
 
       const newState = duplicateState<
@@ -295,6 +300,7 @@ describe('reducerHandlers', () => {
           unixMilliseconds: createdDate.valueOf(),
         },
         isPending: true,
+        metadata: {},
       };
 
       const initialRequest =
@@ -321,6 +327,7 @@ describe('reducerHandlers', () => {
                 unixMilliseconds: expect.any(Number),
               },
               isPending: false,
+              metadata: {},
               isOk: true,
               statusCode: testSavePartialReducerMetadataAction.statusCode,
               subRequests: testSavePartialReducerMetadataAction.subRequests,
@@ -367,6 +374,7 @@ describe('reducerHandlers', () => {
           unixMilliseconds: createdDate.valueOf(),
         },
         isPending: true,
+        metadata: {},
       };
 
       handleCommonProps<
@@ -387,6 +395,7 @@ describe('reducerHandlers', () => {
                 unixMilliseconds: expect.any(Number),
               },
               isPending: false,
+              metadata: {},
               isOk: true,
               entityPks: Object.keys(testSaveWholeEntitiesAction.wholeEntities),
               statusCode: testSaveWholeEntitiesAction.statusCode,
@@ -428,6 +437,7 @@ describe('reducerHandlers', () => {
           unixMilliseconds: createdDate.valueOf(),
         },
         isPending: true,
+        metadata: {},
       };
 
       handleCommonProps<
@@ -448,6 +458,7 @@ describe('reducerHandlers', () => {
                 unixMilliseconds: expect.any(Number),
               },
               isPending: false,
+              metadata: {},
               isOk: true,
               entityPks: Object.keys(
                 testSavePartialEntitiesAction.partialEntities,
@@ -494,6 +505,7 @@ describe('reducerHandlers', () => {
           unixMilliseconds: createdDate.valueOf(),
         },
         isPending: true,
+        metadata: {},
       };
 
       handleCommonProps<
@@ -515,6 +527,7 @@ describe('reducerHandlers', () => {
                 unixMilliseconds: expect.any(Number),
               },
               isPending: false,
+              metadata: {},
               isOk: true,
               entityPks: testSavePartialPatternToEntitiesAction.entityPks,
               statusCode: testSavePartialPatternToEntitiesAction.statusCode,
@@ -555,6 +568,7 @@ describe('reducerHandlers', () => {
           unixMilliseconds: createdDate.valueOf(),
         },
         isPending: true,
+        metadata: {},
       };
 
       handleCommonProps<
@@ -576,6 +590,7 @@ describe('reducerHandlers', () => {
                 unixMilliseconds: expect.any(Number),
               },
               isPending: false,
+              metadata: {},
               isOk: true,
               entityPks: testDeleteEntitiesAction.entityPks,
               statusCode: testDeleteEntitiesAction.statusCode,
@@ -604,6 +619,7 @@ describe('reducerHandlers', () => {
           unixMilliseconds: createdDate.valueOf(),
         },
         isPending: true,
+        metadata: {},
       };
 
       handleCommonProps<'testFailAction', TestReducer['metadata'], TestEntity>(
@@ -623,6 +639,7 @@ describe('reducerHandlers', () => {
                 unixMilliseconds: expect.any(Number),
               },
               isPending: false,
+              metadata: {},
               isOk: false,
               statusCode: testFailAction.statusCode,
               error: testFailAction.error,
@@ -649,6 +666,7 @@ describe('reducerHandlers', () => {
             unixMilliseconds: createdDate.valueOf(),
           },
           isPending: true,
+          metadata: {},
         };
       });
 
@@ -690,6 +708,7 @@ describe('reducerHandlers', () => {
             unixMilliseconds: 1,
           },
           isPending: true,
+          metadata: {},
         },
         request2: {
           id: 'request2',
@@ -700,6 +719,7 @@ describe('reducerHandlers', () => {
             unixMilliseconds: 2,
           },
           isPending: false,
+          metadata: {},
           isOk: true,
         },
         request3: {
@@ -711,6 +731,7 @@ describe('reducerHandlers', () => {
             unixMilliseconds: 3,
           },
           isPending: false,
+          metadata: {},
           isOk: true,
         },
         request4: {
@@ -722,6 +743,7 @@ describe('reducerHandlers', () => {
             unixMilliseconds: 4,
           },
           isPending: false,
+          metadata: {},
           isOk: true,
         },
         request5: {
@@ -733,6 +755,7 @@ describe('reducerHandlers', () => {
             unixMilliseconds: 5,
           },
           isPending: false,
+          metadata: {},
           isOk: false,
         },
         request6: {
@@ -744,6 +767,7 @@ describe('reducerHandlers', () => {
             unixMilliseconds: 6,
           },
           isPending: false,
+          metadata: {},
           isOk: false,
         },
         request7: {
@@ -755,6 +779,7 @@ describe('reducerHandlers', () => {
             unixMilliseconds: 7,
           },
           isPending: false,
+          metadata: {},
           isOk: false,
         },
       };

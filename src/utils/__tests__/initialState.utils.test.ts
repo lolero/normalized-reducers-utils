@@ -11,7 +11,7 @@ import {
   TestReducer,
   testReducerConfig,
 } from '../tests.utils';
-import { destructurePk, getPkOfEntity } from '../pk.utils';
+import { destructPk, getPkOfEntity } from '../pk.utils';
 
 describe('initialTestUtils', () => {
   describe('createInitialState', () => {
@@ -36,11 +36,9 @@ describe('initialTestUtils', () => {
       );
 
       expect(
-        testInitialState.destructurePk(
-          getPkOfEntity(testEntity1, testPkSchema),
-        ),
+        testInitialState.destructPk(getPkOfEntity(testEntity1, testPkSchema)),
       ).toEqual(
-        destructurePk(getPkOfEntity(testEntity1, testPkSchema), testPkSchema),
+        destructPk(getPkOfEntity(testEntity1, testPkSchema), testPkSchema),
       );
     });
 

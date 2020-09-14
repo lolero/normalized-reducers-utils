@@ -6,6 +6,7 @@ import {
   testEntity3,
   testPkSchema,
   TestReducer,
+  TestRequestMetadata,
 } from '../tests.utils';
 import { getPkOfEntity } from '../pk.utils';
 import {
@@ -70,11 +71,17 @@ describe('reducerHandlers', () => {
   });
 
   describe('handleRequest', () => {
-    let testRequestAction: RequestAction<'testRequestAction', never, never>;
+    let testRequestAction: RequestAction<
+      'testRequestAction',
+      TestRequestMetadata
+    >;
 
     beforeEach(() => {
       testRequestAction = {
         type: 'testRequestAction',
+        requestMetadata: {
+          testRequestMetadata: 'testRequestMetadata',
+        },
         requestId: 'testRequestActionRequestId',
       };
     });
@@ -82,7 +89,7 @@ describe('reducerHandlers', () => {
     it('Should handle request', () => {
       const newState = handleRequest<
         'testRequestAction',
-        never,
+        TestRequestMetadata,
         TestEntity,
         TestReducer['metadata']
       >(state, testRequestAction);
@@ -97,6 +104,7 @@ describe('reducerHandlers', () => {
               unixMilliseconds: expect.any(Number),
             },
             isPending: true,
+            metadata: testRequestAction.requestMetadata,
           },
         },
       });
@@ -114,7 +122,7 @@ describe('reducerHandlers', () => {
 
         const newState = handleRequest<
           'testRequestAction',
-          never,
+          TestRequestMetadata,
           TestEntity,
           TestReducer['metadata']
         >(state, testRequestAction);

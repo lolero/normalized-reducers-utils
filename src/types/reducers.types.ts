@@ -4,7 +4,7 @@ export type PkSchema<EntityT extends Entity> = {
   separator: string;
 };
 
-export type DestructuredPk<EntityT extends Entity> = {
+export type DestructedPk<EntityT extends Entity> = {
   fields: { [field in keyof EntityT]?: string };
   edges: { [edge in keyof EntityT['__edges__']]?: string };
 };
@@ -12,6 +12,10 @@ export type DestructuredPk<EntityT extends Entity> = {
 export type SubRequest = {
   reducerName: string;
   requestId: string;
+};
+
+export type RequestMetadata = {
+  [requestMetadataKey: string]: unknown;
 };
 
 export type Request = {
@@ -25,6 +29,7 @@ export type Request = {
     formattedString?: string;
   };
   isPending: boolean;
+  metadata: RequestMetadata;
   isOk?: boolean;
   entityPks?: string[];
   statusCode?: number;
@@ -85,6 +90,6 @@ export type Reducer<
   data: ReducerData<EntityT>;
   pkSchema: PkSchema<EntityT>;
   getPk: (entity: EntityT) => string;
-  destructurePk: (pk: string) => DestructuredPk<EntityT>;
+  destructPk: (pk: string) => DestructedPk<EntityT>;
   config: ReducerConfig;
 };

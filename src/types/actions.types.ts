@@ -4,20 +4,15 @@ import {
   ReducerPartialData,
   SubRequest,
   ReducerMetadata,
+  RequestMetadata,
 } from './reducers.types';
-
-export type RequestMetadata = {
-  [requestMetadataKey: string]: unknown;
-};
 
 export type RequestAction<
   ActionTypeT extends string,
-  RequestMetadataT extends RequestMetadata,
-  ReducerMetadataT extends ReducerMetadata
+  RequestMetadataT extends RequestMetadata
 > = {
   type: ActionTypeT;
-  requestMetadata?: RequestMetadataT;
-  partialReducerMetadata?: Partial<ReducerMetadataT>;
+  requestMetadata: RequestMetadataT;
   requestId: string;
 };
 
