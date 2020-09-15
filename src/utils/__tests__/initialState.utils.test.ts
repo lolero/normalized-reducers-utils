@@ -1,7 +1,7 @@
 import {
   createInitialState,
   defaultReducerConfig,
-  emptyGenericPkSchema,
+  emptyPkSchema,
 } from '../initialState.utils';
 import {
   testEntity1,
@@ -59,7 +59,7 @@ describe('initialTestUtils', () => {
       const testInitialState = createInitialState<
         TestReducer['metadata'],
         never
-      >(testInitialReducerMetadata, {}, emptyGenericPkSchema);
+      >(testInitialReducerMetadata, {}, emptyPkSchema);
 
       expect(testInitialState).toEqual(
         expect.objectContaining({

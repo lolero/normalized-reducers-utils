@@ -8,7 +8,7 @@ import {
 } from '../types/reducers.types';
 import { destructPk, getPkOfEntity } from './pk.utils';
 
-export const emptyGenericPkSchema: PkSchema<Entity> = {
+export const emptyPkSchema: PkSchema<Entity> = {
   fields: [],
   edges: [],
   separator: '',
@@ -16,7 +16,7 @@ export const emptyGenericPkSchema: PkSchema<Entity> = {
 
 export const defaultReducerConfig: ReducerConfig = {
   successRequestsCache: 10,
-  failRequestsCache: 10,
+  failRequestsCache: null,
 };
 
 /**

@@ -13,7 +13,7 @@ export function getRequestActionTypePrefix(requestAction: {
   type: string;
   requestId: string;
 }): string {
-  return requestAction.type.split('_REQUEST')[0];
+  return requestAction.type.split('__REQUEST')[0];
 }
 
 /**
@@ -36,8 +36,8 @@ export function doesActionMatchRequest(
   const requestActionTypePrefix = getRequestActionTypePrefix(requestAction);
   return (
     action.requestId === requestAction.requestId &&
-    (action.type === `${requestActionTypePrefix}_SUCCESS` ||
-      action.type === `${requestActionTypePrefix}_FAIL`)
+    (action.type === `${requestActionTypePrefix}__SUCCESS` ||
+      action.type === `${requestActionTypePrefix}__FAIL`)
   );
 }
 
@@ -67,7 +67,7 @@ export function* wasRequestSuccessful(requestAction: {
   const { type: resultActionType } = (yield take((action: any) =>
     doesActionMatchRequest(requestAction, action),
   )) as { type: string };
-  return resultActionType === `${requestActionTypePrefix}_SUCCESS`;
+  return resultActionType === `${requestActionTypePrefix}__SUCCESS`;
 }
 
 /**

@@ -10,7 +10,7 @@ describe('actionUtils', () => {
   describe('getRequestActionTypePrefix', () => {
     it('Should get request action type prefix', () => {
       const requestAction = {
-        type: 'testRequestAction_REQUEST',
+        type: 'testRequestAction__REQUEST',
         requestId: 'testRequestActionRequestId',
       };
       const requestActionTypePrefix = getRequestActionTypePrefix(requestAction);
@@ -22,11 +22,11 @@ describe('actionUtils', () => {
   describe('doesActionMatchRequest', () => {
     it('Should match request for success action', () => {
       const requestAction = {
-        type: 'testRequestAction_REQUEST',
+        type: 'testRequestAction__REQUEST',
         requestId: 'testRequestActionRequestId',
       };
       const action = {
-        type: `${getRequestActionTypePrefix(requestAction)}_SUCCESS`,
+        type: `${getRequestActionTypePrefix(requestAction)}__SUCCESS`,
         requestId: requestAction.requestId,
       };
 
@@ -35,11 +35,11 @@ describe('actionUtils', () => {
 
     it('Should match request for fail action', () => {
       const requestAction = {
-        type: 'testRequestAction_REQUEST',
+        type: 'testRequestAction__REQUEST',
         requestId: 'testRequestActionRequestId',
       };
       const action = {
-        type: `${getRequestActionTypePrefix(requestAction)}_FAIL`,
+        type: `${getRequestActionTypePrefix(requestAction)}__FAIL`,
         requestId: requestAction.requestId,
       };
 
@@ -48,11 +48,11 @@ describe('actionUtils', () => {
 
     it('Should not match request if request ids are different', () => {
       const requestAction = {
-        type: 'testRequestAction_REQUEST',
+        type: 'testRequestAction__REQUEST',
         requestId: 'testRequestActionRequestId',
       };
       const action = {
-        type: `${getRequestActionTypePrefix(requestAction)}_SUCCESS`,
+        type: `${getRequestActionTypePrefix(requestAction)}__SUCCESS`,
         requestId: 'randomRequestId',
       };
 
@@ -61,11 +61,11 @@ describe('actionUtils', () => {
 
     it('Should not match request if request type prefixes are different', () => {
       const requestAction = {
-        type: 'testRequestAction_REQUEST',
+        type: 'testRequestAction__REQUEST',
         requestId: 'testRequestActionRequestId',
       };
       const action = {
-        type: 'randomPrefix_SUCCESS',
+        type: 'randomPrefix__SUCCESS',
         requestId: requestAction.requestId,
       };
 
@@ -76,7 +76,7 @@ describe('actionUtils', () => {
   describe('wasRequestSuccessful', () => {
     it.skip('Should return true for corresponding success action', () => {
       const requestAction = {
-        type: 'testRequestAction_REQUEST',
+        type: 'testRequestAction__REQUEST',
         requestId: 'testRequestId',
       };
 
@@ -85,14 +85,14 @@ describe('actionUtils', () => {
         .call(getRequestActionTypePrefix, requestAction)
         .next(getRequestActionTypePrefix(requestAction))
         .take()
-        .next({ type: 'testRequestAction_SUCCESS' })
+        .next({ type: 'testRequestAction__SUCCESS' })
         .returns(true)
         .finish();
     });
 
     it.skip('Should return false for corresponding fail action', () => {
       const requestAction = {
-        type: 'testRequestAction_REQUEST',
+        type: 'testRequestAction__REQUEST',
         requestId: 'testRequestId',
       };
 
@@ -101,7 +101,7 @@ describe('actionUtils', () => {
         .call(getRequestActionTypePrefix, requestAction)
         .next(getRequestActionTypePrefix(requestAction))
         .take()
-        .next({ type: 'testRequestAction_FAIL' })
+        .next({ type: 'testRequestAction__FAIL' })
         .returns(true)
         .finish();
     });

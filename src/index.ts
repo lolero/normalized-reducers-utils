@@ -4,8 +4,8 @@ export * from './types/requests.types';
 export * from './types/services.types';
 
 export { wasRequestSuccessful } from './utils/actions.utils';
-export * from './utils/initialState.utils';
-export * from './utils/normalizer.utils';
+export { emptyPkSchema, createInitialState } from './utils/initialState.utils';
+export { normalizeEntityArrayByPk } from './utils/normalizer.utils';
 export {
   handleRequest,
   handleSavePartialReducerMetadata,
