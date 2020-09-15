@@ -42,9 +42,8 @@ export function doesActionMatchRequest(
 }
 
 /**
- * Waits for success or fail action to be dispatched,
- * corresponding to a request action,
- * and returns whether or not the request was successful
+ * Waits for success or fail action to be dispatched, corresponding to a
+ * request action, and returns whether or not the request was successful
  *
  * @param {{type: string; requestId: string}} requestAction - Request action
  * @param {string} requestAction.type - Request action type
