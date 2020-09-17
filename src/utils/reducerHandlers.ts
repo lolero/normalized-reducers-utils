@@ -1,5 +1,8 @@
 import {
   Entity,
+  PkSchema,
+  PkSchemaEdges,
+  PkSchemaFields,
   Reducer,
   ReducerMetadata,
   RequestMetadata,
@@ -36,12 +39,16 @@ function handleCompletedRequest<
   ReducerMetadataT extends ReducerMetadata,
   EntityT extends Entity
 >(
-  newState: Reducer<ReducerMetadataT, EntityT>,
+  newState: Reducer<
+    ReducerMetadataT,
+    EntityT,
+    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
+  >,
   action:
     | SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>
-    | SaveWholeEntitiesAction<ActionTypeT, EntityT, ReducerMetadataT>
-    | SavePartialEntitiesAction<ActionTypeT, EntityT, ReducerMetadataT>
-    | SavePartialPatternToEntitiesAction<ActionTypeT, EntityT, ReducerMetadataT>
+    | SaveWholeEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>
+    | SavePartialEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>
+    | SavePartialPatternToEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>
     | DeleteEntitiesAction<ActionTypeT, ReducerMetadataT>
     | FailAction<ActionTypeT>,
 ): void {
@@ -60,13 +67,21 @@ function handleCompletedRequest<
  */
 export function handleRequest<
   ActionTypeT extends string,
-  RequestMetadataT extends RequestMetadata,
+  ReducerMetadataT extends ReducerMetadata,
   EntityT extends Entity,
-  ReducerMetadataT extends ReducerMetadata
+  RequestMetadataT extends RequestMetadata
 >(
-  state: Reducer<ReducerMetadataT, EntityT>,
+  state: Reducer<
+    ReducerMetadataT,
+    EntityT,
+    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
+  >,
   action: RequestAction<ActionTypeT, RequestMetadataT>,
-): Reducer<ReducerMetadataT, EntityT> {
+): Reducer<
+  ReducerMetadataT,
+  EntityT,
+  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
+> {
   const createdDate = new Date();
   const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
     state,
@@ -103,12 +118,20 @@ export function handleRequest<
  */
 export function handleSavePartialReducerMetadata<
   ActionTypeT extends string,
-  EntityT extends Entity,
-  ReducerMetadataT extends ReducerMetadata
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity
 >(
-  state: Reducer<ReducerMetadataT, EntityT>,
+  state: Reducer<
+    ReducerMetadataT,
+    EntityT,
+    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
+  >,
   action: SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>,
-): Reducer<ReducerMetadataT, EntityT> {
+): Reducer<
+  ReducerMetadataT,
+  EntityT,
+  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
+> {
   const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
     state,
     action,
@@ -134,12 +157,20 @@ export function handleSavePartialReducerMetadata<
  */
 export function handleSaveWholeEntities<
   ActionTypeT extends string,
-  EntityT extends Entity,
-  ReducerMetadataT extends ReducerMetadata
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity
 >(
-  state: Reducer<ReducerMetadataT, EntityT>,
-  action: SaveWholeEntitiesAction<ActionTypeT, EntityT, ReducerMetadataT>,
-): Reducer<ReducerMetadataT, EntityT> {
+  state: Reducer<
+    ReducerMetadataT,
+    EntityT,
+    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
+  >,
+  action: SaveWholeEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>,
+): Reducer<
+  ReducerMetadataT,
+  EntityT,
+  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
+> {
   const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
     state,
     action,
@@ -170,12 +201,20 @@ export function handleSaveWholeEntities<
  */
 export function handleSavePartialEntities<
   ActionTypeT extends string,
-  EntityT extends Entity,
-  ReducerMetadataT extends ReducerMetadata
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity
 >(
-  state: Reducer<ReducerMetadataT, EntityT>,
-  action: SavePartialEntitiesAction<ActionTypeT, EntityT, ReducerMetadataT>,
-): Reducer<ReducerMetadataT, EntityT> {
+  state: Reducer<
+    ReducerMetadataT,
+    EntityT,
+    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
+  >,
+  action: SavePartialEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>,
+): Reducer<
+  ReducerMetadataT,
+  EntityT,
+  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
+> {
   const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
     state,
     action,
@@ -216,16 +255,24 @@ export function handleSavePartialEntities<
  */
 export function handleSavePartialPatternToEntities<
   ActionTypeT extends string,
-  EntityT extends Entity,
-  ReducerMetadataT extends ReducerMetadata
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity
 >(
-  state: Reducer<ReducerMetadataT, EntityT>,
+  state: Reducer<
+    ReducerMetadataT,
+    EntityT,
+    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
+  >,
   action: SavePartialPatternToEntitiesAction<
     ActionTypeT,
-    EntityT,
-    ReducerMetadataT
+    ReducerMetadataT,
+    EntityT
   >,
-): Reducer<ReducerMetadataT, EntityT> {
+): Reducer<
+  ReducerMetadataT,
+  EntityT,
+  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
+> {
   const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
     state,
     action,
@@ -263,12 +310,20 @@ export function handleSavePartialPatternToEntities<
  */
 export function handleDeleteEntities<
   ActionTypeT extends string,
-  EntityT extends Entity,
-  ReducerMetadataT extends ReducerMetadata
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity
 >(
-  state: Reducer<ReducerMetadataT, EntityT>,
+  state: Reducer<
+    ReducerMetadataT,
+    EntityT,
+    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
+  >,
   action: DeleteEntitiesAction<ActionTypeT, ReducerMetadataT>,
-): Reducer<ReducerMetadataT, EntityT> {
+): Reducer<
+  ReducerMetadataT,
+  EntityT,
+  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
+> {
   const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
     state,
     action,
@@ -293,12 +348,20 @@ export function handleDeleteEntities<
  */
 export function handleFail<
   ActionTypeT extends string,
-  EntityT extends Entity,
-  ReducerMetadataT extends ReducerMetadata
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity
 >(
-  state: Reducer<ReducerMetadataT, EntityT>,
+  state: Reducer<
+    ReducerMetadataT,
+    EntityT,
+    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
+  >,
   action: FailAction<ActionTypeT>,
-): Reducer<ReducerMetadataT, EntityT> {
+): Reducer<
+  ReducerMetadataT,
+  EntityT,
+  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
+> {
   const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
     state,
     action,

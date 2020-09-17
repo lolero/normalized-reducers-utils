@@ -41,16 +41,16 @@ describe('reducerHandlers', () => {
   let updateCompletedRequestsCacheSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    state = createInitialState<TestReducer['metadata'], TestEntity>(
-      testInitialReducerMetadata,
-      {},
-      testPkSchema,
-    );
-    duplicatedState = createInitialState<TestReducer['metadata'], TestEntity>(
-      testInitialReducerMetadata,
-      {},
-      testPkSchema,
-    );
+    state = createInitialState<
+      TestReducer['metadata'],
+      TestEntity,
+      typeof testPkSchema
+    >(testInitialReducerMetadata, {}, testPkSchema);
+    duplicatedState = createInitialState<
+      TestReducer['metadata'],
+      TestEntity,
+      typeof testPkSchema
+    >(testInitialReducerMetadata, {}, testPkSchema);
     duplicateStateSpy = jest
       .spyOn(ReducerHandlersUtils, 'duplicateState')
       // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -89,9 +89,9 @@ describe('reducerHandlers', () => {
     it('Should handle request', () => {
       const newState = handleRequest<
         'testRequestAction',
-        TestRequestMetadata,
+        TestReducer['metadata'],
         TestEntity,
-        TestReducer['metadata']
+        TestRequestMetadata
       >(state, testRequestAction);
 
       expect(duplicateStateSpy).toHaveBeenCalledWith(state, testRequestAction);
@@ -122,9 +122,9 @@ describe('reducerHandlers', () => {
 
         const newState = handleRequest<
           'testRequestAction',
-          TestRequestMetadata,
+          TestReducer['metadata'],
           TestEntity,
-          TestReducer['metadata']
+          TestRequestMetadata
         >(state, testRequestAction);
 
         const requestCreatedAt = newState.requests[
@@ -153,8 +153,8 @@ describe('reducerHandlers', () => {
 
       handleSavePartialReducerMetadata<
         'testSavePartialReducerMetadataAction',
-        TestEntity,
-        TestReducer['metadata']
+        TestReducer['metadata'],
+        TestEntity
       >(state, testSavePartialReducerMetadataAction);
 
       expect(duplicateStateSpy).toHaveBeenCalledWith(
@@ -178,8 +178,8 @@ describe('reducerHandlers', () => {
       };
       const testSaveWholeEntitiesAction: SaveWholeEntitiesAction<
         'testSaveWholeEntitiesAction',
-        TestEntity,
-        never
+        never,
+        TestEntity
       > = {
         type: 'testSaveWholeEntitiesAction',
         wholeEntities: {
@@ -190,8 +190,8 @@ describe('reducerHandlers', () => {
 
       const newState = handleSaveWholeEntities<
         'testSaveWholeEntitiesAction',
-        TestEntity,
-        TestReducer['metadata']
+        TestReducer['metadata'],
+        TestEntity
       >(state, testSaveWholeEntitiesAction);
 
       expect(duplicateStateSpy).toHaveBeenCalledWith(
@@ -220,8 +220,8 @@ describe('reducerHandlers', () => {
       };
       const testSaveWholeEntitiesAction: SaveWholeEntitiesAction<
         'testSaveWholeEntitiesAction',
-        TestEntity,
-        never
+        never,
+        TestEntity
       > = {
         type: 'testSaveWholeEntitiesAction',
         wholeEntities: {
@@ -233,8 +233,8 @@ describe('reducerHandlers', () => {
 
       const newState = handleSaveWholeEntities<
         'testSaveWholeEntitiesAction',
-        TestEntity,
-        TestReducer['metadata']
+        TestReducer['metadata'],
+        TestEntity
       >(state, testSaveWholeEntitiesAction);
 
       expect(duplicateStateSpy).toHaveBeenCalledWith(
@@ -265,8 +265,8 @@ describe('reducerHandlers', () => {
       };
       const testSavePartialEntitiesAction: SavePartialEntitiesAction<
         'testSavePartialEntitiesAction',
-        TestEntity,
-        never
+        never,
+        TestEntity
       > = {
         type: 'testSavePartialEntitiesAction',
         partialEntities: {
@@ -298,8 +298,8 @@ describe('reducerHandlers', () => {
 
       const newState = handleSavePartialEntities<
         'testSavePartialEntitiesAction',
-        TestEntity,
-        TestReducer['metadata']
+        TestReducer['metadata'],
+        TestEntity
       >(state, testSavePartialEntitiesAction);
 
       expect(duplicateStateSpy).toHaveBeenCalledWith(
@@ -355,8 +355,8 @@ describe('reducerHandlers', () => {
       };
       const testSavePartialPatternToEntitiesAction: SavePartialPatternToEntitiesAction<
         'testSavePartialPatternToEntitiesAction',
-        TestEntity,
-        never
+        never,
+        TestEntity
       > = {
         type: 'testSavePartialPatternToEntitiesAction',
         entityPks: [
@@ -378,8 +378,8 @@ describe('reducerHandlers', () => {
 
       const newState = handleSavePartialPatternToEntities<
         'testSavePartialPatternToEntitiesAction',
-        TestEntity,
-        TestReducer['metadata']
+        TestReducer['metadata'],
+        TestEntity
       >(state, testSavePartialPatternToEntitiesAction);
 
       expect(duplicateStateSpy).toHaveBeenCalledWith(
@@ -443,8 +443,8 @@ describe('reducerHandlers', () => {
 
       const newState = handleDeleteEntities<
         'testDeleteEntitiesAction',
-        TestEntity,
-        TestReducer['metadata']
+        TestReducer['metadata'],
+        TestEntity
       >(state, testDeleteEntitiesAction);
 
       expect(duplicateStateSpy).toHaveBeenCalledWith(
@@ -475,7 +475,7 @@ describe('reducerHandlers', () => {
         requestId: 'testRequestId',
       };
 
-      handleFail<'testFailAction', TestEntity, TestReducer['metadata']>(
+      handleFail<'testFailAction', TestReducer['metadata'], TestEntity>(
         state,
         testFailAction,
       );

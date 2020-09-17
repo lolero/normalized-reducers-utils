@@ -1,4 +1,10 @@
-import { PkSchema, ReducerData, Entity } from '../types/reducers.types';
+import {
+  PkSchema,
+  ReducerData,
+  Entity,
+  PkSchemaFields,
+  PkSchemaEdges,
+} from '../types/reducers.types';
 import { getPkOfEntity } from './pk.utils';
 
 /**
@@ -9,10 +15,14 @@ import { getPkOfEntity } from './pk.utils';
  *
  * @returns {ReducerData} Normalized entities object
  */
-export function normalizeEntityArrayByPk<EntityT extends Entity>(
-  pkSchema: PkSchema<EntityT>,
-  entityArray: EntityT[],
-): ReducerData<EntityT> {
+export function normalizeEntityArrayByPk<
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
+    EntityT,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
+>(pkSchema: PkSchemaT, entityArray: EntityT[]): ReducerData<EntityT> {
   const normalizedByPk = entityArray.reduce(
     (normalizedByPkTemp: ReducerData<EntityT>, entity) => ({
       ...normalizedByPkTemp,

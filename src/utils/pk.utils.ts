@@ -1,4 +1,10 @@
-import { PkSchema, Entity, DestructedPk } from '../types/reducers.types';
+import {
+  PkSchema,
+  Entity,
+  DestructedPk,
+  PkSchemaFields,
+  PkSchemaEdges,
+} from '../types/reducers.types';
 
 /**
  * Get PK of entity
@@ -8,10 +14,14 @@ import { PkSchema, Entity, DestructedPk } from '../types/reducers.types';
  *
  * @returns {string} PK of entity
  */
-export function getPkOfEntity<EntityT extends Entity>(
-  entity: EntityT,
-  pkSchema: PkSchema<EntityT>,
-): string {
+export function getPkOfEntity<
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
+    EntityT,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
+>(entity: EntityT, pkSchema: PkSchemaT): string {
   const fields = pkSchema.fields.map(
     (field) => entity[field] as string | number,
   );
@@ -30,10 +40,14 @@ export function getPkOfEntity<EntityT extends Entity>(
  *
  * @returns {DestructedPk} Fields and edges from entity's PK
  */
-export function destructPk<EntityT extends Entity>(
-  pk: string,
-  pkSchema: PkSchema<EntityT>,
-): DestructedPk<EntityT> {
+export function destructPk<
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
+    EntityT,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
+>(pk: string, pkSchema: PkSchemaT): DestructedPk<EntityT, PkSchemaT> {
   const fieldsAndEdgesFromPk = {
     fields: pk
       .split(pkSchema.separator)

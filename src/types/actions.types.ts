@@ -29,8 +29,8 @@ export type SavePartialReducerMetadataAction<
 
 export type SaveWholeEntitiesAction<
   ActionTypeT extends string,
-  EntityT extends Entity,
-  ReducerMetadataT extends ReducerMetadata
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity
 > = {
   type: ActionTypeT;
   wholeEntities: ReducerData<EntityT>;
@@ -43,8 +43,8 @@ export type SaveWholeEntitiesAction<
 
 export type SavePartialEntitiesAction<
   ActionTypeT extends string,
-  EntityT extends Entity,
-  ReducerMetadataT extends ReducerMetadata
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity
 > = {
   type: ActionTypeT;
   partialEntities: ReducerPartialData<EntityT>;
@@ -56,8 +56,8 @@ export type SavePartialEntitiesAction<
 
 export type SavePartialPatternToEntitiesAction<
   ActionTypeT extends string,
-  EntityT extends Entity,
-  ReducerMetadataT extends ReducerMetadata
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity
 > = {
   type: ActionTypeT;
   entityPks: string[];

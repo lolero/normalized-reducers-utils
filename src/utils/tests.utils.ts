@@ -29,13 +29,17 @@ export interface TestEntity extends Entity {
   };
 }
 
-export type TestReducer = Reducer<TestReducerMetadata, TestEntity>;
-
-export const testPkSchema: PkSchema<TestEntity> = {
+export const testPkSchema: PkSchema<TestEntity, ['id', 'name'], ['parent']> = {
   fields: ['id', 'name'],
   edges: ['parent'],
   separator: '___',
 };
+
+export type TestReducer = Reducer<
+  TestReducerMetadata,
+  TestEntity,
+  typeof testPkSchema
+>;
 
 export const testEntity1: TestEntity = {
   id: 'testEntityId1',

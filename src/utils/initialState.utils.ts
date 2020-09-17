@@ -5,10 +5,12 @@ import {
   ReducerMetadata,
   ReducerData,
   ReducerConfig,
+  PkSchemaFields,
+  PkSchemaEdges,
 } from '../types/reducers.types';
 import { destructPk, getPkOfEntity } from './pk.utils';
 
-export const emptyPkSchema: PkSchema<Entity> = {
+export const emptyPkSchema: PkSchema<Entity, [], []> = {
   fields: [],
   edges: [],
   separator: '',
@@ -31,14 +33,19 @@ export const defaultReducerConfig: ReducerConfig = {
  */
 export function createInitialState<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
+    EntityT,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
 >(
   initialReducerMetadata: ReducerMetadataT,
   initialReducerData: ReducerData<EntityT>,
-  pkSchema: PkSchema<EntityT>,
+  pkSchema: PkSchemaT,
   config?: Partial<ReducerConfig>,
-): Reducer<ReducerMetadataT, EntityT> {
-  const reducerInitialState: Reducer<ReducerMetadataT, EntityT> = {
+): Reducer<ReducerMetadataT, EntityT, PkSchemaT> {
+  const reducerInitialState: Reducer<ReducerMetadataT, EntityT, PkSchemaT> = {
     requests: {},
     metadata: initialReducerMetadata,
     data: initialReducerData,

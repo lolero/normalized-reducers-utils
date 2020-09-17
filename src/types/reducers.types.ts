@@ -1,12 +1,29 @@
-export type PkSchema<EntityT extends Entity> = {
-  fields: (keyof EntityT)[];
-  edges: (keyof EntityT['__edges__'])[];
+export type PkSchemaFields<EntityT extends Entity> = (keyof EntityT)[];
+
+export type PkSchemaEdges<
+  EntityT extends Entity
+> = (keyof EntityT['__edges__'])[];
+
+export type PkSchema<
+  EntityT extends Entity,
+  FieldsT extends PkSchemaFields<EntityT>,
+  EdgesT extends PkSchemaEdges<EntityT>
+> = {
+  fields: FieldsT;
+  edges: EdgesT;
   separator: string;
 };
 
-export type DestructedPk<EntityT extends Entity> = {
-  fields: { [field in keyof EntityT]?: string };
-  edges: { [edge in keyof EntityT['__edges__']]?: string };
+export type DestructedPk<
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
+    EntityT,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
+> = {
+  fields: { [field in PkSchemaT['fields'][number]]?: string };
+  edges: { [edge in PkSchemaT['edges'][number]]?: string };
 };
 
 export type SubRequest = {
@@ -83,13 +100,18 @@ export type ReducerConfig = {
 
 export type Reducer<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
+    EntityT,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
 > = {
   requests: { [requestId: string]: Request };
   metadata: ReducerMetadataT;
   data: ReducerData<EntityT>;
-  pkSchema: PkSchema<EntityT>;
+  pkSchema: PkSchemaT;
   getPk: (entity: EntityT) => string;
-  destructPk: (pk: string) => DestructedPk<EntityT>;
+  destructPk: (pk: string) => DestructedPk<EntityT, PkSchemaT>;
   config: ReducerConfig;
 };

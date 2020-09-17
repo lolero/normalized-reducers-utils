@@ -33,11 +33,11 @@ describe('reducerHandlers', () => {
   let createdDate: Date;
 
   beforeEach(() => {
-    state = createInitialState<TestReducer['metadata'], TestEntity>(
-      testInitialReducerMetadata,
-      {},
-      testPkSchema,
-    );
+    state = createInitialState<
+      TestReducer['metadata'],
+      TestEntity,
+      typeof testPkSchema
+    >(testInitialReducerMetadata, {}, testPkSchema);
     createdDate = new Date();
   });
 
@@ -133,8 +133,8 @@ describe('reducerHandlers', () => {
     it('Should duplicate affected entities by save whole entities action', () => {
       const testSaveWholeEntitiesAction: SaveWholeEntitiesAction<
         'testSaveWholeEntitiesAction',
-        TestEntity,
-        TestReducer['metadata']
+        TestReducer['metadata'],
+        TestEntity
       > = {
         type: 'testSaveWholeEntitiesAction',
         wholeEntities: {
@@ -163,8 +163,8 @@ describe('reducerHandlers', () => {
     it('Should duplicate affected entities by save partial entities action', () => {
       const testSavePartialEntitiesAction: SavePartialEntitiesAction<
         'testSavePartialEntitiesAction',
-        TestEntity,
-        TestReducer['metadata']
+        TestReducer['metadata'],
+        TestEntity
       > = {
         type: 'testSavePartialEntitiesAction',
         partialEntities: {
@@ -193,8 +193,8 @@ describe('reducerHandlers', () => {
     it('Should duplicate affected entities by save partial pattern to entities action', () => {
       const testSavePartialPatternToEntitiesAction: SavePartialPatternToEntitiesAction<
         'testSavePartialPatternToEntitiesAction',
-        TestEntity,
-        TestReducer['metadata']
+        TestReducer['metadata'],
+        TestEntity
       > = {
         type: 'testSavePartialPatternToEntitiesAction',
         entityPks: [
@@ -350,8 +350,8 @@ describe('reducerHandlers', () => {
     it('Should handle SaveWholeEntitiesAction', () => {
       const testSaveWholeEntitiesAction: SaveWholeEntitiesAction<
         'testSaveWholeEntitiesAction',
-        TestEntity,
-        TestReducer['metadata']
+        TestReducer['metadata'],
+        TestEntity
       > = {
         type: 'testSaveWholeEntitiesAction',
         wholeEntities: {
@@ -413,8 +413,8 @@ describe('reducerHandlers', () => {
     it('Should handle SavePartialEntitiesAction', () => {
       const testSavePartialEntitiesAction: SavePartialEntitiesAction<
         'testSavePartialEntitiesAction',
-        TestEntity,
-        TestReducer['metadata']
+        TestReducer['metadata'],
+        TestEntity
       > = {
         type: 'testSavePartialEntitiesAction',
         partialEntities: {
@@ -478,8 +478,8 @@ describe('reducerHandlers', () => {
     it('Should handle SavePartialPatternToEntitiesAction', () => {
       const testSavePartialPatternToEntitiesAction: SavePartialPatternToEntitiesAction<
         'testSavePartialPatternToEntitiesAction',
-        TestEntity,
-        TestReducer['metadata']
+        TestReducer['metadata'],
+        TestEntity
       > = {
         type: 'testSavePartialPatternToEntitiesAction',
         entityPks: [
