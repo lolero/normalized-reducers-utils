@@ -34,13 +34,14 @@ import {
 export function duplicateState<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
->(
-  state: Reducer<
-    ReducerMetadataT,
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
     EntityT,
-    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-  >,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
+>(
+  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
   action: // @typescript-eslint/no-explicit-any disabled because the
   // RequestMetadata type is irrelevant for this function and it needs to be
   // able to take any request action regardless of its RequestMetadata
@@ -52,11 +53,7 @@ export function duplicateState<
     | SavePartialPatternToEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>
     | DeleteEntitiesAction<ActionTypeT, ReducerMetadataT>
     | FailAction<ActionTypeT>,
-): Reducer<
-  ReducerMetadataT,
-  EntityT,
-  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-> {
+): Reducer<ReducerMetadataT, EntityT, PkSchemaT> {
   // The metadata object is not duplicated here since it gets duplicated in the
   // 'handleCommonProps' function, which should get called by every handler
   // that completes an action.
@@ -108,13 +105,14 @@ export function duplicateState<
 export function handleCommonProps<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
->(
-  newState: Reducer<
-    ReducerMetadataT,
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
     EntityT,
-    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-  >,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
+>(
+  newState: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
   action:
     | SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>
     | SaveWholeEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>
@@ -186,14 +184,13 @@ export function handleCommonProps<
  */
 export function updateCompletedRequestsCache<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
->(
-  newState: Reducer<
-    ReducerMetadataT,
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
     EntityT,
-    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-  >,
-): void {
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
+>(newState: Reducer<ReducerMetadataT, EntityT, PkSchemaT>): void {
   if (
     newState.config.successRequestsCache === null &&
     newState.config.failRequestsCache === null

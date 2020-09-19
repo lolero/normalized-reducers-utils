@@ -4,41 +4,59 @@ Utility functions and types for normalized reducers architectures
 
 ## Purpose
 
-A set of standard protocols and interfaces to interact with a front-end state's
-store, in order to make CRUD operations on the store consistent regardless of
-the data that is being stored or consumed. In simple English, this package
-provides the tools to interact with an application's front-end state in a
-similar way to how client applications interact with a RESTful back-end API.
+1. A standard protocol to interact with an application's front-end state, in
+   order to make CRUD operations on it consistent regardless of the data that
+   is being stored or consumed. In simple English, this package provides the
+   tools to interact with the state in a similar way to how clients interact
+   with a RESTful API.
 
-The framework is designed for Redux-like architectures where data is stored in
-reducers and interactions with the stored data happen through actions that hit
-the reducers.
+2. A set of strongly typed CRUD action interfaces and reducer handlers that
+   enforce a consistent reducer architecture which allows for the robust and
+   reliable scaling of a web application.
 
-## Introduction
+The framework is designed for [redux](https://redux.js.org)-like architectures
+where data is stored in reducers and interactions with the stored data happen
+through actions that get dispatched and hit the reducers. Given that all
+utilities provided by this framework are strictly typed, TypeScript projects
+that call the functions with their corresponding generic types stand to gain
+the most from the package.
 
-The main structural advantage that building an application's state following
-these normalized reducers pattern is that all the reducers of the application
-will have the same fundamental structure, regardless of the type of data they
-store. This makes all interactions with state data a standard and straight
-forward task when the data corresponds to entities in a database, it is
-metadata related to the presentational state of a component in the scope of
-a session, or any other type for data for any use whatsoever.
+## Motivation
 
-Having a standard structure for the application state's store also facilitates
-the migration of other data that often ends up in components' state, but could
-or should be shared with other components from ONE single source of truth, as
-opposed to getting passed between components through props and contexts.
+Many millions of applications with broad ranges of size, complexity and
+popularity are getting built today with [React](https://reactjs.org) and
+[Redux](https://redux.js.org) because they are the most popular frameworks for
+that purpose. Unfortunately, there is little consistency in the reducer
+architecture across the vast ocean of projects that include them in their
+stack. App state configurations and interaction protocols vary as much as or
+more than the apps' purposes and business logic.
 
-Another important advantage of organizing the state in normalized reducers is
-that asynchronous logic can be moved away from components' methods and hooks
-to an isolated layer with the help of reliable frameworks like redux-saga. This
-means that components get all the data they need for their rendering from their
-connected props and their selectors. When a component requires additional data,
-a synchronous action is dispatched to the store and the rendering of the
-component is promptly completed. Not having asynchronous logic simplifies the
-components' unit tests. Unit tests of components whose state does not depend on
-promises waiting to get resolved are easier to read and understand, on top of
-being more reliable and deterministic.
+Many of these projects are so busy sorting out features and aesthetics that
+they don't allocate much time to address the scalabity of their state's design.
+As the amount and complexity of the app's features grow, maintaining the
+growing amount of reducers with a variety of structures for their respective
+purposes becomes increasingly more expensive and cumbersome. Not to mention the
+bugs that arise from consuming and modifying these reducers without types for
+their structures and data which can be resolved by the components that consume
+them.
+
+This project started while refactoring an app that consumes many related
+entities from their respective microservices and presents their data in a web
+interface. As more entities were added to the application, maintaining the
+reducers that stored their data and the actions that modified them became very
+inefficient. Then, after cleaning up the state and experiencing the benefits of a
+standard reducer structure and reducer-hitting actions, this set of generic
+types and functions began to come together as an underlying architecture for
+scalable react-redux applications.
+
+A standard structure for all reducers and the interactions with them
+simplifies their maintenance. On the other hand, the normalization of reducers
+that store entity data simplifies the access-to and control-of both the
+entities and the relationships between them. Naturally, this results in the
+ability to better scale the state, regardless of the type of data that is
+stored and managed in it; be it data entities stored in a database,
+metadata related to the presentational state of a component in the scope of a
+session, or any other type of data for any use whatsoever.
 
 ## Getting started
 
@@ -55,6 +73,10 @@ yarn add normalized-reducers-utils
 ```
 
 ## Configuration
+
+The initial state of a reducer is created by calling the
+[createInitialState](#createinitialstate) function which takes an optional
+[config](#reducerconfig) object with the following props.
 
 ### `successRequestsCache`
 
@@ -105,8 +127,9 @@ Reducers can contain both types of data or only one of the two.
 #### 1. Reducer metadata
 
 Metadata about the reducer itself. This can be data related to the state of
-the reducer, regarding the collection of entity data stored in the reducer,
-or any other information not related to any particular single data entity.
+the reducer, regarding the collection of [entity data](#2-entity-data) stored
+in the reducer, or any other information not related to any particular single
+data entity.
 
 #### 2. Entity data
 
@@ -311,19 +334,22 @@ function UsersReducer(
         UsersActionTypes.USERS_GET_MANY__REQUEST,
         UsersReducer['metadata'],
         User,
+        typeof usersPkSchema,
         UsersGetManyRequestMetadata
       >(state, action);
     case UsersActionTypes.USERS_GET_MANY__SUCCESS:
       return handleSaveWholeEntities<
         UsersActionTypes.USERS_GET_MANY__SUCCESS,
         UsersReducer['metadata'],
-        User
+        User,
+        typeof usersPkSchema
       >(state, action);
     case UsersActionTypes.USERS_GET_MANY__FAIL:
       return handleFail<
         UsersActionTypes.USERS_GET_MANY__FAIL,
         UsersReducer['metadata'],
-        User
+        User,
+        typeof usersPkSchema
       >(state, action);
     default:
       return state;
@@ -337,19 +363,16 @@ function UsersReducer(
 function handleDeleteEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
->(
-  state: Reducer<
-    ReducerMetadataT,
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
     EntityT,
-    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-  >,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
+>(
+  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
   action: DeleteEntitiesAction<ActionTypeT, ReducerMetadataT>,
-): Reducer<
-  ReducerMetadataT,
-  EntityT,
-  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
->;
+): Reducer<ReducerMetadataT, EntityT, PkSchemaT>;
 ```
 
 #### `handleFail`
@@ -358,19 +381,16 @@ function handleDeleteEntities<
 function handleFail<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
->(
-  state: Reducer<
-    ReducerMetadataT,
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
     EntityT,
-    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-  >,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
+>(
+  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
   action: FailAction<ActionTypeT>,
-): Reducer<
-  ReducerMetadataT,
-  EntityT,
-  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
->;
+): Reducer<ReducerMetadataT, EntityT, PkSchemaT>;
 ```
 
 #### `handleRequest`
@@ -380,19 +400,16 @@ function handleRequest<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
   EntityT extends Entity,
+  PkSchemaT extends PkSchema<
+    EntityT,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >,
   RequestMetadataT extends RequestMetadata
 >(
-  state: Reducer<
-    ReducerMetadataT,
-    EntityT,
-    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-  >,
+  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
   action: RequestAction<ActionTypeT, RequestMetadataT>,
-): Reducer<
-  ReducerMetadataT,
-  EntityT,
-  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
->;
+): Reducer<ReducerMetadataT, EntityT, PkSchemaT>;
 ```
 
 #### `handleSavePartialEntities`
@@ -401,19 +418,16 @@ function handleRequest<
 function handleSavePartialEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
->(
-  state: Reducer<
-    ReducerMetadataT,
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
     EntityT,
-    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-  >,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
+>(
+  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
   action: SavePartialEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>,
-): Reducer<
-  ReducerMetadataT,
-  EntityT,
-  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
->;
+): Reducer<ReducerMetadataT, EntityT, PkSchemaT>;
 ```
 
 #### `handleSavePartialPatternToEntities`
@@ -422,23 +436,20 @@ function handleSavePartialEntities<
 function handleSavePartialPatternToEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
->(
-  state: Reducer<
-    ReducerMetadataT,
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
     EntityT,
-    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-  >,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
+>(
+  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
   action: SavePartialPatternToEntitiesAction<
     ActionTypeT,
     ReducerMetadataT,
     EntityT
   >,
-): Reducer<
-  ReducerMetadataT,
-  EntityT,
-  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
->;
+): Reducer<ReducerMetadataT, EntityT, PkSchemaT>;
 ```
 
 #### `handleSavePartialReducerMetadata`
@@ -447,19 +458,16 @@ function handleSavePartialPatternToEntities<
 function handleSavePartialReducerMetadata<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
->(
-  state: Reducer<
-    ReducerMetadataT,
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
     EntityT,
-    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-  >,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
+>(
+  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
   action: SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>,
-): Reducer<
-  ReducerMetadataT,
-  EntityT,
-  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
->;
+): Reducer<ReducerMetadataT, EntityT, PkSchemaT>;
 ```
 
 #### `handleSaveWholeEntities`
@@ -468,19 +476,16 @@ function handleSavePartialReducerMetadata<
 function handleSaveWholeEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
->(
-  state: Reducer<
-    ReducerMetadataT,
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
     EntityT,
-    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-  >,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
+>(
+  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
   action: SaveWholeEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>,
-): Reducer<
-  ReducerMetadataT,
-  EntityT,
-  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
->;
+): Reducer<ReducerMetadataT, EntityT, PkSchemaT>;
 ```
 
 ## Types
@@ -498,8 +503,8 @@ type DestructedPk<
     PkSchemaEdges<EntityT>
   >
 > = {
-  fields: { [field in PkSchemaT['fields'][number]]?: string };
-  edges: { [edge in PkSchemaT['edges'][number]]?: string };
+  fields: { [field in PkSchemaT['fields'][number]]: string };
+  edges: { [edge in PkSchemaT['edges'][number]]: string };
 };
 ```
 

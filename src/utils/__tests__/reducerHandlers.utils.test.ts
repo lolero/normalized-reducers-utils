@@ -65,7 +65,8 @@ describe('reducerHandlers', () => {
       const newState = duplicateState<
         'testRequestAction',
         TestReducer['metadata'],
-        TestEntity
+        TestEntity,
+        typeof testPkSchema
       >(state, testRequestAction);
 
       expect(newState).toEqual(state);
@@ -90,7 +91,8 @@ describe('reducerHandlers', () => {
       const newState = duplicateState<
         'testRequestAction',
         TestReducer['metadata'],
-        TestEntity
+        TestEntity,
+        typeof testPkSchema
       >(state, testRequestAction);
 
       expect(newState.data[state.getPk(testEntity1)]).toBe(
@@ -116,7 +118,8 @@ describe('reducerHandlers', () => {
       const newState = duplicateState<
         'testSavePartialReducerMetadataAction',
         TestReducer['metadata'],
-        TestEntity
+        TestEntity,
+        typeof testPkSchema
       >(state, testSavePartialReducerMetadataAction);
 
       expect(newState.data[state.getPk(testEntity1)]).toBe(
@@ -146,7 +149,8 @@ describe('reducerHandlers', () => {
       const newState = duplicateState<
         'testSaveWholeEntitiesAction',
         TestReducer['metadata'],
-        TestEntity
+        TestEntity,
+        typeof testPkSchema
       >(state, testSaveWholeEntitiesAction);
 
       expect(newState.data[state.getPk(testEntity1)]).not.toBe(
@@ -176,7 +180,8 @@ describe('reducerHandlers', () => {
       const newState = duplicateState<
         'testSavePartialEntitiesAction',
         TestReducer['metadata'],
-        TestEntity
+        TestEntity,
+        typeof testPkSchema
       >(state, testSavePartialEntitiesAction);
 
       expect(newState.data[state.getPk(testEntity1)]).not.toBe(
@@ -207,7 +212,8 @@ describe('reducerHandlers', () => {
       const newState = duplicateState<
         'testSavePartialPatternToEntitiesAction',
         TestReducer['metadata'],
-        TestEntity
+        TestEntity,
+        typeof testPkSchema
       >(state, testSavePartialPatternToEntitiesAction);
 
       expect(newState.data[state.getPk(testEntity1)]).toBe(
@@ -236,7 +242,8 @@ describe('reducerHandlers', () => {
       const newState = duplicateState<
         'testDeleteEntitiesAction',
         TestReducer['metadata'],
-        TestEntity
+        TestEntity,
+        typeof testPkSchema
       >(state, testDeleteEntitiesAction);
 
       expect(newState.data[state.getPk(testEntity1)]).not.toBe(
@@ -260,7 +267,8 @@ describe('reducerHandlers', () => {
       const newState = duplicateState<
         'testFailAction',
         TestReducer['metadata'],
-        TestEntity
+        TestEntity,
+        typeof testPkSchema
       >(state, testFailAction);
 
       expect(newState.data[state.getPk(testEntity1)]).toBe(
@@ -312,7 +320,8 @@ describe('reducerHandlers', () => {
       handleCommonProps<
         'testSavePartialReducerMetadataAction',
         TestReducer['metadata'],
-        TestEntity
+        TestEntity,
+        typeof testPkSchema
       >(state, testSavePartialReducerMetadataAction);
 
       expect(state).toEqual(
@@ -380,7 +389,8 @@ describe('reducerHandlers', () => {
       handleCommonProps<
         'testSaveWholeEntitiesAction',
         TestReducer['metadata'],
-        TestEntity
+        TestEntity,
+        typeof testPkSchema
       >(state, testSaveWholeEntitiesAction);
 
       expect(state).toEqual(
@@ -443,7 +453,8 @@ describe('reducerHandlers', () => {
       handleCommonProps<
         'testSavePartialEntitiesAction',
         TestReducer['metadata'],
-        TestEntity
+        TestEntity,
+        typeof testPkSchema
       >(state, testSavePartialEntitiesAction);
 
       expect(state).toEqual(
@@ -511,7 +522,8 @@ describe('reducerHandlers', () => {
       handleCommonProps<
         'testSavePartialPatternToEntitiesAction',
         TestReducer['metadata'],
-        TestEntity
+        TestEntity,
+        typeof testPkSchema
       >(state, testSavePartialPatternToEntitiesAction);
 
       expect(state).toEqual(
@@ -574,7 +586,8 @@ describe('reducerHandlers', () => {
       handleCommonProps<
         'testDeleteEntitiesAction',
         TestReducer['metadata'],
-        TestEntity
+        TestEntity,
+        typeof testPkSchema
       >(state, testDeleteEntitiesAction);
 
       expect(state).toEqual(
@@ -622,10 +635,12 @@ describe('reducerHandlers', () => {
         metadata: {},
       };
 
-      handleCommonProps<'testFailAction', TestReducer['metadata'], TestEntity>(
-        state,
-        testFailAction,
-      );
+      handleCommonProps<
+        'testFailAction',
+        TestReducer['metadata'],
+        TestEntity,
+        typeof testPkSchema
+      >(state, testFailAction);
 
       expect(state).toEqual(
         expect.objectContaining({
@@ -682,7 +697,8 @@ describe('reducerHandlers', () => {
         handleCommonProps<
           'testFailAction',
           TestReducer['metadata'],
-          TestEntity
+          TestEntity,
+          typeof testPkSchema
         >(state, testFailAction);
 
         const requestCompletedAt = state.requests[
@@ -789,7 +805,11 @@ describe('reducerHandlers', () => {
       state.config.successRequestsCache = null;
       state.config.failRequestsCache = null;
 
-      updateCompletedRequestsCache<TestReducer['metadata'], TestEntity>(state);
+      updateCompletedRequestsCache<
+        TestReducer['metadata'],
+        TestEntity,
+        typeof testPkSchema
+      >(state);
 
       expect(Object.keys(state.requests).sort()).toEqual([
         'request1',
@@ -806,7 +826,11 @@ describe('reducerHandlers', () => {
       state.config.successRequestsCache = 0;
       state.config.failRequestsCache = null;
 
-      updateCompletedRequestsCache<TestReducer['metadata'], TestEntity>(state);
+      updateCompletedRequestsCache<
+        TestReducer['metadata'],
+        TestEntity,
+        typeof testPkSchema
+      >(state);
 
       expect(Object.keys(state.requests).sort()).toEqual([
         'request1',
@@ -820,7 +844,11 @@ describe('reducerHandlers', () => {
       state.config.successRequestsCache = null;
       state.config.failRequestsCache = 0;
 
-      updateCompletedRequestsCache<TestReducer['metadata'], TestEntity>(state);
+      updateCompletedRequestsCache<
+        TestReducer['metadata'],
+        TestEntity,
+        typeof testPkSchema
+      >(state);
 
       expect(Object.keys(state.requests).sort()).toEqual([
         'request1',
@@ -834,7 +862,11 @@ describe('reducerHandlers', () => {
       state.config.successRequestsCache = 2;
       state.config.failRequestsCache = 2;
 
-      updateCompletedRequestsCache<TestReducer['metadata'], TestEntity>(state);
+      updateCompletedRequestsCache<
+        TestReducer['metadata'],
+        TestEntity,
+        typeof testPkSchema
+      >(state);
 
       expect(Object.keys(state.requests).sort()).toEqual([
         'request1',

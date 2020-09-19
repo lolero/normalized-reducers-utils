@@ -37,13 +37,14 @@ import {
 function handleCompletedRequest<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
->(
-  newState: Reducer<
-    ReducerMetadataT,
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
     EntityT,
-    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-  >,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
+>(
+  newState: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
   action:
     | SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>
     | SaveWholeEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>
@@ -52,8 +53,11 @@ function handleCompletedRequest<
     | DeleteEntitiesAction<ActionTypeT, ReducerMetadataT>
     | FailAction<ActionTypeT>,
 ): void {
-  handleCommonProps<ActionTypeT, ReducerMetadataT, EntityT>(newState, action);
-  updateCompletedRequestsCache<ReducerMetadataT, EntityT>(newState);
+  handleCommonProps<ActionTypeT, ReducerMetadataT, EntityT, PkSchemaT>(
+    newState,
+    action,
+  );
+  updateCompletedRequestsCache<ReducerMetadataT, EntityT, PkSchemaT>(newState);
 }
 
 /**
@@ -69,24 +73,23 @@ export function handleRequest<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
   EntityT extends Entity,
+  PkSchemaT extends PkSchema<
+    EntityT,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >,
   RequestMetadataT extends RequestMetadata
 >(
-  state: Reducer<
+  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
+  action: RequestAction<ActionTypeT, RequestMetadataT>,
+): Reducer<ReducerMetadataT, EntityT, PkSchemaT> {
+  const createdDate = new Date();
+  const newState = duplicateState<
+    ActionTypeT,
     ReducerMetadataT,
     EntityT,
-    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-  >,
-  action: RequestAction<ActionTypeT, RequestMetadataT>,
-): Reducer<
-  ReducerMetadataT,
-  EntityT,
-  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-> {
-  const createdDate = new Date();
-  const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
-    state,
-    action,
-  );
+    PkSchemaT
+  >(state, action);
   newState.requests[action.requestId] = {
     id: action.requestId,
     createdAt: {
@@ -119,24 +122,23 @@ export function handleRequest<
 export function handleSavePartialReducerMetadata<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
+    EntityT,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
 >(
-  state: Reducer<
+  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
+  action: SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>,
+): Reducer<ReducerMetadataT, EntityT, PkSchemaT> {
+  const newState = duplicateState<
+    ActionTypeT,
     ReducerMetadataT,
     EntityT,
-    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-  >,
-  action: SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>,
-): Reducer<
-  ReducerMetadataT,
-  EntityT,
-  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-> {
-  const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
-    state,
-    action,
-  );
-  handleCompletedRequest<ActionTypeT, ReducerMetadataT, EntityT>(
+    PkSchemaT
+  >(state, action);
+  handleCompletedRequest<ActionTypeT, ReducerMetadataT, EntityT, PkSchemaT>(
     newState,
     action,
   );
@@ -158,27 +160,26 @@ export function handleSavePartialReducerMetadata<
 export function handleSaveWholeEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
+    EntityT,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
 >(
-  state: Reducer<
+  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
+  action: SaveWholeEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>,
+): Reducer<ReducerMetadataT, EntityT, PkSchemaT> {
+  const newState = duplicateState<
+    ActionTypeT,
     ReducerMetadataT,
     EntityT,
-    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-  >,
-  action: SaveWholeEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>,
-): Reducer<
-  ReducerMetadataT,
-  EntityT,
-  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-> {
-  const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
-    state,
-    action,
-  );
+    PkSchemaT
+  >(state, action);
   newState.data = action.flush
     ? action.wholeEntities
     : { ...newState.data, ...action.wholeEntities };
-  handleCompletedRequest<ActionTypeT, ReducerMetadataT, EntityT>(
+  handleCompletedRequest<ActionTypeT, ReducerMetadataT, EntityT, PkSchemaT>(
     newState,
     action,
   );
@@ -202,23 +203,22 @@ export function handleSaveWholeEntities<
 export function handleSavePartialEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
+    EntityT,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
 >(
-  state: Reducer<
+  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
+  action: SavePartialEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>,
+): Reducer<ReducerMetadataT, EntityT, PkSchemaT> {
+  const newState = duplicateState<
+    ActionTypeT,
     ReducerMetadataT,
     EntityT,
-    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-  >,
-  action: SavePartialEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>,
-): Reducer<
-  ReducerMetadataT,
-  EntityT,
-  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-> {
-  const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
-    state,
-    action,
-  );
+    PkSchemaT
+  >(state, action);
   Object.keys(action.partialEntities).forEach((entityPk) => {
     newState.data[entityPk] = {
       ...newState.data[entityPk],
@@ -232,7 +232,7 @@ export function handleSavePartialEntities<
       };
     }
   });
-  handleCompletedRequest<ActionTypeT, ReducerMetadataT, EntityT>(
+  handleCompletedRequest<ActionTypeT, ReducerMetadataT, EntityT, PkSchemaT>(
     newState,
     action,
   );
@@ -256,27 +256,26 @@ export function handleSavePartialEntities<
 export function handleSavePartialPatternToEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
->(
-  state: Reducer<
-    ReducerMetadataT,
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
     EntityT,
-    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-  >,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
+>(
+  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
   action: SavePartialPatternToEntitiesAction<
     ActionTypeT,
     ReducerMetadataT,
     EntityT
   >,
-): Reducer<
-  ReducerMetadataT,
-  EntityT,
-  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-> {
-  const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
-    state,
-    action,
-  );
+): Reducer<ReducerMetadataT, EntityT, PkSchemaT> {
+  const newState = duplicateState<
+    ActionTypeT,
+    ReducerMetadataT,
+    EntityT,
+    PkSchemaT
+  >(state, action);
   action.entityPks.forEach((entityPk) => {
     newState.data[entityPk] = {
       ...newState.data[entityPk],
@@ -290,7 +289,7 @@ export function handleSavePartialPatternToEntities<
       };
     }
   });
-  handleCompletedRequest<ActionTypeT, ReducerMetadataT, EntityT>(
+  handleCompletedRequest<ActionTypeT, ReducerMetadataT, EntityT, PkSchemaT>(
     newState,
     action,
   );
@@ -311,25 +310,24 @@ export function handleSavePartialPatternToEntities<
 export function handleDeleteEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
+    EntityT,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
 >(
-  state: Reducer<
+  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
+  action: DeleteEntitiesAction<ActionTypeT, ReducerMetadataT>,
+): Reducer<ReducerMetadataT, EntityT, PkSchemaT> {
+  const newState = duplicateState<
+    ActionTypeT,
     ReducerMetadataT,
     EntityT,
-    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-  >,
-  action: DeleteEntitiesAction<ActionTypeT, ReducerMetadataT>,
-): Reducer<
-  ReducerMetadataT,
-  EntityT,
-  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-> {
-  const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
-    state,
-    action,
-  );
+    PkSchemaT
+  >(state, action);
   action.entityPks.forEach((entityPk) => delete newState.data[entityPk]);
-  handleCompletedRequest<ActionTypeT, ReducerMetadataT, EntityT>(
+  handleCompletedRequest<ActionTypeT, ReducerMetadataT, EntityT, PkSchemaT>(
     newState,
     action,
   );
@@ -349,24 +347,23 @@ export function handleDeleteEntities<
 export function handleFail<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
+    EntityT,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
 >(
-  state: Reducer<
+  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
+  action: FailAction<ActionTypeT>,
+): Reducer<ReducerMetadataT, EntityT, PkSchemaT> {
+  const newState = duplicateState<
+    ActionTypeT,
     ReducerMetadataT,
     EntityT,
-    PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-  >,
-  action: FailAction<ActionTypeT>,
-): Reducer<
-  ReducerMetadataT,
-  EntityT,
-  PkSchema<EntityT, PkSchemaFields<EntityT>, PkSchemaEdges<EntityT>>
-> {
-  const newState = duplicateState<ActionTypeT, ReducerMetadataT, EntityT>(
-    state,
-    action,
-  );
-  handleCompletedRequest<ActionTypeT, ReducerMetadataT, EntityT>(
+    PkSchemaT
+  >(state, action);
+  handleCompletedRequest<ActionTypeT, ReducerMetadataT, EntityT, PkSchemaT>(
     newState,
     action,
   );
