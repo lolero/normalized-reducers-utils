@@ -4,8 +4,8 @@ Utility functions and types for normalized reducers architectures
 
 ## Purpose
 
-1. A standard protocol to interact with an application's front-end state, in
-   order to make CRUD operations on it consistent regardless of the data that
+1. A standard protocol to interact with an application's front-end state in
+   order to make CRUD operations on it consistent, regardless of the data that
    is being stored or consumed. In simple English, this package provides the
    tools to interact with the state in a similar way to how clients interact
    with a RESTful API.
@@ -14,12 +14,12 @@ Utility functions and types for normalized reducers architectures
    enforce a consistent reducer architecture which allows for the robust and
    reliable scaling of a web application.
 
+3. A framework that simplifies the migration of async logic away from
+   components and into a dedicated layer of redux middleware.
+
 The framework is designed for [redux](https://redux.js.org)-like architectures
 where data is stored in reducers and interactions with the stored data happen
-through actions that get dispatched and hit the reducers. Given that all
-utilities provided by this framework are strictly typed, TypeScript projects
-that call the functions with their corresponding generic types stand to gain
-the most from the package.
+through actions that get dispatched and hit the reducers.
 
 ## Motivation
 
@@ -32,22 +32,27 @@ stack. App state configurations and interaction protocols vary as much as or
 more than the apps' purposes and business logic.
 
 Many of these projects are so busy sorting out features and aesthetics that
-they don't allocate much time to address the scalabity of their state's design.
-As the amount and complexity of the app's features grow, maintaining the
-growing amount of reducers with a variety of structures for their respective
-purposes becomes increasingly more expensive and cumbersome. Not to mention the
-bugs that arise from consuming and modifying these reducers without types for
-their structures and data which can be resolved by the components that consume
-them.
+they don't allocate much time to address the scalabity of their state's design,
+as well the handling of asynchronous logic such as the handling of AJAX calls
+to remote APIs. As the amount and complexity of the app's features grow, their
+maintenance and scaling becomes increasingly more expensive and cumbersome.
+This is a result of a growing amount of reducers with a variety of structures
+for their respective purposes, as well as the non standardized handling of an
+increasing number of async calls to RESTful servers for a variety of data that
+the app requires.
 
 This project started while refactoring an app that consumes many related
 entities from their respective microservices and presents their data in a web
 interface. As more entities were added to the application, maintaining the
 reducers that stored their data and the actions that modified them became very
-inefficient. Then, after cleaning up the state and experiencing the benefits of a
-standard reducer structure and reducer-hitting actions, this set of generic
-types and functions began to come together as an underlying architecture for
-scalable react-redux applications.
+inefficient. What's more, the scattered promises that handled the fetching of
+the entities, sometimes in component's methods and others in redux middleware
+or custom service classes, made the management and tracking of the ongoing
+calls difficult to follow and debug. Then, after cleaning up the state and
+migrating all async logic to a dedicated layer in redux middleware, the
+benefits of a standard reducer structure and reducer-hitting actions became
+evident and this set of generic types and functions began to come together
+as an underlying architecture for scalable react-redux applications.
 
 A standard structure for all reducers and the interactions with them
 simplifies their maintenance. On the other hand, the normalization of reducers
@@ -116,8 +121,8 @@ Format of requests' formatted string timestamps.
 
 ### Normalized reducers
 
-Normalized reducers are reducers that have the standard
-[reducer](#reducer) object structure.
+Normalized reducers are reducers that have the standard [reducer](#reducer)
+object structure.
 
 This structure is deliberately designed for reducers to store two kinds of
 data.
@@ -145,9 +150,8 @@ modify a reducer.
 [Request actions](#requestaction) are actions with the `'__REQUEST'` suffix in
 the action type.
 
-When a
-[request action](#requestaction) gets dispatched, a [request](#request) object
-is added to the `requests` prop of the [reducer](#reducer).
+When a [request action](#requestaction) gets dispatched, a [request](#request)
+object is added to the `requests` prop of the [reducer](#reducer).
 [Requests](#request) are indexed by the `requestId` included in the
 [request action](#requestaction) and contain the following props about the
 requested CRUD operation that should be performed on the [reducer](#reducer).
@@ -158,25 +162,28 @@ requested CRUD operation that should be performed on the [reducer](#reducer).
   - `unixMilliseconds`: Milliseconds since the Unix epoch
   - `formattedString` (optional): Formatted timestamp according to the format
     passed in the reducer's [config](#reducerconfig) prop
-- `completedAt`: The timestamp at which a success or [fail action](#failaction)
-  with the [request action's](#requestaction) `requestId` hits the reducer
+- `completedAt`: The timestamp at which a [success](#success-actions) or
+  [fail action](#failaction) with the [request action's](#requestaction)
+  `requestId` hits the reducer
   - `unixMilliseconds`: Milliseconds since the Unix epoch
   - `formattedString` (optional): Formatted timestamp according to the format
     passed in the reducer's [config](#reducerconfig) prop
 - `isPending`: Boolean flag set to `true` when the
   [request action](#requestaction) hits the reducer and to `false` when
-  either a success or a [fail](#failaction) action with the
+  either a [success](#success-actions) or a [fail](#failaction) action with the
   [request action's](#requestaction) `requestId` does
 - `requestMetadata`: The [request metadata](#requestmetadata) object passed
   with the [request action](#requestaction)
-- `isOk` (optional): Boolean flag set to `true` when a success action with the
-  [request action's](#requestaction) `requestId` hits the reducer or to
-  `false` when a [fail action](#failaction) does
+- `isOk` (optional): Boolean flag set to `true` when a
+  [success action](#success-actions) with the
+  [request action's](#requestaction) `requestId` hits the reducer or to `false`
+  when a [fail action](#failaction) does
 - `entityPks` (optional): String array with the primary keys of the
-  [data entities](#2-entity-data) that get modified when a success action
-  with the [request action's](#requestaction) `requestId` hits the reducer
-- `statusCode` (optional): The status code in a success or a
-  [fail](#failaction) action, with the [request action's](#requestaction)
+  [data entities](#2-entity-data) that get modified when a
+  [success action](#success-actions) with the
+  [request action's](#requestaction) `requestId` hits the reducer
+- `statusCode` (optional): The status code in a [success](#success-actions) or
+  a [fail](#failaction) action, with the [request action's](#requestaction)
   `requestId`, that hits the reducer
 - `error` (optional): The error message in a [fail](#failaction) action, with
   the [request action's](#requestaction) `requestId`, that hits the reducer
@@ -215,6 +222,16 @@ A function that takes an entity's PK and returns a
 
 The [reducer configuration](#reducerconfig) object with all
 [config params](#configuration).
+
+### Reducer actions
+
+As stated above, [normalized reducers](#normalized-reducers) are often used to
+store [entity data](#2-entity-data), usually fetched asynchronously from remote
+RESTful APIs. This is why the [reducer](#reducer) contains a
+[requests](#requests) prop and all interactions with
+[normalized reducers](#normalized-reducers) should be initiated with a
+[request action](#requestaction) and completed with a
+[success](#success-actions) or [fail action](#failaction).
 
 ## API
 
@@ -279,8 +296,10 @@ function createInitialState<
 
 A simple function that creates a typed initial state for a reducer.
 
-The true value of this function is only exploited when called with generic
-types.
+\*\* The `EntityT` generic type required by this function is not inferred from
+the function's arguments when `initialReducerData` is an empty object,
+therefore it is recommended that consumers declare the function's generic
+types explicitly in function calls.
 
 #### `emptyPkSchema`
 
@@ -318,39 +337,20 @@ the entities' PKs.
 An abstraction layer of utility functions that handle the manipulation of the
 reducer's state for CRUD operations on reducer's metadata or on entity data.
 
-The true value of these function is only exploited when called with generic
-types.
-
 Example:
 
 ```typescript
 function UsersReducer(
   state: UsersReducer = usersInitialState,
   action: UsersReducerHittingAction,
-): PairsReducer {
+): UsersReducer {
   switch (action.type) {
     case UsersActionTypes.USERS_GET_MANY__REQUEST:
-      return handleRequest<
-        UsersActionTypes.USERS_GET_MANY__REQUEST,
-        UsersReducer['metadata'],
-        User,
-        typeof usersPkSchema,
-        UsersGetManyRequestMetadata
-      >(state, action);
+      return handleRequest(state, action);
     case UsersActionTypes.USERS_GET_MANY__SUCCESS:
-      return handleSaveWholeEntities<
-        UsersActionTypes.USERS_GET_MANY__SUCCESS,
-        UsersReducer['metadata'],
-        User,
-        typeof usersPkSchema
-      >(state, action);
+      return handleSaveWholeEntities(state, action);
     case UsersActionTypes.USERS_GET_MANY__FAIL:
-      return handleFail<
-        UsersActionTypes.USERS_GET_MANY__FAIL,
-        UsersReducer['metadata'],
-        User,
-        typeof usersPkSchema
-      >(state, action);
+      return handleFail(state, action);
     default:
       return state;
   }
@@ -666,7 +666,24 @@ type SubRequest = {
 
 ### Action types
 
-#### `DeleteEntitiesAction`
+#### Request actions
+
+##### `RequestAction`
+
+```typescript
+type RequestAction<
+  ActionTypeT extends string,
+  RequestMetadataT extends RequestMetadata
+> = {
+  type: ActionTypeT;
+  requestMetadata: RequestMetadataT;
+  requestId: string;
+};
+```
+
+#### Success actions
+
+##### `DeleteEntitiesAction`
 
 ```typescript
 type DeleteEntitiesAction<
@@ -682,31 +699,7 @@ type DeleteEntitiesAction<
 };
 ```
 
-#### `FailAction`
-
-```typescript
-type FailAction<ActionTypeT extends string> = {
-  type: ActionTypeT;
-  error: string;
-  requestId: string;
-  statusCode?: number;
-};
-```
-
-#### `RequestAction`
-
-```typescript
-type RequestAction<
-  ActionTypeT extends string,
-  RequestMetadataT extends RequestMetadata
-> = {
-  type: ActionTypeT;
-  requestMetadata: RequestMetadataT;
-  requestId: string;
-};
-```
-
-#### `SavePartialEntitiesAction`
+##### `SavePartialEntitiesAction`
 
 ```typescript
 type SavePartialEntitiesAction<
@@ -723,7 +716,7 @@ type SavePartialEntitiesAction<
 };
 ```
 
-#### `SavePartialPatternToEntitiesAction`
+##### `SavePartialPatternToEntitiesAction`
 
 ```typescript
 type SavePartialPatternToEntitiesAction<
@@ -741,7 +734,7 @@ type SavePartialPatternToEntitiesAction<
 };
 ```
 
-#### `SavePartialReducerMetadataAction`
+##### `SavePartialReducerMetadataAction`
 
 ```typescript
 type SavePartialReducerMetadataAction<
@@ -756,7 +749,7 @@ type SavePartialReducerMetadataAction<
 };
 ```
 
-#### `SaveWholeEntitiesAction`
+##### `SaveWholeEntitiesAction`
 
 ```typescript
 type SaveWholeEntitiesAction<
@@ -771,5 +764,18 @@ type SaveWholeEntitiesAction<
   subRequests?: SubRequest[];
   statusCode?: number;
   flush?: boolean;
+};
+```
+
+#### Fail actions
+
+##### `FailAction`
+
+```typescript
+type FailAction<ActionTypeT extends string> = {
+  type: ActionTypeT;
+  error: string;
+  requestId: string;
+  statusCode?: number;
 };
 ```

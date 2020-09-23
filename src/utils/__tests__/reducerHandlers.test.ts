@@ -87,13 +87,7 @@ describe('reducerHandlers', () => {
     });
 
     it('Should handle request', () => {
-      const newState = handleRequest<
-        'testRequestAction',
-        TestReducer['metadata'],
-        TestEntity,
-        typeof testPkSchema,
-        typeof testRequestAction.requestMetadata
-      >(state, testRequestAction);
+      const newState = handleRequest(state, testRequestAction);
 
       expect(duplicateStateSpy).toHaveBeenCalledWith(state, testRequestAction);
       expect(newState).toEqual({
@@ -121,13 +115,7 @@ describe('reducerHandlers', () => {
           },
         };
 
-        const newState = handleRequest<
-          'testRequestAction',
-          TestReducer['metadata'],
-          TestEntity,
-          typeof testPkSchema,
-          typeof testRequestAction.requestMetadata
-        >(state, testRequestAction);
+        const newState = handleRequest(state, testRequestAction);
 
         const requestCreatedAt = newState.requests[
           testRequestAction.requestId as string
@@ -153,12 +141,10 @@ describe('reducerHandlers', () => {
         partialReducerMetadata: {},
       };
 
-      handleSavePartialReducerMetadata<
-        'testSavePartialReducerMetadataAction',
-        TestReducer['metadata'],
-        TestEntity,
-        typeof testPkSchema
-      >(state, testSavePartialReducerMetadataAction);
+      handleSavePartialReducerMetadata(
+        state,
+        testSavePartialReducerMetadataAction,
+      );
 
       expect(duplicateStateSpy).toHaveBeenCalledWith(
         state,
@@ -191,12 +177,10 @@ describe('reducerHandlers', () => {
         },
       };
 
-      const newState = handleSaveWholeEntities<
-        'testSaveWholeEntitiesAction',
-        TestReducer['metadata'],
-        TestEntity,
-        typeof testPkSchema
-      >(state, testSaveWholeEntitiesAction);
+      const newState = handleSaveWholeEntities(
+        state,
+        testSaveWholeEntitiesAction,
+      );
 
       expect(duplicateStateSpy).toHaveBeenCalledWith(
         state,
@@ -235,12 +219,10 @@ describe('reducerHandlers', () => {
         flush: true,
       };
 
-      const newState = handleSaveWholeEntities<
-        'testSaveWholeEntitiesAction',
-        TestReducer['metadata'],
-        TestEntity,
-        typeof testPkSchema
-      >(state, testSaveWholeEntitiesAction);
+      const newState = handleSaveWholeEntities(
+        state,
+        testSaveWholeEntitiesAction,
+      );
 
       expect(duplicateStateSpy).toHaveBeenCalledWith(
         state,
@@ -301,12 +283,10 @@ describe('reducerHandlers', () => {
         },
       };
 
-      const newState = handleSavePartialEntities<
-        'testSavePartialEntitiesAction',
-        TestReducer['metadata'],
-        TestEntity,
-        typeof testPkSchema
-      >(state, testSavePartialEntitiesAction);
+      const newState = handleSavePartialEntities(
+        state,
+        testSavePartialEntitiesAction,
+      );
 
       expect(duplicateStateSpy).toHaveBeenCalledWith(
         state,
@@ -382,12 +362,10 @@ describe('reducerHandlers', () => {
         },
       };
 
-      const newState = handleSavePartialPatternToEntities<
-        'testSavePartialPatternToEntitiesAction',
-        TestReducer['metadata'],
-        TestEntity,
-        typeof testPkSchema
-      >(state, testSavePartialPatternToEntitiesAction);
+      const newState = handleSavePartialPatternToEntities(
+        state,
+        testSavePartialPatternToEntitiesAction,
+      );
 
       expect(duplicateStateSpy).toHaveBeenCalledWith(
         state,
@@ -448,12 +426,7 @@ describe('reducerHandlers', () => {
         entityPks: [state.getPk(testEntity1), state.getPk(testEntity3)],
       };
 
-      const newState = handleDeleteEntities<
-        'testDeleteEntitiesAction',
-        TestReducer['metadata'],
-        TestEntity,
-        typeof testPkSchema
-      >(state, testDeleteEntitiesAction);
+      const newState = handleDeleteEntities(state, testDeleteEntitiesAction);
 
       expect(duplicateStateSpy).toHaveBeenCalledWith(
         state,
@@ -483,12 +456,7 @@ describe('reducerHandlers', () => {
         requestId: 'testRequestId',
       };
 
-      handleFail<
-        'testFailAction',
-        TestReducer['metadata'],
-        TestEntity,
-        typeof testPkSchema
-      >(state, testFailAction);
+      handleFail(state, testFailAction);
 
       expect(duplicateStateSpy).toHaveBeenCalledWith(state, testFailAction);
       expect(handleCommonPropsSpy).toHaveBeenCalledWith(

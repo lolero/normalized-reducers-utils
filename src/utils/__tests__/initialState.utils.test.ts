@@ -22,16 +22,10 @@ describe('initialTestUtils', () => {
         typeof testPkSchema
       >(testInitialReducerMetadata, {}, testPkSchema, testReducerConfig);
 
-      const entityPk = getPkOfEntity<TestEntity, typeof testPkSchema>(
-        testEntity1,
-        testPkSchema,
-      );
+      const entityPk = getPkOfEntity(testEntity1, testPkSchema);
 
       const destructedPk = destructPk<TestEntity, typeof testPkSchema>(
-        getPkOfEntity<TestEntity, typeof testPkSchema>(
-          testEntity1,
-          testPkSchema,
-        ),
+        entityPk,
         testPkSchema,
       );
 
@@ -51,10 +45,7 @@ describe('initialTestUtils', () => {
     });
 
     it('Should populate initial state reducer data', () => {
-      const entityPk = getPkOfEntity<TestEntity, typeof testPkSchema>(
-        testEntity1,
-        testPkSchema,
-      );
+      const entityPk = getPkOfEntity(testEntity1, testPkSchema);
 
       const testInitialReducerData = {
         [entityPk]: testEntity1,

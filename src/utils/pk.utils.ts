@@ -53,25 +53,29 @@ export function destructPk<
       .split(pkSchema.separator)
       .slice(0, pkSchema.fields.length)
       .reduce(
-        (fields: { [field in keyof EntityT]?: string }, field, fieldIndex) => ({
+        (
+          fields: DestructedPk<EntityT, PkSchemaT>['fields'],
+          field,
+          fieldIndex,
+        ) => ({
           ...fields,
           [pkSchema.fields[fieldIndex]]: field,
         }),
-        {},
+        {} as DestructedPk<EntityT, PkSchemaT>['fields'],
       ),
     edges: pk
       .split(pkSchema.separator)
       .slice(pkSchema.fields.length)
       .reduce(
         (
-          edges: { [edge in keyof EntityT['__edges__']]?: string },
+          edges: DestructedPk<EntityT, PkSchemaT>['edges'],
           edge,
           edgeIndex,
         ) => ({
           ...edges,
           [pkSchema.edges[edgeIndex]]: edge,
         }),
-        {},
+        {} as DestructedPk<EntityT, PkSchemaT>['edges'],
       ),
   };
   return fieldsAndEdgesFromPk;

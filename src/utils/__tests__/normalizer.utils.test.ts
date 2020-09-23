@@ -1,6 +1,5 @@
 import { normalizeEntityArrayByPk } from '../normalizer.utils';
 import {
-  TestEntity,
   testEntity1,
   testEntity2,
   testEntity3,
@@ -11,10 +10,11 @@ import { getPkOfEntity } from '../pk.utils';
 describe('normalizerUtils', () => {
   describe('normalizeEntityArrayByPk', () => {
     it('Should normalize entity array by PK', () => {
-      const normalizedEntities = normalizeEntityArrayByPk<
-        TestEntity,
-        typeof testPkSchema
-      >(testPkSchema, [testEntity1, testEntity2, testEntity3]);
+      const normalizedEntities = normalizeEntityArrayByPk(testPkSchema, [
+        testEntity1,
+        testEntity2,
+        testEntity3,
+      ]);
 
       expect(normalizedEntities).toEqual({
         [getPkOfEntity(testEntity1, testPkSchema)]: testEntity1,

@@ -10,10 +10,7 @@ describe('pkUtils', () => {
         edges: [],
         separator: '___',
       };
-      const entityPk = getPkOfEntity<TestEntity, typeof testPkSchema>(
-        testEntity2,
-        testPkSchema,
-      );
+      const entityPk = getPkOfEntity(testEntity2, testPkSchema);
 
       expect(entityPk).toBe(
         `${testEntity2.id}${testPkSchema.separator}${testEntity2.name}`,
@@ -26,10 +23,7 @@ describe('pkUtils', () => {
         edges: ['parent', 'sibling'],
         separator: '___',
       };
-      const entityPk = getPkOfEntity<TestEntity, typeof testPkSchema>(
-        testEntity2,
-        testPkSchema,
-      );
+      const entityPk = getPkOfEntity(testEntity2, testPkSchema);
 
       expect(entityPk).toBe(
         `${testEntity2.__edges__.parent?.pks[0]}${testPkSchema.separator}${testEntity2.__edges__.sibling?.pks[0]}`,
@@ -46,10 +40,7 @@ describe('pkUtils', () => {
         edges: ['parent', 'sibling'],
         separator: '___',
       };
-      const entityPk = getPkOfEntity<TestEntity, typeof testPkSchema>(
-        testEntity2,
-        testPkSchema,
-      );
+      const entityPk = getPkOfEntity(testEntity2, testPkSchema);
 
       expect(entityPk).toBe(
         `${testEntity2.id}${testPkSchema.separator}${testEntity2.name}${testPkSchema.separator}${testEntity2.__edges__.parent?.pks[0]}${testPkSchema.separator}${testEntity2.__edges__.sibling?.pks[0]}`,
@@ -65,15 +56,9 @@ describe('pkUtils', () => {
         separator: '___',
       };
 
-      const entityPk = getPkOfEntity<TestEntity, typeof testPkSchema>(
-        testEntity2,
-        testPkSchema,
-      );
+      const entityPk = getPkOfEntity(testEntity2, testPkSchema);
 
-      const destructedPk = destructPk<TestEntity, typeof testPkSchema>(
-        entityPk,
-        testPkSchema,
-      );
+      const destructedPk = destructPk(entityPk, testPkSchema);
 
       expect(destructedPk).toEqual({
         fields: {
@@ -90,10 +75,7 @@ describe('pkUtils', () => {
         edges: ['parent', 'sibling'],
         separator: '___',
       };
-      const entityPk = getPkOfEntity<TestEntity, typeof testPkSchema>(
-        testEntity2,
-        testPkSchema,
-      );
+      const entityPk = getPkOfEntity(testEntity2, testPkSchema);
 
       const destructedPk = destructPk<TestEntity, typeof testPkSchema>(
         entityPk,
@@ -119,10 +101,7 @@ describe('pkUtils', () => {
         edges: ['parent', 'sibling'],
         separator: '___',
       };
-      const entityPk = getPkOfEntity<TestEntity, typeof testPkSchema>(
-        testEntity2,
-        testPkSchema,
-      );
+      const entityPk = getPkOfEntity(testEntity2, testPkSchema);
 
       const destructedPk = destructPk<TestEntity, typeof testPkSchema>(
         entityPk,
