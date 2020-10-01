@@ -33,8 +33,8 @@ more than the apps' purposes and business logic.
 
 Many of these projects are so busy sorting out features and aesthetics that
 they don't allocate much time to address the scalabity of their state's design,
-as well the handling of asynchronous logic such as the handling of AJAX calls
-to remote APIs. As the amount and complexity of the app's features grow, their
+as well the handling of asynchronous logic such pending AJAX calls to remote
+APIs. As the amount and complexity of the app's features grow, their
 maintenance and scaling becomes increasingly more expensive and cumbersome.
 This is a result of a growing amount of reducers with a variety of structures
 for their respective purposes, as well as the non standardized handling of an
@@ -776,6 +776,29 @@ type FailAction<ActionTypeT extends string> = {
   type: ActionTypeT;
   error: string;
   requestId: string;
-  statusCode?: number;
+  statusCode?: number; <!-- .element height="50%" width="50%" -->
 };
 ```
+
+## Donate
+I developed this framework entirely in my free time and without monetary
+retribution. You are welcome and encouraged to use it free of charge but if it
+serves your purpose and you want to contribute to the project, any amount of
+donation is greatly appreciated!
+
+| Paypal | BTC |
+| :---: | :---: |
+| <a href="https://paypal.me/pools/c/8t2WvAATaG"><img src="https://www.paypalobjects.com/en_US/NL/i/btn/btn_donateCC_LG.gif"></a> | <img src="https://raw.githubusercontent.com/lolero/normalized-reducers-utils/master/readme-assets/btc-address.png" height="128" width="128"> |
+| https://paypal.me/pools/c/8t2WvAATaG | bc1q7gq4crnt2t47nk9fnzc8vh488ekmns7l8ufj7z |
+| DGB | ETH |
+| <img src="https://raw.githubusercontent.com/lolero/normalized-reducers-utils/master/readme-assets/dgb-address.png" height="128" width="128"> | <img src="https://raw.githubusercontent.com/lolero/normalized-reducers-utils/master/readme-assets/eth-address.png" height="128" width="128"> |
+| dgb1qpp2xxe3e32zqwyvm4rzmqy07t4k642eulkz0a7 | 0x220E622eBF471F9b12203DC8E2107b5be1171AA8 |
+
+
+## Acknowledgments
+<a href="https://www.jetbrains.com/?from=normalized-reducers-utils"><img src="https://raw.githubusercontent.com/lolero/normalized-reducers-utils/master/readme-assets/jetbrains-logo.png" height="128" width="128"></a>
+This project is developed with JetBrains IDEs and their Open Source license is
+greatly appreciated! 
+
+<a href="https://github.com/AngSin"><img src="https://avatars3.githubusercontent.com/u/30783941?s=400&u=9ce3c54ef91e5413e35be0766083f46598ee91ee&v=4" height="128" width="128"></a>
+Thanks to [AngSin](https://github.com/AngSin) for his valuable contributions.
