@@ -25,8 +25,8 @@ export function getPkOfEntity<
   const fields = pkSchema.fields.map(
     (field) => entity[field] as string | number,
   );
-  const edges = pkSchema.edges.map(
-    (edge) => entity.__edges__?.[edge as string]?.pks[0] as string,
+  const edges = pkSchema.edges.map((edge) =>
+    entity.__edges__?.[edge as string]?.pks?.join(`${pkSchema.subSeparator}`),
   );
 
   return [...fields, ...edges].join(pkSchema.separator);
@@ -73,7 +73,7 @@ export function destructPk<
           edgeIndex,
         ) => ({
           ...edges,
-          [pkSchema.edges[edgeIndex]]: edge,
+          [pkSchema.edges[edgeIndex]]: edge.split(pkSchema.subSeparator),
         }),
         {} as DestructedPk<EntityT, PkSchemaT>['edges'],
       ),

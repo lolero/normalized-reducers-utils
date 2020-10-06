@@ -72,7 +72,7 @@ describe('initialTestUtils', () => {
           requests: {},
           metadata: testInitialReducerMetadata,
           data: {},
-          pkSchema: { fields: [], edges: [], separator: '' },
+          pkSchema: { fields: [], edges: [], separator: '', subSeparator: '' },
           config: defaultReducerConfig,
         }),
       );

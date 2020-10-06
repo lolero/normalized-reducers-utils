@@ -12,6 +12,7 @@ export type PkSchema<
   fields: FieldsT;
   edges: EdgesT;
   separator: string;
+  subSeparator: string;
 };
 
 export type DestructedPk<
@@ -23,7 +24,7 @@ export type DestructedPk<
   >
 > = {
   fields: { [field in PkSchemaT['fields'][number]]: string };
-  edges: { [edge in PkSchemaT['edges'][number]]: string };
+  edges: { [edge in PkSchemaT['edges'][number]]: string[] };
 };
 
 export type SubRequest = {

@@ -14,6 +14,7 @@ export const emptyPkSchema: PkSchema<Entity, [], []> = {
   fields: [],
   edges: [],
   separator: '',
+  subSeparator: '',
 };
 
 export const defaultReducerConfig: ReducerConfig = {

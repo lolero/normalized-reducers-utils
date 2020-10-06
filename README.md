@@ -308,6 +308,7 @@ const emptyPkSchema: PkSchema<Entity, [], []> = {
   fields: [],
   edges: [],
   separator: '',
+  subSeparator: '',
 };
 ```
 
@@ -546,6 +547,7 @@ type PkSchema<
   fields: FieldsT;
   edges: EdgesT;
   separator: string;
+  subSeparator: string;
 };
 ```
 
@@ -781,24 +783,25 @@ type FailAction<ActionTypeT extends string> = {
 ```
 
 ## Donate
+
 I developed this framework entirely in my free time and without monetary
 retribution. You are welcome and encouraged to use it free of charge but if it
 serves your purpose and you want to contribute to the project, any amount of
 donation is greatly appreciated!
 
-| Paypal | BTC |
-| :---: | :---: |
-| <a href="https://paypal.me/pools/c/8t2WvAATaG"><img src="https://www.paypalobjects.com/en_US/NL/i/btn/btn_donateCC_LG.gif"></a> | <img src="https://raw.githubusercontent.com/lolero/normalized-reducers-utils/master/readme-assets/btc-address.png" height="128" width="128"> |
-| https://paypal.me/pools/c/8t2WvAATaG | bc1q7gq4crnt2t47nk9fnzc8vh488ekmns7l8ufj7z |
-| DGB | ETH |
+|                                                                    Paypal                                                                    |                                                                     BTC                                                                      |
+| :------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------: |
+|       <a href="https://paypal.me/pools/c/8t2WvAATaG"><img src="https://www.paypalobjects.com/en_US/NL/i/btn/btn_donateCC_LG.gif"></a>        | <img src="https://raw.githubusercontent.com/lolero/normalized-reducers-utils/master/readme-assets/btc-address.png" height="128" width="128"> |
+|                                                     https://paypal.me/pools/c/8t2WvAATaG                                                     |                                                  bc1q7gq4crnt2t47nk9fnzc8vh488ekmns7l8ufj7z                                                  |
+|                                                                     DGB                                                                      |                                                                     ETH                                                                      |
 | <img src="https://raw.githubusercontent.com/lolero/normalized-reducers-utils/master/readme-assets/dgb-address.png" height="128" width="128"> | <img src="https://raw.githubusercontent.com/lolero/normalized-reducers-utils/master/readme-assets/eth-address.png" height="128" width="128"> |
-| dgb1qpp2xxe3e32zqwyvm4rzmqy07t4k642eulkz0a7 | 0x220E622eBF471F9b12203DC8E2107b5be1171AA8 |
-
+|                                                 dgb1qpp2xxe3e32zqwyvm4rzmqy07t4k642eulkz0a7                                                  |                                                  0x220E622eBF471F9b12203DC8E2107b5be1171AA8                                                  |
 
 ## Acknowledgments
+
 <a href="https://www.jetbrains.com/?from=normalized-reducers-utils"><img src="https://raw.githubusercontent.com/lolero/normalized-reducers-utils/master/readme-assets/jetbrains-logo.png" height="128" width="128"></a>
 This project is developed with JetBrains IDEs and their Open Source license is
-greatly appreciated! 
+greatly appreciated!
 
 <a href="https://github.com/AngSin"><img src="https://avatars3.githubusercontent.com/u/30783941?s=400&u=9ce3c54ef91e5413e35be0766083f46598ee91ee&v=4" height="128" width="128"></a>
 Thanks to [AngSin](https://github.com/AngSin) for his valuable contributions.

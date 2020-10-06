@@ -32,7 +32,8 @@ export interface TestEntity extends Entity {
 export const testPkSchema: PkSchema<TestEntity, ['id', 'name'], ['parent']> = {
   fields: ['id', 'name'],
   edges: ['parent'],
-  separator: '___',
+  separator: '_',
+  subSeparator: '-',
 };
 
 export type TestReducer = Reducer<
