@@ -1,51 +1,44 @@
 import {
   createInitialState,
   defaultReducerConfig,
-  emptyPkSchema,
 } from '../initialState.utils';
 import {
   testEntity1,
   testInitialReducerMetadata,
   TestEntity,
-  testPkSchema,
   TestReducer,
   testReducerConfig,
+  getPkOfTestEntity,
 } from '../tests.utils';
-import { destructPk, getPkOfEntity } from '../pk.utils';
 
-describe('initialTestUtils', () => {
+describe('initialState.utils', () => {
   describe('createInitialState', () => {
     it('Should create initial state for initially empty entity data reducer', () => {
       const testInitialState = createInitialState<
         TestReducer['metadata'],
-        TestEntity,
-        typeof testPkSchema
-      >(testInitialReducerMetadata, {}, testPkSchema, testReducerConfig);
-
-      const entityPk = getPkOfEntity(testEntity1, testPkSchema);
-
-      const destructedPk = destructPk<TestEntity, typeof testPkSchema>(
-        entityPk,
-        testPkSchema,
+        TestEntity
+      >(
+        testInitialReducerMetadata,
+        {},
+        {
+          failRequestsCache: 10,
+          requestsPrettyTimestamps: {
+            format: 'utc',
+            timezone: 'utc',
+          },
+        },
       );
 
-      expect(testInitialState).toEqual(
-        expect.objectContaining({
-          requests: {},
-          metadata: testInitialReducerMetadata,
-          data: {},
-          pkSchema: testPkSchema,
-          config: testReducerConfig,
-        }),
-      );
-
-      expect(testInitialState.getPk(testEntity1)).toBe(entityPk);
-
-      expect(testInitialState.destructPk(entityPk)).toEqual(destructedPk);
+      expect(testInitialState).toEqual({
+        requests: {},
+        metadata: testInitialReducerMetadata,
+        data: {},
+        config: testReducerConfig,
+      });
     });
 
     it('Should populate initial state reducer data', () => {
-      const entityPk = getPkOfEntity(testEntity1, testPkSchema);
+      const entityPk = getPkOfTestEntity(testEntity1);
 
       const testInitialReducerData = {
         [entityPk]: testEntity1,
@@ -53,9 +46,8 @@ describe('initialTestUtils', () => {
 
       const testInitialState = createInitialState<
         TestReducer['metadata'],
-        TestEntity,
-        typeof testPkSchema
-      >(testInitialReducerMetadata, testInitialReducerData, testPkSchema);
+        TestEntity
+      >(testInitialReducerMetadata, testInitialReducerData);
 
       expect(testInitialState.data).toBe(testInitialReducerData);
     });
@@ -63,19 +55,15 @@ describe('initialTestUtils', () => {
     it('Should create initial state for only metadata reducer', () => {
       const testInitialState = createInitialState<
         TestReducer['metadata'],
-        never,
-        typeof emptyPkSchema
-      >(testInitialReducerMetadata, {}, emptyPkSchema);
+        never
+      >(testInitialReducerMetadata, {});
 
-      expect(testInitialState).toEqual(
-        expect.objectContaining({
-          requests: {},
-          metadata: testInitialReducerMetadata,
-          data: {},
-          pkSchema: { fields: [], edges: [], separator: '', subSeparator: '' },
-          config: defaultReducerConfig,
-        }),
-      );
+      expect(testInitialState).toEqual({
+        requests: {},
+        metadata: testInitialReducerMetadata,
+        data: {},
+        config: defaultReducerConfig,
+      });
     });
   });
 });

@@ -7,6 +7,7 @@ import {
   TestReducer,
   testEntity3,
   TestRequestMetadata,
+  getPkOfTestEntity,
 } from '../tests.utils';
 import {
   createInitialState,
@@ -28,16 +29,15 @@ import {
 } from '../../types/actions.types';
 import { getPkOfEntity } from '../pk.utils';
 
-describe('reducerHandlers', () => {
+describe('reducerHandlers.utils', () => {
   let state: TestReducer;
   let createdDate: Date;
 
   beforeEach(() => {
-    state = createInitialState<
-      TestReducer['metadata'],
-      TestEntity,
-      typeof testPkSchema
-    >(testInitialReducerMetadata, {}, testPkSchema);
+    state = createInitialState<TestReducer['metadata'], TestEntity>(
+      testInitialReducerMetadata,
+      {},
+    );
     createdDate = new Date();
   });
 
@@ -85,14 +85,14 @@ describe('reducerHandlers', () => {
 
       const newState = duplicateState(state, testRequestAction);
 
-      expect(newState.data[state.getPk(testEntity1)]).toBe(
-        state.data[state.getPk(testEntity1)],
+      expect(newState.data[getPkOfTestEntity(testEntity1)]).toBe(
+        state.data[getPkOfTestEntity(testEntity1)],
       );
-      expect(newState.data[state.getPk(testEntity2)]).toBe(
-        state.data[state.getPk(testEntity2)],
+      expect(newState.data[getPkOfTestEntity(testEntity2)]).toBe(
+        state.data[getPkOfTestEntity(testEntity2)],
       );
-      expect(newState.data[state.getPk(testEntity3)]).toBe(
-        state.data[state.getPk(testEntity3)],
+      expect(newState.data[getPkOfTestEntity(testEntity3)]).toBe(
+        state.data[getPkOfTestEntity(testEntity3)],
       );
     });
 
@@ -110,14 +110,14 @@ describe('reducerHandlers', () => {
         testSavePartialReducerMetadataAction,
       );
 
-      expect(newState.data[state.getPk(testEntity1)]).toBe(
-        state.data[state.getPk(testEntity1)],
+      expect(newState.data[getPkOfTestEntity(testEntity1)]).toBe(
+        state.data[getPkOfTestEntity(testEntity1)],
       );
-      expect(newState.data[state.getPk(testEntity2)]).toBe(
-        state.data[state.getPk(testEntity2)],
+      expect(newState.data[getPkOfTestEntity(testEntity2)]).toBe(
+        state.data[getPkOfTestEntity(testEntity2)],
       );
-      expect(newState.data[state.getPk(testEntity3)]).toBe(
-        state.data[state.getPk(testEntity3)],
+      expect(newState.data[getPkOfTestEntity(testEntity3)]).toBe(
+        state.data[getPkOfTestEntity(testEntity3)],
       );
     });
 
@@ -136,14 +136,14 @@ describe('reducerHandlers', () => {
 
       const newState = duplicateState(state, testSaveWholeEntitiesAction);
 
-      expect(newState.data[state.getPk(testEntity1)]).not.toBe(
-        state.data[state.getPk(testEntity1)],
+      expect(newState.data[getPkOfTestEntity(testEntity1)]).not.toBe(
+        state.data[getPkOfTestEntity(testEntity1)],
       );
-      expect(newState.data[state.getPk(testEntity2)]).not.toBe(
-        state.data[state.getPk(testEntity2)],
+      expect(newState.data[getPkOfTestEntity(testEntity2)]).not.toBe(
+        state.data[getPkOfTestEntity(testEntity2)],
       );
-      expect(newState.data[state.getPk(testEntity3)]).toBe(
-        state.data[state.getPk(testEntity3)],
+      expect(newState.data[getPkOfTestEntity(testEntity3)]).toBe(
+        state.data[getPkOfTestEntity(testEntity3)],
       );
     });
 
@@ -162,14 +162,14 @@ describe('reducerHandlers', () => {
 
       const newState = duplicateState(state, testSavePartialEntitiesAction);
 
-      expect(newState.data[state.getPk(testEntity1)]).not.toBe(
-        state.data[state.getPk(testEntity1)],
+      expect(newState.data[getPkOfTestEntity(testEntity1)]).not.toBe(
+        state.data[getPkOfTestEntity(testEntity1)],
       );
-      expect(newState.data[state.getPk(testEntity2)]).toBe(
-        state.data[state.getPk(testEntity2)],
+      expect(newState.data[getPkOfTestEntity(testEntity2)]).toBe(
+        state.data[getPkOfTestEntity(testEntity2)],
       );
-      expect(newState.data[state.getPk(testEntity3)]).not.toBe(
-        state.data[state.getPk(testEntity3)],
+      expect(newState.data[getPkOfTestEntity(testEntity3)]).not.toBe(
+        state.data[getPkOfTestEntity(testEntity3)],
       );
     });
 
@@ -192,14 +192,14 @@ describe('reducerHandlers', () => {
         testSavePartialPatternToEntitiesAction,
       );
 
-      expect(newState.data[state.getPk(testEntity1)]).toBe(
-        state.data[state.getPk(testEntity1)],
+      expect(newState.data[getPkOfTestEntity(testEntity1)]).toBe(
+        state.data[getPkOfTestEntity(testEntity1)],
       );
-      expect(newState.data[state.getPk(testEntity2)]).not.toBe(
-        state.data[state.getPk(testEntity2)],
+      expect(newState.data[getPkOfTestEntity(testEntity2)]).not.toBe(
+        state.data[getPkOfTestEntity(testEntity2)],
       );
-      expect(newState.data[state.getPk(testEntity3)]).not.toBe(
-        state.data[state.getPk(testEntity3)],
+      expect(newState.data[getPkOfTestEntity(testEntity3)]).not.toBe(
+        state.data[getPkOfTestEntity(testEntity3)],
       );
     });
 
@@ -217,14 +217,14 @@ describe('reducerHandlers', () => {
 
       const newState = duplicateState(state, testDeleteEntitiesAction);
 
-      expect(newState.data[state.getPk(testEntity1)]).not.toBe(
-        state.data[state.getPk(testEntity1)],
+      expect(newState.data[getPkOfTestEntity(testEntity1)]).not.toBe(
+        state.data[getPkOfTestEntity(testEntity1)],
       );
-      expect(newState.data[state.getPk(testEntity2)]).not.toBe(
-        state.data[state.getPk(testEntity2)],
+      expect(newState.data[getPkOfTestEntity(testEntity2)]).not.toBe(
+        state.data[getPkOfTestEntity(testEntity2)],
       );
-      expect(newState.data[state.getPk(testEntity3)]).toBe(
-        state.data[state.getPk(testEntity3)],
+      expect(newState.data[getPkOfTestEntity(testEntity3)]).toBe(
+        state.data[getPkOfTestEntity(testEntity3)],
       );
     });
 
@@ -237,14 +237,14 @@ describe('reducerHandlers', () => {
 
       const newState = duplicateState(state, testFailAction);
 
-      expect(newState.data[state.getPk(testEntity1)]).toBe(
-        state.data[state.getPk(testEntity1)],
+      expect(newState.data[getPkOfTestEntity(testEntity1)]).toBe(
+        state.data[getPkOfTestEntity(testEntity1)],
       );
-      expect(newState.data[state.getPk(testEntity2)]).toBe(
-        state.data[state.getPk(testEntity2)],
+      expect(newState.data[getPkOfTestEntity(testEntity2)]).toBe(
+        state.data[getPkOfTestEntity(testEntity2)],
       );
-      expect(newState.data[state.getPk(testEntity3)]).toBe(
-        state.data[state.getPk(testEntity3)],
+      expect(newState.data[getPkOfTestEntity(testEntity3)]).toBe(
+        state.data[getPkOfTestEntity(testEntity3)],
       );
     });
   });

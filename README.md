@@ -32,14 +32,15 @@ stack. App state configurations and interaction protocols vary as much as or
 more than the apps' purposes and business logic.
 
 Many of these projects are so busy sorting out features and aesthetics that
-they don't allocate much time to address the scalabity of their state's design,
-as well the handling of asynchronous logic such pending AJAX calls to remote
-APIs. As the amount and complexity of the app's features grow, their
-maintenance and scaling becomes increasingly more expensive and cumbersome.
-This is a result of a growing amount of reducers with a variety of structures
-for their respective purposes, as well as the non standardized handling of an
-increasing number of async calls to RESTful servers for a variety of data that
-the app requires.
+they don't allocate much time to addressing the scalabity of their state's
+design, or the handling of asynchronous logic such as pending AJAX calls to
+remote APIs.
+
+As the amount and complexity of the app's features grow, their maintenance and
+scaling becomes increasingly more expensive and cumbersome. This is a result of
+a growing amount of reducers with a variety of structures for their respective
+purposes, as well as the non standardized handling of an increasing number of
+async calls to RESTful servers for a variety of data that the app requires.
 
 This project started while refactoring an app that consumes many related
 entities from their respective microservices and presents their data in a web
@@ -59,9 +60,9 @@ simplifies their maintenance. On the other hand, the normalization of reducers
 that store entity data simplifies the access-to and control-of both the
 entities and the relationships between them. Naturally, this results in the
 ability to better scale the state, regardless of the type of data that is
-stored and managed in it; be it data entities stored in a database,
-metadata related to the presentational state of a component in the scope of a
-session, or any other type of data for any use whatsoever.
+stored and managed in it; be it data entities stored in a database, metadata
+related to the presentational state of a component in the scope of a session,
+or any other type of data for any use whatsoever.
 
 ## Getting started
 
@@ -202,21 +203,7 @@ The [reducer's entity data](#2-entity-data) is indexed by the entities's
 primary key (PK).
 
 An entity's PK is a concatenated string of the entity's props and/or its
-`__edges__`'s props keys, as defined in the reducer's [PK schema](#pkschema).
-
-#### `pkSchema` (prop)
-
-The [PK schema](#pkschema) used to create the PK concatenated strings that
-index the entities in the [reducer's data](#data) prop.
-
-#### `getPk`
-
-A function that takes an entity and returns the entity's PK
-
-#### `destructPk`
-
-A function that takes an entity's PK and returns a
-[destructed entity PK](#destructedpk)
+`__edges__`, as defined in the reducer's [PK schema](#pkschema).
 
 #### `config`
 
@@ -280,40 +267,20 @@ function* fetchUser1AndThenUser2(): Generator<
 ```typescript
 function createInitialState<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity,
-  PkSchemaT extends PkSchema<
-    EntityT,
-    PkSchemaFields<EntityT>,
-    PkSchemaEdges<EntityT>
-  >
+  EntityT extends Entity
 >(
   initialReducerMetadata: ReducerMetadataT,
   initialReducerData: ReducerData<EntityT>,
-  pkSchema: PkSchemaT,
   config?: Partial<ReducerConfig>,
-): Reducer<ReducerMetadataT, EntityT, PkSchemaT>;
+): Reducer<ReducerMetadataT, EntityT>;
 ```
 
-A simple function that creates a typed initial state for a reducer.
+Creates a typed initial state for a reducer.
 
 \*\* The `EntityT` generic type required by this function is not inferred from
 the function's arguments when `initialReducerData` is an empty object,
 therefore it is recommended that consumers declare the function's generic
 types explicitly in function calls.
-
-#### `emptyPkSchema`
-
-```typescript
-const emptyPkSchema: PkSchema<Entity, [], []> = {
-  fields: [],
-  edges: [],
-  separator: '',
-  subSeparator: '',
-};
-```
-
-An empty [PK schema](#pkschema-prop) to initialize reducers that don't store
-entity data.
 
 ### Normalizer utils
 
@@ -330,8 +297,54 @@ function normalizeEntityArrayByPk<
 >(pkSchema: PkSchemaT, entityArray: EntityT[]): ReducerData<EntityT>;
 ```
 
-A simple function to convert an array of entities into an object, indexed by
-the entities' PKs.
+Converts an array of entities into an object, indexed by the entities' PKs.
+
+### PK utils
+
+#### `createReducerPkUtils`
+
+```typescript
+function createReducerPkUtils<
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
+    EntityT,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
+>(pkSchema: PkSchemaT): ReducerPkUtils<ReducerMetadataT, EntityT, PkSchemaT>;
+```
+
+Creates an object that contains a reducer's Pk schema as well as PK utility
+functions.
+
+##### `pkSchema`
+
+The [PK schema](#pkschema) used to create the PK concatenated strings that
+index the entities in the [reducer's data](#data) prop.
+
+##### `getPkOfEntity`
+
+A function that takes an entity and returns the entity's PK
+
+##### `destructPk`
+
+A function that takes an entity's PK and returns a
+[destructed entity PK](#destructedpk)
+
+#### `emptyPkSchema`
+
+```typescript
+const emptyPkSchema: PkSchema<Entity, [], []> = {
+  fields: [],
+  edges: [],
+  separator: '',
+  subSeparator: '',
+};
+```
+
+An empty [PK schema](#pkschema-prop) to initialize reducers that don't store
+entity data.
 
 ### Reducer handlers
 
@@ -364,16 +377,11 @@ function UsersReducer(
 function handleDeleteEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity,
-  PkSchemaT extends PkSchema<
-    EntityT,
-    PkSchemaFields<EntityT>,
-    PkSchemaEdges<EntityT>
-  >
+  EntityT extends Entity
 >(
-  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
+  state: Reducer<ReducerMetadataT, EntityT>,
   action: DeleteEntitiesAction<ActionTypeT, ReducerMetadataT>,
-): Reducer<ReducerMetadataT, EntityT, PkSchemaT>;
+): Reducer<ReducerMetadataT, EntityT>;
 ```
 
 #### `handleFail`
@@ -382,16 +390,11 @@ function handleDeleteEntities<
 function handleFail<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity,
-  PkSchemaT extends PkSchema<
-    EntityT,
-    PkSchemaFields<EntityT>,
-    PkSchemaEdges<EntityT>
-  >
+  EntityT extends Entity
 >(
-  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
+  state: Reducer<ReducerMetadataT, EntityT>,
   action: FailAction<ActionTypeT>,
-): Reducer<ReducerMetadataT, EntityT, PkSchemaT>;
+): Reducer<ReducerMetadataT, EntityT>;
 ```
 
 #### `handleRequest`
@@ -401,16 +404,11 @@ function handleRequest<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
   EntityT extends Entity,
-  PkSchemaT extends PkSchema<
-    EntityT,
-    PkSchemaFields<EntityT>,
-    PkSchemaEdges<EntityT>
-  >,
   RequestMetadataT extends RequestMetadata
 >(
-  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
+  state: Reducer<ReducerMetadataT, EntityT>,
   action: RequestAction<ActionTypeT, RequestMetadataT>,
-): Reducer<ReducerMetadataT, EntityT, PkSchemaT>;
+): Reducer<ReducerMetadataT, EntityT>;
 ```
 
 #### `handleSavePartialEntities`
@@ -419,16 +417,11 @@ function handleRequest<
 function handleSavePartialEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity,
-  PkSchemaT extends PkSchema<
-    EntityT,
-    PkSchemaFields<EntityT>,
-    PkSchemaEdges<EntityT>
-  >
+  EntityT extends Entity
 >(
-  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
+  state: Reducer<ReducerMetadataT, EntityT>,
   action: SavePartialEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>,
-): Reducer<ReducerMetadataT, EntityT, PkSchemaT>;
+): Reducer<ReducerMetadataT, EntityT>;
 ```
 
 #### `handleSavePartialPatternToEntities`
@@ -437,20 +430,15 @@ function handleSavePartialEntities<
 function handleSavePartialPatternToEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity,
-  PkSchemaT extends PkSchema<
-    EntityT,
-    PkSchemaFields<EntityT>,
-    PkSchemaEdges<EntityT>
-  >
+  EntityT extends Entity
 >(
-  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
+  state: Reducer<ReducerMetadataT, EntityT>,
   action: SavePartialPatternToEntitiesAction<
     ActionTypeT,
     ReducerMetadataT,
     EntityT
   >,
-): Reducer<ReducerMetadataT, EntityT, PkSchemaT>;
+): Reducer<ReducerMetadataT, EntityT>;
 ```
 
 #### `handleSavePartialReducerMetadata`
@@ -459,16 +447,11 @@ function handleSavePartialPatternToEntities<
 function handleSavePartialReducerMetadata<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity,
-  PkSchemaT extends PkSchema<
-    EntityT,
-    PkSchemaFields<EntityT>,
-    PkSchemaEdges<EntityT>
-  >
+  EntityT extends Entity
 >(
-  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
+  state: Reducer<ReducerMetadataT, EntityT>,
   action: SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>,
-): Reducer<ReducerMetadataT, EntityT, PkSchemaT>;
+): Reducer<ReducerMetadataT, EntityT>;
 ```
 
 #### `handleSaveWholeEntities`
@@ -477,194 +460,32 @@ function handleSavePartialReducerMetadata<
 function handleSaveWholeEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity,
-  PkSchemaT extends PkSchema<
-    EntityT,
-    PkSchemaFields<EntityT>,
-    PkSchemaEdges<EntityT>
-  >
+  EntityT extends Entity
 >(
-  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
+  state: Reducer<ReducerMetadataT, EntityT>,
   action: SaveWholeEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>,
-): Reducer<ReducerMetadataT, EntityT, PkSchemaT>;
+): Reducer<ReducerMetadataT, EntityT>;
 ```
 
-## Types
+### Selectors creators
 
-### Reducer types
-
-#### `DestructedPk`
+#### `createReducerSelectors`
 
 ```typescript
-type DestructedPk<
-  EntityT extends Entity,
-  PkSchemaT extends PkSchema<
-    EntityT,
-    PkSchemaFields<EntityT>,
-    PkSchemaEdges<EntityT>
-  >
-> = {
-  fields: { [field in PkSchemaT['fields'][number]]: string };
-  edges: { [edge in PkSchemaT['edges'][number]]: string };
-};
-```
-
-#### `Entity`
-
-```typescript
-type Entity = {
-  [fieldKey: string]: unknown;
-  __edges__?: {
-    [edgeName: string]:
-      | EntityEdge<string, string[], string | never>
-      | undefined;
-  };
-};
-```
-
-#### `EntityEdge`
-
-```typescript
-type EntityEdge<
-  EntityNameT extends string,
-  RelationType extends string[],
-  RelationNameT extends string
-> = {
-  entity: EntityNameT;
-  pks: RelationType;
-  relationId?: RelationNameT;
-};
-```
-
-#### `PkSchema`
-
-```typescript
-type PkSchema<
-  EntityT extends Entity,
-  FieldsT extends PkSchemaFields<EntityT>,
-  EdgesT extends PkSchemaEdges<EntityT>
-> = {
-  fields: FieldsT;
-  edges: EdgesT;
-  separator: string;
-  subSeparator: string;
-};
-```
-
-#### `PkSchemaEdges`
-
-```typescript
-type PkSchemaEdges<EntityT extends Entity> = (keyof EntityT['__edges__'])[];
-```
-
-#### `PkSchemaFields`
-
-```typescript
-type PkSchemaFields<EntityT extends Entity> = (keyof EntityT)[];
-```
-
-#### `Reducer`
-
-```typescript
-type Reducer<
+function createReducerSelectors<
   ReducerMetadataT extends ReducerMetadata,
   EntityT extends Entity,
-  PkSchemaT extends PkSchema<
-    EntityT,
-    PkSchemaFields<EntityT>,
-    PkSchemaEdges<EntityT>
-  >
-> = {
-  requests: { [requestId: string]: Request };
-  metadata: ReducerMetadataT;
-  data: ReducerData<EntityT>;
-  pkSchema: PkSchemaT;
-  getPk: (entity: EntityT) => string;
-  destructPk: (pk: string) => DestructedPk<EntityT, PkSchemaT>;
-  config: ReducerConfig;
-};
+  ReduxState extends ReducerGroup<ReducerMetadataT, EntityT>
+>(
+  pathToReducer: string[],
+): ReducerSelectors<ReducerMetadataT, EntityT, ReduxState>;
 ```
 
-#### `ReducerConfig`
+Creates an object that containes
+[reselect](https://github.com/reduxjs/reselect) selectors to select a
+[reducer](#reducer)'s props.
 
-```typescript
-type ReducerConfig = {
-  successRequestsCache: number | null;
-  failRequestsCache: number | null;
-  requestsPrettyTimestamps?: {
-    format: string;
-    timezone: string;
-  };
-};
-```
-
-#### `ReducerData`
-
-```typescript
-type ReducerData<EntityT extends Entity> = {
-  [entityPk: string]: EntityT;
-};
-```
-
-#### `ReducerMetadata`
-
-```typescript
-type ReducerMetadata = {
-  [metadataKey: string]: unknown;
-};
-```
-
-#### `ReducerPartialData`
-
-```typescript
-type ReducerPartialData<EntityT extends Entity> = {
-  [entityPk: string]: Partial<
-    Omit<EntityT, '__edges__'> & {
-      __edges__?: Partial<EntityT['__edges__']>;
-    }
-  >;
-};
-```
-
-#### `Request`
-
-```typescript
-type Request = {
-  id: string;
-  createdAt: {
-    unixMilliseconds: number;
-    formattedString?: string;
-  };
-  completedAt?: {
-    unixMilliseconds: number;
-    formattedString?: string;
-  };
-  isPending: boolean;
-  metadata: RequestMetadata;
-  isOk?: boolean;
-  entityPks?: string[];
-  statusCode?: number;
-  error?: string;
-  subRequests?: SubRequest[];
-};
-```
-
-#### `RequestMetadata`
-
-```typescript
-type RequestMetadata = {
-  [requestMetadataKey: string]: unknown;
-};
-```
-
-#### `SubRequest`
-
-```typescript
-type SubRequest = {
-  reducerName: string;
-  requestId: string;
-};
-```
+## Types
 
 ### Action types
 
@@ -779,6 +600,247 @@ type FailAction<ActionTypeT extends string> = {
   error: string;
   requestId: string;
   statusCode?: number; <!-- .element height="50%" width="50%" -->
+};
+```
+
+### PK types
+
+#### `DestructedPk`
+
+```typescript
+type DestructedPk<
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
+    EntityT,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
+> = {
+  fields: { [field in PkSchemaT['fields'][number]]: string };
+  edges: { [edge in PkSchemaT['edges'][number]]: string[] };
+};
+```
+
+#### `PkSchema`
+
+```typescript
+type PkSchema<
+  EntityT extends Entity,
+  FieldsT extends PkSchemaFields<EntityT>,
+  EdgesT extends PkSchemaEdges<EntityT>
+> = {
+  fields: FieldsT;
+  edges: EdgesT;
+  separator: string;
+  subSeparator: string;
+};
+```
+
+#### `PkSchemaEdges`
+
+```typescript
+type PkSchemaEdges<EntityT extends Entity> = (keyof EntityT['__edges__'])[];
+```
+
+#### `PkSchemaFields`
+
+```typescript
+type PkSchemaFields<EntityT extends Entity> = (keyof EntityT)[];
+```
+
+#### `ReducerPkUtils`
+
+```typescript
+type ReducerPkUtils<
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
+    EntityT,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
+> = {
+  pkSchema: PkSchemaT;
+  getPkOfEntity: (entity: EntityT) => string;
+  destructPk: (pk: string) => DestructedPk<EntityT, PkSchemaT>;
+};
+```
+
+### Reducer types
+
+#### `Entity`
+
+```typescript
+type Entity = {
+  [fieldKey: string]: unknown;
+  __edges__?: {
+    [edgeName: string]:
+      | EntityEdge<string, string[], string | never>
+      | undefined;
+  };
+};
+```
+
+#### `EntityEdge`
+
+```typescript
+type EntityEdge<
+  EntityNameT extends string,
+  RelationType extends string[],
+  RelationNameT extends string
+> = {
+  entity: EntityNameT;
+  pks: RelationType;
+  relationId?: RelationNameT;
+};
+```
+
+#### `Reducer`
+
+```typescript
+type Reducer<
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity
+> = {
+  requests: { [requestId: string]: Request };
+  metadata: ReducerMetadataT;
+  data: ReducerData<EntityT>;
+  config: ReducerConfig;
+};
+```
+
+#### `ReducerConfig`
+
+```typescript
+type ReducerConfig = {
+  successRequestsCache: number | null;
+  failRequestsCache: number | null;
+  requestsPrettyTimestamps?: {
+    format: string;
+    timezone: string;
+  };
+};
+```
+
+#### `ReducerData`
+
+```typescript
+type ReducerData<EntityT extends Entity> = {
+  [entityPk: string]: EntityT;
+};
+```
+
+#### `ReducerGroup`
+
+```typescript
+type ReducerGroup<
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity
+> = {
+  [reducerOrGroup: string]:
+    | Reducer<ReducerMetadataT, EntityT>
+    | ReducerGroup<ReducerMetadataT, EntityT>;
+};
+```
+
+#### `ReducerMetadata`
+
+```typescript
+type ReducerMetadata = {
+  [metadataKey: string]: unknown;
+};
+```
+
+#### `ReducerPartialData`
+
+```typescript
+type ReducerPartialData<EntityT extends Entity> = {
+  [entityPk: string]: Partial<
+    Omit<EntityT, '__edges__'> & {
+      __edges__?: Partial<EntityT['__edges__']>;
+    }
+  >;
+};
+```
+
+#### `Request`
+
+```typescript
+type Request = {
+  id: string;
+  createdAt: {
+    unixMilliseconds: number;
+    formattedString?: string;
+  };
+  completedAt?: {
+    unixMilliseconds: number;
+    formattedString?: string;
+  };
+  isPending: boolean;
+  metadata: RequestMetadata;
+  isOk?: boolean;
+  entityPks?: string[];
+  statusCode?: number;
+  error?: string;
+  subRequests?: SubRequest[];
+};
+```
+
+#### `RequestMetadata`
+
+```typescript
+type RequestMetadata = {
+  [requestMetadataKey: string]: unknown;
+};
+```
+
+#### `SubRequest`
+
+```typescript
+type SubRequest = {
+  reducerName: string;
+  requestId: string;
+};
+```
+
+### Selector types
+
+#### `ReducerSelectors`
+
+```typescript
+type ReducerSelectors<
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity,
+  ReduxState extends ReducerGroup<ReducerMetadataT, EntityT>
+> = {
+  selectRequests: OutputSelector<
+    ReduxState,
+    Reducer<ReducerMetadataT, EntityT>['requests'],
+    (
+      res: Reducer<ReducerMetadataT, EntityT>,
+    ) => Reducer<ReducerMetadataT, EntityT>['requests']
+  >;
+  selectMetadata: OutputSelector<
+    ReduxState,
+    Reducer<ReducerMetadataT, EntityT>['metadata'],
+    (
+      res: Reducer<ReducerMetadataT, EntityT>,
+    ) => Reducer<ReducerMetadataT, EntityT>['metadata']
+  >;
+  selectData: OutputSelector<
+    ReduxState,
+    Reducer<ReducerMetadataT, EntityT>['data'],
+    (
+      res: Reducer<ReducerMetadataT, EntityT>,
+    ) => Reducer<ReducerMetadataT, EntityT>['data']
+  >;
+  selectConfig: OutputSelector<
+    ReduxState,
+    Reducer<ReducerMetadataT, EntityT>['config'],
+    (
+      res: Reducer<ReducerMetadataT, EntityT>,
+    ) => Reducer<ReducerMetadataT, EntityT>['config']
+  >;
 };
 ```
 

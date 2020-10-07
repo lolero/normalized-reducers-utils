@@ -4,11 +4,10 @@ import {
   testEntity1,
   testEntity2,
   testEntity3,
-  testPkSchema,
   TestReducer,
   TestRequestMetadata,
+  getPkOfTestEntity,
 } from '../tests.utils';
-import { getPkOfEntity } from '../pk.utils';
 import {
   DeleteEntitiesAction,
   FailAction,
@@ -41,16 +40,14 @@ describe('reducerHandlers', () => {
   let updateCompletedRequestsCacheSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    state = createInitialState<
-      TestReducer['metadata'],
-      TestEntity,
-      typeof testPkSchema
-    >(testInitialReducerMetadata, {}, testPkSchema);
-    duplicatedState = createInitialState<
-      TestReducer['metadata'],
-      TestEntity,
-      typeof testPkSchema
-    >(testInitialReducerMetadata, {}, testPkSchema);
+    state = createInitialState<TestReducer['metadata'], TestEntity>(
+      testInitialReducerMetadata,
+      {},
+    );
+    duplicatedState = createInitialState<TestReducer['metadata'], TestEntity>(
+      testInitialReducerMetadata,
+      {},
+    );
     duplicateStateSpy = jest
       .spyOn(ReducerHandlersUtils, 'duplicateState')
       // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -163,7 +160,7 @@ describe('reducerHandlers', () => {
   describe('handleSaveWholeEntities', () => {
     it('Should handle save whole entities without flushing reducer', () => {
       duplicatedState.data = {
-        [getPkOfEntity(testEntity1, testPkSchema)]: testEntity1,
+        [getPkOfTestEntity(testEntity1)]: testEntity1,
       };
       const testSaveWholeEntitiesAction: SaveWholeEntitiesAction<
         'testSaveWholeEntitiesAction',
@@ -172,8 +169,8 @@ describe('reducerHandlers', () => {
       > = {
         type: 'testSaveWholeEntitiesAction',
         wholeEntities: {
-          [state.getPk(testEntity2)]: testEntity2,
-          [state.getPk(testEntity3)]: testEntity3,
+          [getPkOfTestEntity(testEntity2)]: testEntity2,
+          [getPkOfTestEntity(testEntity3)]: testEntity3,
         },
       };
 
@@ -204,7 +201,7 @@ describe('reducerHandlers', () => {
 
     it('Should handle save whole entities with flushing reducer', () => {
       duplicatedState.data = {
-        [state.getPk(testEntity1)]: testEntity1,
+        [getPkOfTestEntity(testEntity1)]: testEntity1,
       };
       const testSaveWholeEntitiesAction: SaveWholeEntitiesAction<
         'testSaveWholeEntitiesAction',
@@ -213,8 +210,8 @@ describe('reducerHandlers', () => {
       > = {
         type: 'testSaveWholeEntitiesAction',
         wholeEntities: {
-          [state.getPk(testEntity2)]: testEntity2,
-          [state.getPk(testEntity3)]: testEntity3,
+          [getPkOfTestEntity(testEntity2)]: testEntity2,
+          [getPkOfTestEntity(testEntity3)]: testEntity3,
         },
         flush: true,
       };
@@ -247,8 +244,8 @@ describe('reducerHandlers', () => {
   describe('handleSavePartialEntities', () => {
     it('Should handle save partial entities', () => {
       duplicatedState.data = {
-        [state.getPk(testEntity1)]: testEntity1,
-        [state.getPk(testEntity2)]: testEntity2,
+        [getPkOfTestEntity(testEntity1)]: testEntity1,
+        [getPkOfTestEntity(testEntity2)]: testEntity2,
       };
       const testSavePartialEntitiesAction: SavePartialEntitiesAction<
         'testSavePartialEntitiesAction',
@@ -257,7 +254,7 @@ describe('reducerHandlers', () => {
       > = {
         type: 'testSavePartialEntitiesAction',
         partialEntities: {
-          [state.getPk(testEntity1)]: {
+          [getPkOfTestEntity(testEntity1)]: {
             name: 'newTestName1',
             isTrue: false,
             __edges__: {
@@ -271,7 +268,7 @@ describe('reducerHandlers', () => {
               },
             },
           },
-          [state.getPk(testEntity2)]: {
+          [getPkOfTestEntity(testEntity2)]: {
             name: 'newTestName2',
             __edges__: {
               children: {
@@ -303,27 +300,27 @@ describe('reducerHandlers', () => {
         ...duplicatedState,
         data: {
           ...duplicatedState.data,
-          [state.getPk(testEntity1)]: {
+          [getPkOfTestEntity(testEntity1)]: {
             ...testEntity1,
             ...testSavePartialEntitiesAction.partialEntities[
-              state.getPk(testEntity1)
+              getPkOfTestEntity(testEntity1)
             ],
             __edges__: {
               ...testEntity1.__edges__,
               ...testSavePartialEntitiesAction.partialEntities[
-                state.getPk(testEntity1)
+                getPkOfTestEntity(testEntity1)
               ].__edges__,
             },
           },
-          [state.getPk(testEntity2)]: {
+          [getPkOfTestEntity(testEntity2)]: {
             ...testEntity2,
             ...testSavePartialEntitiesAction.partialEntities[
-              state.getPk(testEntity2)
+              getPkOfTestEntity(testEntity2)
             ],
             __edges__: {
               ...testEntity2.__edges__,
               ...testSavePartialEntitiesAction.partialEntities[
-                state.getPk(testEntity2)
+                getPkOfTestEntity(testEntity2)
               ].__edges__,
             },
           },
@@ -335,9 +332,9 @@ describe('reducerHandlers', () => {
   describe('handleSavePartialPatternToEntities', () => {
     it('Should handle save partial pattern to entities', () => {
       duplicatedState.data = {
-        [state.getPk(testEntity1)]: testEntity1,
-        [state.getPk(testEntity2)]: testEntity2,
-        [state.getPk(testEntity3)]: testEntity3,
+        [getPkOfTestEntity(testEntity1)]: testEntity1,
+        [getPkOfTestEntity(testEntity2)]: testEntity2,
+        [getPkOfTestEntity(testEntity3)]: testEntity3,
       };
       const testSavePartialPatternToEntitiesAction: SavePartialPatternToEntitiesAction<
         'testSavePartialPatternToEntitiesAction',
@@ -346,9 +343,9 @@ describe('reducerHandlers', () => {
       > = {
         type: 'testSavePartialPatternToEntitiesAction',
         entityPks: [
-          state.getPk(testEntity1),
-          state.getPk(testEntity2),
-          state.getPk(testEntity3),
+          getPkOfTestEntity(testEntity1),
+          getPkOfTestEntity(testEntity2),
+          getPkOfTestEntity(testEntity3),
         ],
         partialEntity: {
           isTrue: true,
@@ -382,7 +379,7 @@ describe('reducerHandlers', () => {
         ...duplicatedState,
         data: {
           ...duplicatedState.data,
-          [getPkOfEntity(testEntity1, testPkSchema)]: {
+          [getPkOfTestEntity(testEntity1)]: {
             ...testEntity1,
             ...testSavePartialPatternToEntitiesAction.partialEntity,
             __edges__: {
@@ -390,7 +387,7 @@ describe('reducerHandlers', () => {
               ...testSavePartialPatternToEntitiesAction.partialEntity.__edges__,
             },
           },
-          [getPkOfEntity(testEntity2, testPkSchema)]: {
+          [getPkOfTestEntity(testEntity2)]: {
             ...testEntity2,
             ...testSavePartialPatternToEntitiesAction.partialEntity,
             __edges__: {
@@ -398,7 +395,7 @@ describe('reducerHandlers', () => {
               ...testSavePartialPatternToEntitiesAction.partialEntity.__edges__,
             },
           },
-          [getPkOfEntity(testEntity3, testPkSchema)]: {
+          [getPkOfTestEntity(testEntity3)]: {
             ...testEntity3,
             ...testSavePartialPatternToEntitiesAction.partialEntity,
             __edges__: {
@@ -414,16 +411,19 @@ describe('reducerHandlers', () => {
   describe('handleDeleteEntities', () => {
     it('Should handle delete entities', () => {
       duplicatedState.data = {
-        [state.getPk(testEntity1)]: testEntity1,
-        [state.getPk(testEntity2)]: testEntity2,
-        [state.getPk(testEntity3)]: testEntity3,
+        [getPkOfTestEntity(testEntity1)]: testEntity1,
+        [getPkOfTestEntity(testEntity2)]: testEntity2,
+        [getPkOfTestEntity(testEntity3)]: testEntity3,
       };
       const testDeleteEntitiesAction: DeleteEntitiesAction<
         'testDeleteEntitiesAction',
         never
       > = {
         type: 'testDeleteEntitiesAction',
-        entityPks: [state.getPk(testEntity1), state.getPk(testEntity3)],
+        entityPks: [
+          getPkOfTestEntity(testEntity1),
+          getPkOfTestEntity(testEntity3),
+        ],
       };
 
       const newState = handleDeleteEntities(state, testDeleteEntitiesAction);
@@ -442,7 +442,7 @@ describe('reducerHandlers', () => {
       expect(newState).toEqual({
         ...duplicatedState,
         data: {
-          [state.getPk(testEntity2)]: testEntity2,
+          [getPkOfTestEntity(testEntity2)]: testEntity2,
         },
       });
     });

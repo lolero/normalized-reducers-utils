@@ -1,10 +1,19 @@
 import {
-  PkSchema,
-  Entity,
   DestructedPk,
-  PkSchemaFields,
+  Entity,
+  PkSchema,
   PkSchemaEdges,
+  PkSchemaFields,
+  ReducerMetadata,
 } from '../types/reducers.types';
+import { ReducerPkUtils } from '../types/pk.types';
+
+export const emptyPkSchema: PkSchema<Entity, [], []> = {
+  fields: [],
+  edges: [],
+  separator: '',
+  subSeparator: '',
+};
 
 /**
  * Get PK of entity
@@ -79,4 +88,29 @@ export function destructPk<
       ),
   };
   return fieldsAndEdgesFromPk;
+}
+
+/**
+ * Create reducer PK utils
+ *
+ * @param {PkSchema} pkSchema - PK schema of reducer's entities
+ *
+ * @returns {Object} PK utils
+ */
+export function createReducerPkUtils<
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity,
+  PkSchemaT extends PkSchema<
+    EntityT,
+    PkSchemaFields<EntityT>,
+    PkSchemaEdges<EntityT>
+  >
+>(pkSchema: PkSchemaT): ReducerPkUtils<ReducerMetadataT, EntityT, PkSchemaT> {
+  const reducerPkUtils: ReducerPkUtils<ReducerMetadataT, EntityT, PkSchemaT> = {
+    pkSchema,
+    getPkOfEntity: (entity): string => getPkOfEntity(entity, pkSchema),
+    destructPk: (pk) => destructPk(pk, pkSchema),
+  };
+
+  return reducerPkUtils;
 }

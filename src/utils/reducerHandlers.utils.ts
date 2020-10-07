@@ -8,14 +8,7 @@ import {
   SavePartialReducerMetadataAction,
   SaveWholeEntitiesAction,
 } from '../types/actions.types';
-import {
-  Entity,
-  PkSchema,
-  PkSchemaEdges,
-  PkSchemaFields,
-  Reducer,
-  ReducerMetadata,
-} from '../types/reducers.types';
+import { Entity, Reducer, ReducerMetadata } from '../types/reducers.types';
 
 /**
  * Duplicates the state object with shallow copies of the 'data', 'metadata',
@@ -34,14 +27,9 @@ import {
 export function duplicateState<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity,
-  PkSchemaT extends PkSchema<
-    EntityT,
-    PkSchemaFields<EntityT>,
-    PkSchemaEdges<EntityT>
-  >
+  EntityT extends Entity
 >(
-  state: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
+  state: Reducer<ReducerMetadataT, EntityT>,
   action: // @typescript-eslint/no-explicit-any disabled because the
   // RequestMetadata type is irrelevant for this function and it needs to be
   // able to take any request action regardless of its RequestMetadata
@@ -53,7 +41,7 @@ export function duplicateState<
     | SavePartialPatternToEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>
     | DeleteEntitiesAction<ActionTypeT, ReducerMetadataT>
     | FailAction<ActionTypeT>,
-): Reducer<ReducerMetadataT, EntityT, PkSchemaT> {
+): Reducer<ReducerMetadataT, EntityT> {
   // The metadata object is not duplicated here since it gets duplicated in the
   // 'handleCommonProps' function, which should get called by every handler
   // that completes an action.
@@ -105,14 +93,9 @@ export function duplicateState<
 export function handleCommonProps<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity,
-  PkSchemaT extends PkSchema<
-    EntityT,
-    PkSchemaFields<EntityT>,
-    PkSchemaEdges<EntityT>
-  >
+  EntityT extends Entity
 >(
-  newState: Reducer<ReducerMetadataT, EntityT, PkSchemaT>,
+  newState: Reducer<ReducerMetadataT, EntityT>,
   action:
     | SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>
     | SaveWholeEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>
@@ -184,13 +167,8 @@ export function handleCommonProps<
  */
 export function updateCompletedRequestsCache<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity,
-  PkSchemaT extends PkSchema<
-    EntityT,
-    PkSchemaFields<EntityT>,
-    PkSchemaEdges<EntityT>
-  >
->(newState: Reducer<ReducerMetadataT, EntityT, PkSchemaT>): void {
+  EntityT extends Entity
+>(newState: Reducer<ReducerMetadataT, EntityT>): void {
   if (
     newState.config.successRequestsCache === null &&
     newState.config.failRequestsCache === null

@@ -1,21 +1,10 @@
 import {
-  Reducer,
-  PkSchema,
   Entity,
-  ReducerMetadata,
-  ReducerData,
+  Reducer,
   ReducerConfig,
-  PkSchemaFields,
-  PkSchemaEdges,
+  ReducerData,
+  ReducerMetadata,
 } from '../types/reducers.types';
-import { destructPk, getPkOfEntity } from './pk.utils';
-
-export const emptyPkSchema: PkSchema<Entity, [], []> = {
-  fields: [],
-  edges: [],
-  separator: '',
-  subSeparator: '',
-};
 
 export const defaultReducerConfig: ReducerConfig = {
   successRequestsCache: 10,
@@ -31,32 +20,22 @@ export const defaultReducerConfig: ReducerConfig = {
  *
  * @param {ReducerMetadata} initialReducerMetadata - Initial reducer metadata
  * @param {ReducerData} initialReducerData - Initial reducer data
- * @param {PkSchema} pkSchema - PK schema of reducer's entities
  * @param {ReducerConfig} [config] - Custom config params
  *
  * @returns {Reducer} Reducer's initial state
  */
 export function createInitialState<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity,
-  PkSchemaT extends PkSchema<
-    EntityT,
-    PkSchemaFields<EntityT>,
-    PkSchemaEdges<EntityT>
-  >
+  EntityT extends Entity
 >(
   initialReducerMetadata: ReducerMetadataT,
   initialReducerData: ReducerData<EntityT>,
-  pkSchema: PkSchemaT,
   config?: Partial<ReducerConfig>,
-): Reducer<ReducerMetadataT, EntityT, PkSchemaT> {
-  const reducerInitialState: Reducer<ReducerMetadataT, EntityT, PkSchemaT> = {
+): Reducer<ReducerMetadataT, EntityT> {
+  const reducerInitialState: Reducer<ReducerMetadataT, EntityT> = {
     requests: {},
     metadata: initialReducerMetadata,
     data: initialReducerData,
-    pkSchema,
-    getPk: (entity): string => getPkOfEntity(entity, pkSchema),
-    destructPk: (pk) => destructPk(pk, pkSchema),
     config: {
       ...defaultReducerConfig,
       ...config,

@@ -6,7 +6,7 @@ import {
   mySaga,
 } from '../actions.utils';
 
-describe('actionUtils', () => {
+describe('action.utils', () => {
   describe('getRequestActionTypePrefix', () => {
     it('Should get request action type prefix', () => {
       const requestAction = {

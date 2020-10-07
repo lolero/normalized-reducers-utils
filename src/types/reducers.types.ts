@@ -101,18 +101,19 @@ export type ReducerConfig = {
 
 export type Reducer<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity,
-  PkSchemaT extends PkSchema<
-    EntityT,
-    PkSchemaFields<EntityT>,
-    PkSchemaEdges<EntityT>
-  >
+  EntityT extends Entity
 > = {
   requests: { [requestId: string]: Request };
   metadata: ReducerMetadataT;
   data: ReducerData<EntityT>;
-  pkSchema: PkSchemaT;
-  getPk: (entity: EntityT) => string;
-  destructPk: (pk: string) => DestructedPk<EntityT, PkSchemaT>;
   config: ReducerConfig;
+};
+
+export type ReducerGroup<
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity
+> = {
+  [reducerOrGroup: string]:
+    | Reducer<ReducerMetadataT, EntityT>
+    | ReducerGroup<ReducerMetadataT, EntityT>;
 };

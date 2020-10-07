@@ -4,10 +4,10 @@ import {
   testEntity2,
   testEntity3,
   testPkSchema,
+  getPkOfTestEntity,
 } from '../tests.utils';
-import { getPkOfEntity } from '../pk.utils';
 
-describe('normalizerUtils', () => {
+describe('normalizer.utils', () => {
   describe('normalizeEntityArrayByPk', () => {
     it('Should normalize entity array by PK', () => {
       const normalizedEntities = normalizeEntityArrayByPk(testPkSchema, [
@@ -17,9 +17,9 @@ describe('normalizerUtils', () => {
       ]);
 
       expect(normalizedEntities).toEqual({
-        [getPkOfEntity(testEntity1, testPkSchema)]: testEntity1,
-        [getPkOfEntity(testEntity2, testPkSchema)]: testEntity2,
-        [getPkOfEntity(testEntity3, testPkSchema)]: testEntity3,
+        [getPkOfTestEntity(testEntity1)]: testEntity1,
+        [getPkOfTestEntity(testEntity2)]: testEntity2,
+        [getPkOfTestEntity(testEntity3)]: testEntity3,
       });
     });
   });

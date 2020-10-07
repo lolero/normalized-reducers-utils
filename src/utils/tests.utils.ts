@@ -7,6 +7,7 @@ import {
   ReducerConfig,
   RequestMetadata,
 } from '../types/reducers.types';
+import { createReducerPkUtils } from './pk.utils';
 
 export interface TestRequestMetadata extends RequestMetadata {
   testRequestMetadata: string;
@@ -36,11 +37,18 @@ export const testPkSchema: PkSchema<TestEntity, ['id', 'name'], ['parent']> = {
   subSeparator: '-',
 };
 
-export type TestReducer = Reducer<
-  TestReducerMetadata,
-  TestEntity,
-  typeof testPkSchema
->;
+export type TestReducer = Reducer<TestReducerMetadata, TestEntity>;
+
+export type TestState = {
+  testReducerGroup1: {
+    testReducer1: TestReducer;
+    testReducer2: TestReducer;
+  };
+  testReducerGroup2: {
+    testReducer3: TestReducer;
+    testReducer4: TestReducer;
+  };
+};
 
 export const testEntity1: TestEntity = {
   id: 'testEntityId1',
@@ -102,3 +110,12 @@ export const testReducerConfig: ReducerConfig = {
     timezone: 'utc',
   },
 };
+
+export const {
+  pkSchema: testReducerPkSchema,
+  getPkOfEntity: getPkOfTestEntity,
+} = createReducerPkUtils<
+  TestReducer['metadata'],
+  TestEntity,
+  typeof testPkSchema
+>(testPkSchema);
