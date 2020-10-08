@@ -1,10 +1,11 @@
 import {
-  EntityEdge,
   Entity,
   PkSchema,
   Reducer,
-  ReducerMetadata,
   ReducerConfig,
+  ReducerEdge,
+  ReducerEdges,
+  ReducerMetadata,
   RequestMetadata,
 } from '../types/reducers.types';
 import { createReducerPkUtils } from './pk.utils';
@@ -18,36 +19,68 @@ export interface TestReducerMetadata extends ReducerMetadata {
   entityCount: number;
 }
 
-export interface TestEntity extends Entity {
+export interface TestReducerEdges extends ReducerEdges {
+  parent: ReducerEdge;
+  children: ReducerEdge;
+  emergencyContacts: ReducerEdge;
+}
+
+export interface TestEntity extends Entity<TestReducerEdges> {
   id: string;
   name: string;
   number: number;
   isTrue: boolean;
   __edges__: {
-    parent?: EntityEdge<'testEntity', [string], never>;
-    sibling?: EntityEdge<'testEntity', [string], never>;
-    children?: EntityEdge<'testEntity', string[], never>;
+    parent: [string] | null;
+    children: string[] | null;
+    emergencyContacts: [string, string];
   };
 }
+export type TestReducer = Reducer<TestReducerMetadata, TestEntity>;
 
-export const testPkSchema: PkSchema<TestEntity, ['id', 'name'], ['parent']> = {
-  fields: ['id', 'name'],
-  edges: ['parent'],
+export enum ReducerGroups {
+  testReducerGroup1 = 'testReducerGroup1',
+  testReducerGroup2 = 'testReducerGroup2',
+}
+
+export enum Reducers {
+  // testReducerGroup1
+  testReducer1 = 'testReducer1',
+  testReducer2 = 'testReducer2',
+
+  // testReducerGroup2
+  testReducer3 = 'testReducer3',
+  testReducer4 = 'testReducer4',
+}
+
+export type TestState = {
+  [ReducerGroups.testReducerGroup1]: {
+    [Reducers.testReducer1]: TestReducer;
+    [Reducers.testReducer2]: TestReducer;
+  };
+  [ReducerGroups.testReducerGroup2]: {
+    [Reducers.testReducer3]: TestReducer;
+    [Reducers.testReducer4]: TestReducer;
+  };
+};
+
+export const testPkSchema: PkSchema<TestEntity, ['id'], []> = {
+  fields: ['id'],
+  edges: [],
   separator: '_',
   subSeparator: '-',
 };
 
-export type TestReducer = Reducer<TestReducerMetadata, TestEntity>;
-
-export type TestState = {
-  testReducerGroup1: {
-    testReducer1: TestReducer;
-    testReducer2: TestReducer;
-  };
-  testReducerGroup2: {
-    testReducer3: TestReducer;
-    testReducer4: TestReducer;
-  };
+export const testReducerEdges: TestReducerEdges = {
+  parent: {
+    entityReducerPath: [ReducerGroups.testReducerGroup1, Reducers.testReducer1],
+  },
+  children: {
+    entityReducerPath: [ReducerGroups.testReducerGroup1, Reducers.testReducer1],
+  },
+  emergencyContacts: {
+    entityReducerPath: [ReducerGroups.testReducerGroup1, Reducers.testReducer1],
+  },
 };
 
 export const testEntity1: TestEntity = {
@@ -56,10 +89,9 @@ export const testEntity1: TestEntity = {
   number: 1,
   isTrue: true,
   __edges__: {
-    children: {
-      entity: 'testEntity',
-      pks: ['testEntityId2', 'testEntityId3'],
-    },
+    parent: null,
+    children: ['testEntityId2', 'testEntityId3'],
+    emergencyContacts: ['testEntityId2', 'testEntityId3'],
   },
 };
 
@@ -69,14 +101,9 @@ export const testEntity2: TestEntity = {
   number: 2,
   isTrue: false,
   __edges__: {
-    parent: {
-      entity: 'testEntity',
-      pks: ['testEntityId1'],
-    },
-    sibling: {
-      entity: 'testEntity',
-      pks: ['testEntityId3'],
-    },
+    parent: ['testEntityId1'],
+    children: null,
+    emergencyContacts: ['testEntityId1', 'testEntityId3'],
   },
 };
 
@@ -86,14 +113,9 @@ export const testEntity3: TestEntity = {
   number: 3,
   isTrue: false,
   __edges__: {
-    parent: {
-      entity: 'testEntity',
-      pks: ['testEntityId1'],
-    },
-    sibling: {
-      entity: 'testEntity',
-      pks: ['testEntityI2'],
-    },
+    parent: ['testEntityId1'],
+    children: null,
+    emergencyContacts: ['testEntityId1', 'testEntityId2'],
   },
 };
 
@@ -114,6 +136,7 @@ export const testReducerConfig: ReducerConfig = {
 export const {
   pkSchema: testReducerPkSchema,
   getPkOfEntity: getPkOfTestEntity,
+  destructPk: destructTestEntityPk,
 } = createReducerPkUtils<
   TestReducer['metadata'],
   TestEntity,

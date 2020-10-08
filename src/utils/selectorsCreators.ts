@@ -3,6 +3,7 @@ import { createSelector, OutputSelector } from 'reselect';
 import {
   Entity,
   Reducer,
+  ReducerEdges,
   ReducerGroup,
   ReducerMetadata,
 } from '../types/reducers.types';
@@ -21,7 +22,7 @@ import { selectReducerProp } from './selectors';
  */
 export function createReducerPropSelector<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity,
+  EntityT extends Entity<ReducerEdges>,
   ReduxState extends ReducerGroup<ReducerMetadataT, EntityT>,
   ReducerPropKey extends keyof Reducer<ReducerMetadataT, EntityT>
 >(
@@ -68,7 +69,7 @@ export function createReducerPropSelector<
  */
 export function createReducerSelectors<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity,
+  EntityT extends Entity<ReducerEdges>,
   ReduxState extends ReducerGroup<ReducerMetadataT, EntityT>
 >(
   pathToReducer: string[],

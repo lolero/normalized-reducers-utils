@@ -3,9 +3,10 @@ import {
   Entity,
   ReducerPartialData,
   RequestMetadata,
+  ReducerEdges,
 } from './reducers.types';
 
-export interface CreateOneRequestMetadata<EntityT extends Entity>
+export interface CreateOneRequestMetadata<EntityT extends Entity<ReducerEdges>>
   extends RequestMetadata {
   entity: EntityT;
 }
@@ -18,25 +19,29 @@ export interface GetManyRequestMetadata extends RequestMetadata {
   entityPks?: string[];
 }
 
-export interface UpdateOneWholeRequestMetadata<EntityT extends Entity>
-  extends RequestMetadata {
+export interface UpdateOneWholeRequestMetadata<
+  EntityT extends Entity<ReducerEdges>
+> extends RequestMetadata {
   entityPk: string;
   entity: EntityT;
 }
 
-export interface UpdateManyWholeRequestMetadata<EntityT extends Entity>
-  extends RequestMetadata {
+export interface UpdateManyWholeRequestMetadata<
+  EntityT extends Entity<ReducerEdges>
+> extends RequestMetadata {
   wholeEntities: ReducerData<EntityT>;
 }
 
-export interface UpdateOnePartialRequestMetadata<EntityT extends Entity>
-  extends RequestMetadata {
+export interface UpdateOnePartialRequestMetadata<
+  EntityT extends Entity<ReducerEdges>
+> extends RequestMetadata {
   entityPk: string;
   partialEntity: Partial<EntityT>;
 }
 
-export interface UpdateManyPartialRequestMetadata<EntityT extends Entity>
-  extends RequestMetadata {
+export interface UpdateManyPartialRequestMetadata<
+  EntityT extends Entity<ReducerEdges>
+> extends RequestMetadata {
   partialEntities: ReducerPartialData<EntityT>;
 }
 

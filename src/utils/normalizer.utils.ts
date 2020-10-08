@@ -4,6 +4,7 @@ import {
   Entity,
   PkSchemaFields,
   PkSchemaEdges,
+  ReducerEdges,
 } from '../types/reducers.types';
 import { getPkOfEntity } from './pk.utils';
 
@@ -16,7 +17,7 @@ import { getPkOfEntity } from './pk.utils';
  * @returns {ReducerData} Normalized entities object
  */
 export function normalizeEntityArrayByPk<
-  EntityT extends Entity,
+  EntityT extends Entity<ReducerEdges>,
   PkSchemaT extends PkSchema<
     EntityT,
     PkSchemaFields<EntityT>,

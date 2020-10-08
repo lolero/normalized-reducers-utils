@@ -258,23 +258,14 @@ describe('reducerHandlers', () => {
             name: 'newTestName1',
             isTrue: false,
             __edges__: {
-              parent: {
-                entity: 'testEntity',
-                pks: ['newTestParent'],
-              },
-              children: {
-                entity: 'testEntity',
-                pks: ['testEntityId2', 'testEntityId3', 'newTestChild'],
-              },
+              parent: ['newTestParent'],
+              children: ['testEntityId2', 'testEntityId3', 'newTestChild'],
             },
           },
           [getPkOfTestEntity(testEntity2)]: {
             name: 'newTestName2',
             __edges__: {
-              children: {
-                entity: 'testEntity',
-                pks: ['newTestChild'],
-              },
+              children: ['newTestChild'],
             },
           },
         },
@@ -351,10 +342,10 @@ describe('reducerHandlers', () => {
           isTrue: true,
           number: 10,
           __edges__: {
-            sibling: {
-              entity: 'testEntity',
-              pks: ['testSibling'],
-            },
+            emergencyContacts: [
+              'testEmergencyContact1',
+              'testEmergencyContact2',
+            ],
           },
         },
       };

@@ -1,6 +1,7 @@
 import {
   Entity,
   Reducer,
+  ReducerEdges,
   ReducerMetadata,
   RequestMetadata,
 } from '../types/reducers.types';
@@ -34,7 +35,7 @@ import {
 function handleCompletedRequest<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity<ReducerEdges>
 >(
   newState: Reducer<ReducerMetadataT, EntityT>,
   action:
@@ -61,7 +62,7 @@ function handleCompletedRequest<
 export function handleRequest<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity,
+  EntityT extends Entity<ReducerEdges>,
   RequestMetadataT extends RequestMetadata
 >(
   state: Reducer<ReducerMetadataT, EntityT>,
@@ -101,7 +102,7 @@ export function handleRequest<
 export function handleSavePartialReducerMetadata<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity<ReducerEdges>
 >(
   state: Reducer<ReducerMetadataT, EntityT>,
   action: SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>,
@@ -126,7 +127,7 @@ export function handleSavePartialReducerMetadata<
 export function handleSaveWholeEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity<ReducerEdges>
 >(
   state: Reducer<ReducerMetadataT, EntityT>,
   action: SaveWholeEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>,
@@ -156,7 +157,7 @@ export function handleSaveWholeEntities<
 export function handleSavePartialEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity<ReducerEdges>
 >(
   state: Reducer<ReducerMetadataT, EntityT>,
   action: SavePartialEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>,
@@ -196,7 +197,7 @@ export function handleSavePartialEntities<
 export function handleSavePartialPatternToEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity<ReducerEdges>
 >(
   state: Reducer<ReducerMetadataT, EntityT>,
   action: SavePartialPatternToEntitiesAction<
@@ -237,7 +238,7 @@ export function handleSavePartialPatternToEntities<
 export function handleDeleteEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity<ReducerEdges>
 >(
   state: Reducer<ReducerMetadataT, EntityT>,
   action: DeleteEntitiesAction<ActionTypeT, ReducerMetadataT>,
@@ -261,7 +262,7 @@ export function handleDeleteEntities<
 export function handleFail<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity<ReducerEdges>
 >(
   state: Reducer<ReducerMetadataT, EntityT>,
   action: FailAction<ActionTypeT>,

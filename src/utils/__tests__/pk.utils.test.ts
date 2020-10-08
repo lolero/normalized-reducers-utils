@@ -17,24 +17,28 @@ describe('pk.utils', () => {
         separator: '_',
         subSeparator: '-',
       };
-      const entityPk = getPkOfEntity(testEntity2, testPkSchema1);
+      const entityPk = getPkOfEntity(testEntity1, testPkSchema1);
 
       expect(entityPk).toBe(
-        `${testEntity2.id}${testPkSchema1.separator}${testEntity2.name}`,
+        `${testEntity1.id}${testPkSchema1.separator}${testEntity1.name}`,
       );
     });
 
     it('Should get PK of entity with only edges', () => {
-      const testPkSchema1: PkSchema<TestEntity, [], ['parent', 'sibling']> = {
+      const testPkSchema1: PkSchema<
+        TestEntity,
+        [],
+        ['parent', 'emergencyContacts']
+      > = {
         fields: [],
-        edges: ['parent', 'sibling'],
+        edges: ['parent', 'emergencyContacts'],
         separator: '_',
         subSeparator: '-',
       };
       const entityPk = getPkOfEntity(testEntity2, testPkSchema1);
 
       expect(entityPk).toBe(
-        `${testEntity2.__edges__.parent?.pks[0]}${testPkSchema1.separator}${testEntity2.__edges__.sibling?.pks[0]}`,
+        `${testEntity2.__edges__.parent?.[0]}${testPkSchema1.separator}${testEntity2.__edges__?.emergencyContacts?.[0]}${testPkSchema1.subSeparator}${testEntity2.__edges__?.emergencyContacts?.[1]}`,
       );
     });
 
@@ -42,35 +46,17 @@ describe('pk.utils', () => {
       const testPkSchema1: PkSchema<
         TestEntity,
         ['id', 'name'],
-        ['parent', 'sibling']
+        ['parent', 'emergencyContacts']
       > = {
         fields: ['id', 'name'],
-        edges: ['parent', 'sibling'],
+        edges: ['parent', 'emergencyContacts'],
         separator: '_',
         subSeparator: '-',
       };
       const entityPk = getPkOfEntity(testEntity2, testPkSchema1);
 
       expect(entityPk).toBe(
-        `${testEntity2.id}${testPkSchema1.separator}${testEntity2.name}${testPkSchema1.separator}${testEntity2.__edges__.parent?.pks[0]}${testPkSchema1.separator}${testEntity2.__edges__.sibling?.pks[0]}`,
-      );
-    });
-
-    it('Should get PK of entity with fields and edges with multiple pks', () => {
-      const testPkSchema1: PkSchema<
-        TestEntity,
-        ['id', 'name'],
-        ['children']
-      > = {
-        fields: ['id', 'name'],
-        edges: ['children'],
-        separator: '_',
-        subSeparator: '-',
-      };
-      const entityPk = getPkOfEntity(testEntity1, testPkSchema1);
-
-      expect(entityPk).toBe(
-        `${testEntity1.id}${testPkSchema1.separator}${testEntity1.name}${testPkSchema1.separator}${testEntity1.__edges__.children?.pks[0]}${testPkSchema1.subSeparator}${testEntity1.__edges__.children?.pks[1]}`,
+        `${testEntity2.id}${testPkSchema1.separator}${testEntity2.name}${testPkSchema1.separator}${testEntity2.__edges__.parent?.[0]}${testPkSchema1.separator}${testEntity2.__edges__?.emergencyContacts?.[0]}${testPkSchema1.subSeparator}${testEntity2.__edges__?.emergencyContacts?.[1]}`,
       );
     });
   });
@@ -98,9 +84,13 @@ describe('pk.utils', () => {
     });
 
     it('Should destruct PK with only edges', () => {
-      const testPkSchema1: PkSchema<TestEntity, [], ['parent', 'sibling']> = {
+      const testPkSchema1: PkSchema<
+        TestEntity,
+        [],
+        ['parent', 'emergencyContacts']
+      > = {
         fields: [],
-        edges: ['parent', 'sibling'],
+        edges: ['parent', 'emergencyContacts'],
         separator: '_',
         subSeparator: '-',
       };
@@ -114,8 +104,8 @@ describe('pk.utils', () => {
       expect(destructedPk).toEqual({
         fields: {},
         edges: {
-          parent: [testEntity2.__edges__.parent?.pks[0]],
-          sibling: [testEntity2.__edges__.sibling?.pks[0]],
+          parent: testEntity2.__edges__?.parent,
+          emergencyContacts: testEntity2.__edges__?.emergencyContacts,
         },
       });
     });
@@ -124,10 +114,10 @@ describe('pk.utils', () => {
       const testPkSchema1: PkSchema<
         TestEntity,
         ['id', 'name'],
-        ['parent', 'sibling']
+        ['parent', 'emergencyContacts']
       > = {
         fields: ['id', 'name'],
-        edges: ['parent', 'sibling'],
+        edges: ['parent', 'emergencyContacts'],
         separator: '_',
         subSeparator: '-',
       };
@@ -144,37 +134,8 @@ describe('pk.utils', () => {
           name: testEntity2.name,
         },
         edges: {
-          parent: [testEntity2.__edges__.parent?.pks[0]],
-          sibling: [testEntity2.__edges__.sibling?.pks[0]],
-        },
-      });
-    });
-
-    it('Should destruct PK with fields and edges with multiple ids', () => {
-      const testPkSchema1: PkSchema<
-        TestEntity,
-        ['id', 'name'],
-        ['children']
-      > = {
-        fields: ['id', 'name'],
-        edges: ['children'],
-        separator: '_',
-        subSeparator: '-',
-      };
-      const entityPk = getPkOfEntity(testEntity1, testPkSchema1);
-
-      const destructedPk = destructPk<TestEntity, typeof testPkSchema1>(
-        entityPk,
-        testPkSchema1,
-      );
-
-      expect(destructedPk).toEqual({
-        fields: {
-          id: testEntity1.id,
-          name: testEntity1.name,
-        },
-        edges: {
-          children: testEntity1.__edges__.children?.pks,
+          parent: testEntity2.__edges__?.parent,
+          emergencyContacts: testEntity2.__edges__?.emergencyContacts,
         },
       });
     });

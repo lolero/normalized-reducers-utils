@@ -5,6 +5,7 @@ import {
   SubRequest,
   ReducerMetadata,
   RequestMetadata,
+  ReducerEdges,
 } from './reducers.types';
 
 export type RequestAction<
@@ -30,7 +31,7 @@ export type SavePartialReducerMetadataAction<
 export type SaveWholeEntitiesAction<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity<ReducerEdges>
 > = {
   type: ActionTypeT;
   wholeEntities: ReducerData<EntityT>;
@@ -44,7 +45,7 @@ export type SaveWholeEntitiesAction<
 export type SavePartialEntitiesAction<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity<ReducerEdges>
 > = {
   type: ActionTypeT;
   partialEntities: ReducerPartialData<EntityT>;
@@ -57,11 +58,15 @@ export type SavePartialEntitiesAction<
 export type SavePartialPatternToEntitiesAction<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity<ReducerEdges>
 > = {
   type: ActionTypeT;
   entityPks: string[];
-  partialEntity: Partial<EntityT>;
+  partialEntity: Partial<
+    Omit<EntityT, '__edges__'> & {
+      __edges__?: Partial<EntityT['__edges__']>;
+    }
+  >;
   partialReducerMetadata?: Partial<ReducerMetadataT>;
   requestId?: string;
   subRequests?: SubRequest[];

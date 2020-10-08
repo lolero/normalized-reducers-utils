@@ -8,7 +8,12 @@ import {
   SavePartialReducerMetadataAction,
   SaveWholeEntitiesAction,
 } from '../types/actions.types';
-import { Entity, Reducer, ReducerMetadata } from '../types/reducers.types';
+import {
+  Entity,
+  Reducer,
+  ReducerEdges,
+  ReducerMetadata,
+} from '../types/reducers.types';
 
 /**
  * Duplicates the state object with shallow copies of the 'data', 'metadata',
@@ -27,7 +32,7 @@ import { Entity, Reducer, ReducerMetadata } from '../types/reducers.types';
 export function duplicateState<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity<ReducerEdges>
 >(
   state: Reducer<ReducerMetadataT, EntityT>,
   action: // @typescript-eslint/no-explicit-any disabled because the
@@ -93,7 +98,7 @@ export function duplicateState<
 export function handleCommonProps<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity<ReducerEdges>
 >(
   newState: Reducer<ReducerMetadataT, EntityT>,
   action:
@@ -167,7 +172,7 @@ export function handleCommonProps<
  */
 export function updateCompletedRequestsCache<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity
+  EntityT extends Entity<ReducerEdges>
 >(newState: Reducer<ReducerMetadataT, EntityT>): void {
   if (
     newState.config.successRequestsCache === null &&

@@ -1,4 +1,9 @@
-import { Entity, Reducer, ReducerMetadata } from '../types/reducers.types';
+import {
+  Entity,
+  Reducer,
+  ReducerEdges,
+  ReducerMetadata,
+} from '../types/reducers.types';
 
 /**
  * Selects reducer prop.
@@ -11,7 +16,7 @@ import { Entity, Reducer, ReducerMetadata } from '../types/reducers.types';
  */
 export function selectReducerProp<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity,
+  EntityT extends Entity<ReducerEdges>,
   ReducerPropKey extends keyof Reducer<ReducerMetadataT, EntityT>
 >(
   reducer: Reducer<ReducerMetadataT, EntityT>,
