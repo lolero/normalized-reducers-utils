@@ -77,13 +77,13 @@ export const testPkSchema: PkSchema<TestEntity, ['id'], []> = {
 
 export const testReducerEdges: TestReducerEdges = {
   parent: {
-    entityReducerPath: ['testReducerGroup1', 'testReducer1'],
+    nodeReducerPath: ['testReducerGroup1', 'testReducer1'],
   },
   children: {
-    entityReducerPath: ['testReducerGroup1', 'testReducer1'],
+    nodeReducerPath: ['testReducerGroup1', 'testReducer1'],
   },
   emergencyContacts: {
-    entityReducerPath: ['testReducerGroup1', 'testReducer1'],
+    nodeReducerPath: ['testReducerGroup1', 'testReducer1'],
   },
 };
 

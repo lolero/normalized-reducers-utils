@@ -58,15 +58,15 @@ export type Request = {
   subRequests?: SubRequest[];
 };
 
-export enum RelationSide {
+export enum EdgeSide {
   slave,
   master,
 }
 
 export type ReducerEdge = {
-  entityReducerPath: string[];
-  relationReducerPath?: string[];
-  relationSide?: RelationSide;
+  nodeReducerPath: string[];
+  edgeReducerPath?: string[];
+  edgeSide?: EdgeSide;
 };
 
 export type ReducerEdges = {

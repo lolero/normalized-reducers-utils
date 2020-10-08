@@ -728,9 +728,9 @@ type ReducerData<EntityT extends Entity<ReducerEdges>> = {
 
 ```typescript
 type ReducerEdge = {
-  entityReducerPath: string[];
-  relationReducerPath?: string[];
-  relationSide?: RelationSide;
+  nodeReducerPath: string[];
+  edgeReducerPath?: string[];
+  edgeSide?: EdgeSide;
 };
 ```
 
@@ -776,10 +776,10 @@ type ReducerPartialData<EntityT extends Entity<ReducerEdges>> = {
 };
 ```
 
-#### `RelationSide`
+#### `EdgeSide`
 
 ```typescript
-enum RelationSide {
+enum EdgeSide {
   slave,
   master,
 }
