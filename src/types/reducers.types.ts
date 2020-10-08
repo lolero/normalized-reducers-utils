@@ -117,9 +117,10 @@ export type Reducer<
 
 export type ReducerGroup<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity<ReducerEdges>,
+  ReducerPathT extends string[]
 > = {
-  [reducerOrGroup: string]:
+  [reducerOrGroup in ReducerPathT[number]]?:
     | Reducer<ReducerMetadataT, EntityT>
-    | ReducerGroup<ReducerMetadataT, EntityT>;
+    | ReducerGroup<ReducerMetadataT, EntityT, ReducerPathT>;
 };

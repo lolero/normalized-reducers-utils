@@ -475,9 +475,10 @@ function handleSaveWholeEntities<
 function createReducerSelectors<
   ReducerMetadataT extends ReducerMetadata,
   EntityT extends Entity<ReducerEdges>,
-  ReduxState extends ReducerGroup<ReducerMetadataT, EntityT>
+  ReducerPathT extends string[],
+  ReduxState extends ReducerGroup<ReducerMetadataT, EntityT, ReducerPathT>
 >(
-  pathToReducer: string[],
+  reducerPath: ReducerPathT,
 ): ReducerSelectors<ReducerMetadataT, EntityT, ReduxState>;
 ```
 
@@ -746,11 +747,12 @@ type ReducerEdges = {
 ```typescript
 type ReducerGroup<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity<ReducerEdges>,
+  ReducerPathT extends string[]
 > = {
-  [reducerOrGroup: string]:
+  [reducerOrGroup in ReducerPathT[number]]?:
     | Reducer<ReducerMetadataT, EntityT>
-    | ReducerGroup<ReducerMetadataT, EntityT>;
+    | ReducerGroup<ReducerMetadataT, EntityT, ReducerPathT>;
 };
 ```
 
@@ -831,7 +833,8 @@ type SubRequest = {
 type ReducerSelectors<
   ReducerMetadataT extends ReducerMetadata,
   EntityT extends Entity<ReducerEdges>,
-  ReduxState extends ReducerGroup<ReducerMetadataT, EntityT>
+  ReducerPathT extends string[],
+  ReduxState extends ReducerGroup<ReducerMetadataT, EntityT, ReducerPathT>
 > = {
   selectRequests: OutputSelector<
     ReduxState,

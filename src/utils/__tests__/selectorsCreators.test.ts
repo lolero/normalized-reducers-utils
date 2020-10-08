@@ -1,8 +1,14 @@
 import { createInitialState } from '../initialState.utils';
 import {
   TestEntity,
+  TestEntity2,
+  TestEntity3,
+  TestEntity4,
   testInitialReducerMetadata,
   TestReducer,
+  TestReducer2,
+  TestReducer3,
+  TestReducer4,
   TestState,
 } from '../tests.utils';
 import * as selectors from '../selectors';
@@ -22,17 +28,17 @@ describe('selectorsCreators', () => {
           testInitialReducerMetadata,
           {},
         ),
-        testReducer2: createInitialState<TestReducer['metadata'], TestEntity>(
-          testInitialReducerMetadata,
+        testReducer2: createInitialState<TestReducer2['metadata'], TestEntity2>(
+          {},
           {},
         ),
       },
       testReducerGroup2: {
-        testReducer3: createInitialState<TestReducer['metadata'], TestEntity>(
+        testReducer3: createInitialState<TestReducer3['metadata'], TestEntity3>(
           testInitialReducerMetadata,
           {},
         ),
-        testReducer4: createInitialState<TestReducer['metadata'], TestEntity>(
+        testReducer4: createInitialState<TestReducer4['metadata'], TestEntity4>(
           testInitialReducerMetadata,
           {},
         ),
@@ -51,6 +57,7 @@ describe('selectorsCreators', () => {
       const selectTestReducer1Metadata = createReducerPropSelector<
         TestReducer['metadata'],
         TestEntity,
+        ['testReducerGroup1', 'testReducer1'],
         TestState,
         'metadata'
       >(['testReducerGroup1', 'testReducer1'], 'metadata');
@@ -97,6 +104,7 @@ describe('selectorsCreators', () => {
       const reducerPropSelectors = createReducerSelectors<
         TestReducer['metadata'],
         TestEntity,
+        ['testReducerGroup1', 'testReducer1'],
         TestState
       >(['testReducerGroup1', 'testReducer1']);
 

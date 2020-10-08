@@ -10,7 +10,8 @@ import {
 export type ReducerSelectors<
   ReducerMetadataT extends ReducerMetadata,
   EntityT extends Entity<ReducerEdges>,
-  ReduxState extends ReducerGroup<ReducerMetadataT, EntityT>
+  ReducerPathT extends string[],
+  ReduxState extends ReducerGroup<ReducerMetadataT, EntityT, ReducerPathT>
 > = {
   selectRequests: OutputSelector<
     ReduxState,

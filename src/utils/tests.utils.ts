@@ -36,31 +36,35 @@ export interface TestEntity extends Entity<TestReducerEdges> {
     emergencyContacts: [string, string];
   };
 }
+
+export interface TestEntity2 extends Entity<{}> {
+  id2: string;
+}
+
+export interface TestEntity3 extends Entity<{}> {
+  id3: string;
+}
+
+export interface TestEntity4 extends Entity<{}> {
+  id4: string;
+}
+
 export type TestReducer = Reducer<TestReducerMetadata, TestEntity>;
 
-export enum ReducerGroups {
-  testReducerGroup1 = 'testReducerGroup1',
-  testReducerGroup2 = 'testReducerGroup2',
-}
+export type TestReducer2 = Reducer<{}, TestEntity2>;
 
-export enum Reducers {
-  // testReducerGroup1
-  testReducer1 = 'testReducer1',
-  testReducer2 = 'testReducer2',
+export type TestReducer3 = Reducer<{}, TestEntity3>;
 
-  // testReducerGroup2
-  testReducer3 = 'testReducer3',
-  testReducer4 = 'testReducer4',
-}
+export type TestReducer4 = Reducer<{}, TestEntity4>;
 
 export type TestState = {
-  [ReducerGroups.testReducerGroup1]: {
-    [Reducers.testReducer1]: TestReducer;
-    [Reducers.testReducer2]: TestReducer;
+  testReducerGroup1: {
+    testReducer1: TestReducer;
+    testReducer2: TestReducer2;
   };
-  [ReducerGroups.testReducerGroup2]: {
-    [Reducers.testReducer3]: TestReducer;
-    [Reducers.testReducer4]: TestReducer;
+  testReducerGroup2: {
+    testReducer3: TestReducer3;
+    testReducer4: TestReducer4;
   };
 };
 
@@ -73,13 +77,13 @@ export const testPkSchema: PkSchema<TestEntity, ['id'], []> = {
 
 export const testReducerEdges: TestReducerEdges = {
   parent: {
-    entityReducerPath: [ReducerGroups.testReducerGroup1, Reducers.testReducer1],
+    entityReducerPath: ['testReducerGroup1', 'testReducer1'],
   },
   children: {
-    entityReducerPath: [ReducerGroups.testReducerGroup1, Reducers.testReducer1],
+    entityReducerPath: ['testReducerGroup1', 'testReducer1'],
   },
   emergencyContacts: {
-    entityReducerPath: [ReducerGroups.testReducerGroup1, Reducers.testReducer1],
+    entityReducerPath: ['testReducerGroup1', 'testReducer1'],
   },
 };
 
