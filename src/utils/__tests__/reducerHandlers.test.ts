@@ -318,6 +318,71 @@ describe('reducerHandlers', () => {
         },
       });
     });
+
+    it('Should log warning to the console when attempting to save partial entity that does not exist', () => {
+      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
+
+      duplicatedState.data = {
+        [getPkOfTestEntity(testEntity1)]: testEntity1,
+      };
+      const testSavePartialEntitiesAction: SavePartialEntitiesAction<
+        'testSavePartialEntitiesAction',
+        never,
+        TestEntity
+      > = {
+        type: 'testSavePartialEntitiesAction',
+        partialEntities: {
+          [getPkOfTestEntity(testEntity1)]: {
+            name: 'newTestName1',
+          },
+          nonExistingPk: {
+            name: 'newNonExistingName',
+          },
+        },
+      };
+
+      const newState = handleSavePartialEntities(
+        state,
+        testSavePartialEntitiesAction,
+      );
+
+      expect(duplicateStateSpy).toHaveBeenCalledWith(
+        state,
+        testSavePartialEntitiesAction,
+      );
+      expect(handleCommonPropsSpy).toHaveBeenCalledWith(
+        duplicatedState,
+        testSavePartialEntitiesAction,
+      );
+      expect(updateCompletedRequestsCacheSpy).toHaveBeenCalledWith(
+        duplicatedState,
+      );
+      expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        `Failed to save partial entity with PK 'nonExistingPk'`,
+        testSavePartialEntitiesAction,
+      );
+      expect(newState).toEqual({
+        ...duplicatedState,
+        data: {
+          ...duplicatedState.data,
+          [getPkOfTestEntity(testEntity1)]: {
+            ...testEntity1,
+            ...testSavePartialEntitiesAction.partialEntities[
+              getPkOfTestEntity(testEntity1)
+            ],
+            __edges__: {
+              ...testEntity1.__edges__,
+              ...testSavePartialEntitiesAction.partialEntities[
+                getPkOfTestEntity(testEntity1)
+              ].__edges__,
+            },
+          },
+        },
+      });
+
+      consoleWarnSpy.mockRestore();
+    });
   });
 
   describe('handleSavePartialPatternToEntities', () => {
@@ -396,6 +461,70 @@ describe('reducerHandlers', () => {
           },
         },
       });
+    });
+
+    it('Should log warning to the console when attempting to save partial pattern to entity that does not exist', () => {
+      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
+
+      duplicatedState.data = {
+        [getPkOfTestEntity(testEntity1)]: testEntity1,
+      };
+      const testSavePartialPatternToEntitiesAction: SavePartialPatternToEntitiesAction<
+        'testSavePartialPatternToEntitiesAction',
+        never,
+        TestEntity
+      > = {
+        type: 'testSavePartialPatternToEntitiesAction',
+        entityPks: [getPkOfTestEntity(testEntity1), 'nonExistingPk'],
+        partialEntity: {
+          isTrue: true,
+          number: 10,
+          __edges__: {
+            emergencyContacts: [
+              'testEmergencyContact1',
+              'testEmergencyContact2',
+            ],
+          },
+        },
+      };
+
+      const newState = handleSavePartialPatternToEntities(
+        state,
+        testSavePartialPatternToEntitiesAction,
+      );
+
+      expect(duplicateStateSpy).toHaveBeenCalledWith(
+        state,
+        testSavePartialPatternToEntitiesAction,
+      );
+      expect(handleCommonPropsSpy).toHaveBeenCalledWith(
+        duplicatedState,
+        testSavePartialPatternToEntitiesAction,
+      );
+      expect(updateCompletedRequestsCacheSpy).toHaveBeenCalledWith(
+        duplicatedState,
+      );
+      expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        `Failed to save partial pattern to entity with PK 'nonExistingPk'`,
+        testSavePartialPatternToEntitiesAction,
+      );
+      expect(newState).toEqual({
+        ...duplicatedState,
+        data: {
+          ...duplicatedState.data,
+          [getPkOfTestEntity(testEntity1)]: {
+            ...testEntity1,
+            ...testSavePartialPatternToEntitiesAction.partialEntity,
+            __edges__: {
+              ...testEntity1.__edges__,
+              ...testSavePartialPatternToEntitiesAction.partialEntity.__edges__,
+            },
+          },
+        },
+      });
+
+      consoleWarnSpy.mockRestore();
     });
   });
 

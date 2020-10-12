@@ -164,6 +164,18 @@ export function handleSavePartialEntities<
 ): Reducer<ReducerMetadataT, EntityT> {
   const newState = duplicateState(state, action);
   Object.keys(action.partialEntities).forEach((entityPk) => {
+    if (!newState.data[entityPk]) {
+      // no-console is disabled because a console warning is deliberately
+      // intended when saving a partial entity to a PK that does not exist is
+      // attempted
+      // eslint-disable-next-line no-console
+      console.warn(
+        `Failed to save partial entity with PK '${entityPk}'`,
+        action,
+      );
+      return;
+    }
+
     newState.data[entityPk] = {
       ...newState.data[entityPk],
       ...action.partialEntities[entityPk],
@@ -208,6 +220,18 @@ export function handleSavePartialPatternToEntities<
 ): Reducer<ReducerMetadataT, EntityT> {
   const newState = duplicateState(state, action);
   action.entityPks.forEach((entityPk) => {
+    if (!newState.data[entityPk]) {
+      // no-console is disabled because a console warning is deliberately
+      // intended when saving a partial entity to a PK that does not exist is
+      // attempted
+      // eslint-disable-next-line no-console
+      console.warn(
+        `Failed to save partial pattern to entity with PK '${entityPk}'`,
+        action,
+      );
+      return;
+    }
+
     newState.data[entityPk] = {
       ...newState.data[entityPk],
       ...action.partialEntity,
