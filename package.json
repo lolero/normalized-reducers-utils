@@ -18,7 +18,7 @@
   "scripts": {
     "clean": "rm -rf node_modules/ package-lock.json yarn.lock build/ coverage/ .eslintignore .prettierignore",
     "reset": "yarn clean && ln -s .gitignore .eslintignore && ln -s .gitignore .prettierignore && yarn install",
-    "build": "tsc --declaration --noEmit false",
+    "build": "tsc --declaration --noEmit false --module commonjs",
     "test:test": "react-scripts test",
     "test:coverage": "yarn test:test -- --coverage --watchAll=false",
     "lint:check": "eslint       './**/*.{js,jsx,ts,tsx}' && prettier --list-different './**/*.{js,jsx,ts,tsx,css,scss,less,json,md,yml,yaml}'",
