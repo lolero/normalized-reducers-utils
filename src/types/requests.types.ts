@@ -4,7 +4,13 @@ import {
   ReducerPartialData,
   RequestMetadata,
   ReducerEdges,
+  ReducerMetadata,
 } from './reducers.types';
+
+export interface UpdatePartialReducerMetadataRequestMetadata<ReducerMetadataT extends ReducerMetadata>
+  extends RequestMetadata {
+  partialReducerMetadata: Partial<ReducerMetadataT>;
+}
 
 export interface CreateOneRequestMetadata<EntityT extends Entity<ReducerEdges>>
   extends RequestMetadata {
