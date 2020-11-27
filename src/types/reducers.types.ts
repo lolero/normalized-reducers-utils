@@ -27,7 +27,7 @@ export type DestructedPk<
   >
 > = {
   fields: { [field in PkSchemaT['fields'][number]]: string };
-  edges: { [edge in PkSchemaT['edges'][number]]: string[] };
+  edges: { [edge in PkSchemaT['edges'][number]]: EntityT['__edges__'][edge] };
 };
 
 export type SubRequest = {
