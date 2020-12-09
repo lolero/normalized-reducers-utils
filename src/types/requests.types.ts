@@ -13,54 +13,56 @@ export interface UpdatePartialReducerMetadataRequestMetadata<
   partialReducerMetadata: Partial<ReducerMetadataT>;
 }
 
-export interface CreateOneRequestMetadata<EntityT extends Entity<ReducerEdges>>
-  extends RequestMetadata {
+export interface CreateOneEntityRequestMetadata<
+  EntityT extends Entity<ReducerEdges>
+> extends RequestMetadata {
   entity: EntityT;
 }
 
-export interface CreateManyRequestMetadata<EntityT extends Entity<ReducerEdges>>
-  extends RequestMetadata {
+export interface CreateManyEntitiesRequestMetadata<
+  EntityT extends Entity<ReducerEdges>
+> extends RequestMetadata {
   wholeEntities: ReducerData<EntityT>;
 }
 
-export interface GetOneRequestMetadata extends RequestMetadata {
+export interface GetOneEntityRequestMetadata extends RequestMetadata {
   entityPk: string;
 }
 
-export interface GetManyRequestMetadata extends RequestMetadata {
+export interface GetManyEntitiesRequestMetadata extends RequestMetadata {
   entityPks?: string[];
 }
 
-export interface UpdateOneWholeRequestMetadata<
+export interface UpdateOneWholeEntityRequestMetadata<
   EntityT extends Entity<ReducerEdges>
 > extends RequestMetadata {
   entityPk: string;
   entity: EntityT;
 }
 
-export interface UpdateManyWholeRequestMetadata<
+export interface UpdateManyWholeEntitiesRequestMetadata<
   EntityT extends Entity<ReducerEdges>
 > extends RequestMetadata {
   wholeEntities: ReducerData<EntityT>;
 }
 
-export interface UpdateOnePartialRequestMetadata<
+export interface UpdateOnePartialEntityRequestMetadata<
   EntityT extends Entity<ReducerEdges>
 > extends RequestMetadata {
   entityPk: string;
   partialEntity: Partial<EntityT>;
 }
 
-export interface UpdateManyPartialRequestMetadata<
+export interface UpdateManyPartialEntitiesRequestMetadata<
   EntityT extends Entity<ReducerEdges>
 > extends RequestMetadata {
   partialEntities: ReducerPartialData<EntityT>;
 }
 
-export interface DeleteOneRequestMetadata extends RequestMetadata {
+export interface DeleteOneEntityRequestMetadata extends RequestMetadata {
   entityPk: string;
 }
 
-export interface DeleteManyRequestMetadata extends RequestMetadata {
+export interface DeleteManyEntitiesRequestMetadata extends RequestMetadata {
   entityPks: string[];
 }
