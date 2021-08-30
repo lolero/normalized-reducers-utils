@@ -266,16 +266,15 @@ describe('reducerHandlers.utils', () => {
         statusCode: 200,
       };
 
-      state.requests[
-        testSavePartialReducerMetadataAction.requestId as string
-      ] = {
-        id: testSavePartialReducerMetadataAction.requestId as string,
-        createdAt: {
-          unixMilliseconds: createdDate.valueOf(),
-        },
-        isPending: true,
-        metadata: {},
-      };
+      state.requests[testSavePartialReducerMetadataAction.requestId as string] =
+        {
+          id: testSavePartialReducerMetadataAction.requestId as string,
+          createdAt: {
+            unixMilliseconds: createdDate.valueOf(),
+          },
+          isPending: true,
+          metadata: {},
+        };
 
       const initialRequest =
         state.requests[

@@ -3,7 +3,6 @@ import {
   PkSchema,
   Reducer,
   ReducerConfig,
-  ReducerEdge,
   ReducerEdges,
   ReducerMetadata,
   RequestMetadata,
@@ -19,13 +18,7 @@ export interface TestReducerMetadata extends ReducerMetadata {
   entityCount: number;
 }
 
-export interface TestReducerEdges extends ReducerEdges {
-  parent: ReducerEdge;
-  children: ReducerEdge;
-  emergencyContacts: ReducerEdge;
-}
-
-export interface TestEntity extends Entity<TestReducerEdges> {
+export interface TestEntity extends Entity {
   id: string;
   name: string;
   number: number;
@@ -37,15 +30,35 @@ export interface TestEntity extends Entity<TestReducerEdges> {
   };
 }
 
-export interface TestEntity2 extends Entity<{}> {
+const testReducerEdgesWithoutTypes = {
+  parent: {
+    nodeReducerPath: ['testReducerGroup1', 'testReducer1'],
+    edgeReducerPath: ['testReducerGroup1', 'testReducer1'],
+  },
+  children: {
+    nodeReducerPath: ['testReducerGroup1', 'testReducer1'],
+    edgeReducerPath: null,
+  },
+  emergencyContacts: {
+    nodeReducerPath: ['testReducerGroup1', 'testReducer1'],
+    edgeReducerPath: null,
+  },
+} as const;
+
+export const testReducerEdges: ReducerEdges<
+  TestEntity,
+  typeof testReducerEdgesWithoutTypes
+> = testReducerEdgesWithoutTypes;
+
+export interface TestEntity2 extends Entity {
   id2: string;
 }
 
-export interface TestEntity3 extends Entity<{}> {
+export interface TestEntity3 extends Entity {
   id3: string;
 }
 
-export interface TestEntity4 extends Entity<{}> {
+export interface TestEntity4 extends Entity {
   id4: string;
 }
 
@@ -66,25 +79,6 @@ export type TestState = {
     testReducer3: TestReducer3;
     testReducer4: TestReducer4;
   };
-};
-
-export const testPkSchema: PkSchema<TestEntity, ['id'], []> = {
-  fields: ['id'],
-  edges: [],
-  separator: '_',
-  subSeparator: '-',
-};
-
-export const testReducerEdges: TestReducerEdges = {
-  parent: {
-    nodeReducerPath: ['testReducerGroup1', 'testReducer1'],
-  },
-  children: {
-    nodeReducerPath: ['testReducerGroup1', 'testReducer1'],
-  },
-  emergencyContacts: {
-    nodeReducerPath: ['testReducerGroup1', 'testReducer1'],
-  },
 };
 
 export const testEntity1: TestEntity = {
@@ -135,6 +129,13 @@ export const testReducerConfig: ReducerConfig = {
     format: 'utc',
     timezone: 'utc',
   },
+};
+
+export const testPkSchema: PkSchema<TestEntity, ['id'], []> = {
+  fields: ['id'],
+  edges: [],
+  separator: '_',
+  subSeparator: '-',
 };
 
 export const {

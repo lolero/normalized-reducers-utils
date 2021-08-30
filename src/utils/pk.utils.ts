@@ -4,12 +4,11 @@ import {
   PkSchema,
   PkSchemaEdges,
   PkSchemaFields,
-  ReducerEdges,
   ReducerMetadata,
 } from '../types/reducers.types';
 import { ReducerPkUtils } from '../types/pk.types';
 
-export const emptyPkSchema: PkSchema<Entity<ReducerEdges>, [], []> = {
+export const emptyPkSchema: PkSchema<Entity, [], []> = {
   fields: [],
   edges: [],
   separator: '',
@@ -25,12 +24,12 @@ export const emptyPkSchema: PkSchema<Entity<ReducerEdges>, [], []> = {
  * @returns {string} PK of entity
  */
 export function getPkOfEntity<
-  EntityT extends Entity<ReducerEdges>,
+  EntityT extends Entity,
   PkSchemaT extends PkSchema<
     EntityT,
     PkSchemaFields<EntityT>,
     PkSchemaEdges<EntityT>
-  >
+  >,
 >(entity: EntityT, pkSchema: PkSchemaT): string {
   const fields = pkSchema.fields.map(
     (field) => entity[field] as string | number,
@@ -51,12 +50,12 @@ export function getPkOfEntity<
  * @returns {DestructedPk} Fields and edges from entity's PK
  */
 export function destructPk<
-  EntityT extends Entity<ReducerEdges>,
+  EntityT extends Entity,
   PkSchemaT extends PkSchema<
     EntityT,
     PkSchemaFields<EntityT>,
     PkSchemaEdges<EntityT>
-  >
+  >,
 >(pk: string, pkSchema: PkSchemaT): DestructedPk<EntityT, PkSchemaT> {
   const fieldsAndEdgesFromPk = {
     fields: pk
@@ -100,12 +99,12 @@ export function destructPk<
  */
 export function createReducerPkUtils<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>,
+  EntityT extends Entity,
   PkSchemaT extends PkSchema<
     EntityT,
     PkSchemaFields<EntityT>,
     PkSchemaEdges<EntityT>
-  >
+  >,
 >(pkSchema: PkSchemaT): ReducerPkUtils<ReducerMetadataT, EntityT, PkSchemaT> {
   const reducerPkUtils: ReducerPkUtils<ReducerMetadataT, EntityT, PkSchemaT> = {
     pkSchema,

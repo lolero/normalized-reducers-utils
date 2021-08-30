@@ -3,7 +3,6 @@ import { createSelector, OutputSelector } from 'reselect';
 import {
   Entity,
   Reducer,
-  ReducerEdges,
   ReducerGroup,
   ReducerMetadata,
 } from '../types/reducers.types';
@@ -22,10 +21,10 @@ import { selectReducerProp } from './selectors';
  */
 export function createReducerPropSelector<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>,
+  EntityT extends Entity,
   ReducerPathT extends string[],
   ReduxState extends ReducerGroup<ReducerMetadataT, EntityT, ReducerPathT>,
-  ReducerPropKey extends keyof Reducer<ReducerMetadataT, EntityT>
+  ReducerPropKey extends keyof Reducer<ReducerMetadataT, EntityT>,
 >(
   reducerPath: ReducerPathT,
   reducerPropKey: ReducerPropKey,
@@ -38,11 +37,8 @@ export function createReducerPropSelector<
 > {
   const selector = createSelector(
     (state: ReduxState) => {
-      let reducerGroup: ReducerGroup<
-        ReducerMetadataT,
-        EntityT,
-        ReducerPathT
-      > = state;
+      let reducerGroup: ReducerGroup<ReducerMetadataT, EntityT, ReducerPathT> =
+        state;
       reducerPath
         .slice(0, reducerPath.length - 1)
         .forEach((reducerGroupName) => {
@@ -72,9 +68,9 @@ export function createReducerPropSelector<
  */
 export function createReducerSelectors<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>,
+  EntityT extends Entity,
   ReducerPathT extends string[],
-  ReduxState extends ReducerGroup<ReducerMetadataT, EntityT, ReducerPathT>
+  ReduxState extends ReducerGroup<ReducerMetadataT, EntityT, ReducerPathT>,
 >(
   reducerPath: ReducerPathT,
 ): ReducerSelectors<ReducerMetadataT, EntityT, ReducerPathT, ReduxState> {

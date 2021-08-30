@@ -5,12 +5,11 @@ import {
   SubRequest,
   ReducerMetadata,
   RequestMetadata,
-  ReducerEdges,
 } from './reducers.types';
 
 export type RequestAction<
   ActionTypeT extends string,
-  RequestMetadataT extends RequestMetadata
+  RequestMetadataT extends RequestMetadata,
 > = {
   type: ActionTypeT;
   requestMetadata: RequestMetadataT;
@@ -19,7 +18,7 @@ export type RequestAction<
 
 export type SavePartialReducerMetadataAction<
   ActionTypeT extends string,
-  ReducerMetadataT extends ReducerMetadata
+  ReducerMetadataT extends ReducerMetadata,
 > = {
   type: ActionTypeT;
   partialReducerMetadata: Partial<ReducerMetadataT>;
@@ -31,7 +30,7 @@ export type SavePartialReducerMetadataAction<
 export type SaveWholeEntitiesAction<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 > = {
   type: ActionTypeT;
   wholeEntities: ReducerData<EntityT>;
@@ -45,7 +44,7 @@ export type SaveWholeEntitiesAction<
 export type SavePartialEntitiesAction<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 > = {
   type: ActionTypeT;
   partialEntities: ReducerPartialData<EntityT>;
@@ -58,7 +57,7 @@ export type SavePartialEntitiesAction<
 export type SavePartialPatternToEntitiesAction<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 > = {
   type: ActionTypeT;
   entityPks: string[];
@@ -75,7 +74,7 @@ export type SavePartialPatternToEntitiesAction<
 
 export type DeleteEntitiesAction<
   ActionTypeT extends string,
-  ReducerMetadataT extends ReducerMetadata
+  ReducerMetadataT extends ReducerMetadata,
 > = {
   type: ActionTypeT;
   entityPks: string[];

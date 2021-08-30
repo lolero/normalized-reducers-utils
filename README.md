@@ -267,7 +267,7 @@ function* fetchUser1AndThenUser2(): Generator<
 ```typescript
 function createInitialState<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 >(
   initialReducerMetadata: ReducerMetadataT,
   initialReducerData: ReducerData<EntityT>,
@@ -288,12 +288,12 @@ types explicitly in function calls.
 
 ```typescript
 function normalizeEntityArrayByPk<
-  EntityT extends Entity<ReducerEdges>,
+  EntityT extends Entity,
   PkSchemaT extends PkSchema<
     EntityT,
     PkSchemaFields<EntityT>,
     PkSchemaEdges<EntityT>
-  >
+  >,
 >(pkSchema: PkSchemaT, entityArray: EntityT[]): ReducerData<EntityT>;
 ```
 
@@ -306,12 +306,12 @@ Converts an array of entities into an object, indexed by the entities' PKs.
 ```typescript
 function createReducerPkUtils<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>,
+  EntityT extends Entity,
   PkSchemaT extends PkSchema<
     EntityT,
     PkSchemaFields<EntityT>,
     PkSchemaEdges<EntityT>
-  >
+  >,
 >(pkSchema: PkSchemaT): ReducerPkUtils<ReducerMetadataT, EntityT, PkSchemaT>;
 ```
 
@@ -335,7 +335,7 @@ A function that takes an entity's PK and returns a
 #### `emptyPkSchema`
 
 ```typescript
-const emptyPkSchema: PkSchema<Entity<ReducerEdges>, [], []> = {
+const emptyPkSchema: PkSchema<Entity, [], []> = {
   fields: [],
   edges: [],
   separator: '',
@@ -377,7 +377,7 @@ function UsersReducer(
 function handleDeleteEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 >(
   state: Reducer<ReducerMetadataT, EntityT>,
   action: DeleteEntitiesAction<ActionTypeT, ReducerMetadataT>,
@@ -390,7 +390,7 @@ function handleDeleteEntities<
 function handleFail<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 >(
   state: Reducer<ReducerMetadataT, EntityT>,
   action: FailAction<ActionTypeT>,
@@ -403,8 +403,8 @@ function handleFail<
 function handleRequest<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>,
-  RequestMetadataT extends RequestMetadata
+  EntityT extends Entity,
+  RequestMetadataT extends RequestMetadata,
 >(
   state: Reducer<ReducerMetadataT, EntityT>,
   action: RequestAction<ActionTypeT, RequestMetadataT>,
@@ -417,7 +417,7 @@ function handleRequest<
 function handleSavePartialEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 >(
   state: Reducer<ReducerMetadataT, EntityT>,
   action: SavePartialEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>,
@@ -430,7 +430,7 @@ function handleSavePartialEntities<
 function handleSavePartialPatternToEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 >(
   state: Reducer<ReducerMetadataT, EntityT>,
   action: SavePartialPatternToEntitiesAction<
@@ -447,7 +447,7 @@ function handleSavePartialPatternToEntities<
 function handleSavePartialReducerMetadata<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 >(
   state: Reducer<ReducerMetadataT, EntityT>,
   action: SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>,
@@ -460,7 +460,7 @@ function handleSavePartialReducerMetadata<
 function handleSaveWholeEntities<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 >(
   state: Reducer<ReducerMetadataT, EntityT>,
   action: SaveWholeEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>,
@@ -474,9 +474,9 @@ function handleSaveWholeEntities<
 ```typescript
 function createReducerSelectors<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>,
+  EntityT extends Entity,
   ReducerPathT extends string[],
-  ReduxState extends ReducerGroup<ReducerMetadataT, EntityT, ReducerPathT>
+  ReduxState extends ReducerGroup<ReducerMetadataT, EntityT, ReducerPathT>,
 >(
   reducerPath: ReducerPathT,
 ): ReducerSelectors<ReducerMetadataT, EntityT, ReduxState>;
@@ -497,7 +497,7 @@ Creates an object that containes
 ```typescript
 type RequestAction<
   ActionTypeT extends string,
-  RequestMetadataT extends RequestMetadata
+  RequestMetadataT extends RequestMetadata,
 > = {
   type: ActionTypeT;
   requestMetadata: RequestMetadataT;
@@ -512,7 +512,7 @@ type RequestAction<
 ```typescript
 type DeleteEntitiesAction<
   ActionTypeT extends string,
-  ReducerMetadataT extends ReducerMetadata
+  ReducerMetadataT extends ReducerMetadata,
 > = {
   type: ActionTypeT;
   entityPks: string[];
@@ -529,7 +529,7 @@ type DeleteEntitiesAction<
 type SavePartialEntitiesAction<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 > = {
   type: ActionTypeT;
   partialEntities: ReducerPartialData<EntityT>;
@@ -546,7 +546,7 @@ type SavePartialEntitiesAction<
 type SavePartialPatternToEntitiesAction<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 > = {
   type: ActionTypeT;
   entityPks: string[];
@@ -567,7 +567,7 @@ type SavePartialPatternToEntitiesAction<
 ```typescript
 type SavePartialReducerMetadataAction<
   ActionTypeT extends string,
-  ReducerMetadataT extends ReducerMetadata
+  ReducerMetadataT extends ReducerMetadata,
 > = {
   type: ActionTypeT;
   partialReducerMetadata: Partial<ReducerMetadataT>;
@@ -583,7 +583,7 @@ type SavePartialReducerMetadataAction<
 type SaveWholeEntitiesAction<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 > = {
   type: ActionTypeT;
   wholeEntities: ReducerData<EntityT>;
@@ -614,12 +614,12 @@ type FailAction<ActionTypeT extends string> = {
 
 ```typescript
 type DestructedPk<
-  EntityT extends Entity<ReducerEdges>,
+  EntityT extends Entity,
   PkSchemaT extends PkSchema<
     EntityT,
     PkSchemaFields<EntityT>,
     PkSchemaEdges<EntityT>
-  >
+  >,
 > = {
   fields: { [field in PkSchemaT['fields'][number]]: string };
   edges: { [edge in PkSchemaT['edges'][number]]: string[] };
@@ -630,9 +630,9 @@ type DestructedPk<
 
 ```typescript
 type PkSchema<
-  EntityT extends Entity<ReducerEdges>,
+  EntityT extends Entity,
   FieldsT extends PkSchemaFields<EntityT>,
-  EdgesT extends PkSchemaEdges<EntityT>
+  EdgesT extends PkSchemaEdges<EntityT>,
 > = {
   fields: FieldsT;
   edges: EdgesT;
@@ -644,15 +644,13 @@ type PkSchema<
 #### `PkSchemaEdges`
 
 ```typescript
-type PkSchemaEdges<
-  EntityT extends Entity<ReducerEdges>
-> = (keyof EntityT['__edges__'])[];
+type PkSchemaEdges<EntityT extends Entity> = (keyof EntityT['__edges__'])[];
 ```
 
 #### `PkSchemaFields`
 
 ```typescript
-type PkSchemaFields<EntityT extends Entity<ReducerEdges>> = Exclude<
+type PkSchemaFields<EntityT extends Entity> = Exclude<
   keyof EntityT,
   '__edges__'
 >[];
@@ -663,12 +661,12 @@ type PkSchemaFields<EntityT extends Entity<ReducerEdges>> = Exclude<
 ```typescript
 type ReducerPkUtils<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>,
+  EntityT extends Entity,
   PkSchemaT extends PkSchema<
     EntityT,
     PkSchemaFields<EntityT>,
     PkSchemaEdges<EntityT>
-  >
+  >,
 > = {
   pkSchema: PkSchemaT;
   getPkOfEntity: (entity: EntityT) => string;
@@ -694,7 +692,7 @@ type Entity<ReducerEdgesT extends ReducerEdges> = {
 ```typescript
 type Reducer<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 > = {
   requests: { [requestId: string]: Request };
   metadata: ReducerMetadataT;
@@ -719,7 +717,7 @@ type ReducerConfig = {
 #### `ReducerData`
 
 ```typescript
-type ReducerData<EntityT extends Entity<ReducerEdges>> = {
+type ReducerData<EntityT extends Entity> = {
   [entityPk: string]: EntityT;
 };
 ```
@@ -747,8 +745,8 @@ type ReducerEdges = {
 ```typescript
 type ReducerGroup<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>,
-  ReducerPathT extends string[]
+  EntityT extends Entity,
+  ReducerPathT extends string[],
 > = {
   [reducerOrGroup in ReducerPathT[number]]?:
     | Reducer<ReducerMetadataT, EntityT>
@@ -767,7 +765,7 @@ type ReducerMetadata = {
 #### `ReducerPartialData`
 
 ```typescript
-type ReducerPartialData<EntityT extends Entity<ReducerEdges>> = {
+type ReducerPartialData<EntityT extends Entity> = {
   [entityPk: string]: Partial<
     Omit<EntityT, '__edges__'> & {
       __edges__?: Partial<EntityT['__edges__']>;
@@ -832,9 +830,9 @@ type SubRequest = {
 ```typescript
 type ReducerSelectors<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>,
+  EntityT extends Entity,
   ReducerPathT extends string[],
-  ReduxState extends ReducerGroup<ReducerMetadataT, EntityT, ReducerPathT>
+  ReduxState extends ReducerGroup<ReducerMetadataT, EntityT, ReducerPathT>,
 > = {
   selectRequests: OutputSelector<
     ReduxState,

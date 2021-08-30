@@ -2,16 +2,15 @@ import { OutputSelector } from 'reselect';
 import {
   Entity,
   Reducer,
-  ReducerEdges,
   ReducerGroup,
   ReducerMetadata,
 } from './reducers.types';
 
 export type ReducerSelectors<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>,
+  EntityT extends Entity,
   ReducerPathT extends string[],
-  ReduxState extends ReducerGroup<ReducerMetadataT, EntityT, ReducerPathT>
+  ReduxState extends ReducerGroup<ReducerMetadataT, EntityT, ReducerPathT>,
 > = {
   selectRequests: OutputSelector<
     ReduxState,

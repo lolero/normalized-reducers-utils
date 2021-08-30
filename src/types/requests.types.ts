@@ -3,25 +3,22 @@ import {
   Entity,
   ReducerPartialData,
   RequestMetadata,
-  ReducerEdges,
   ReducerMetadata,
 } from './reducers.types';
 
 export interface UpdatePartialReducerMetadataRequestMetadata<
-  ReducerMetadataT extends ReducerMetadata
+  ReducerMetadataT extends ReducerMetadata,
 > extends RequestMetadata {
   partialReducerMetadata: Partial<ReducerMetadataT>;
 }
 
-export interface CreateOneEntityRequestMetadata<
-  EntityT extends Entity<ReducerEdges>
-> extends RequestMetadata {
+export interface CreateOneEntityRequestMetadata<EntityT extends Entity>
+  extends RequestMetadata {
   entity: EntityT;
 }
 
-export interface CreateManyEntitiesRequestMetadata<
-  EntityT extends Entity<ReducerEdges>
-> extends RequestMetadata {
+export interface CreateManyEntitiesRequestMetadata<EntityT extends Entity>
+  extends RequestMetadata {
   wholeEntities: ReducerData<EntityT>;
 }
 
@@ -33,28 +30,25 @@ export interface GetManyEntitiesRequestMetadata extends RequestMetadata {
   entityPks?: string[];
 }
 
-export interface UpdateOneWholeEntityRequestMetadata<
-  EntityT extends Entity<ReducerEdges>
-> extends RequestMetadata {
+export interface UpdateOneWholeEntityRequestMetadata<EntityT extends Entity>
+  extends RequestMetadata {
   entityPk: string;
   entity: EntityT;
 }
 
-export interface UpdateManyWholeEntitiesRequestMetadata<
-  EntityT extends Entity<ReducerEdges>
-> extends RequestMetadata {
+export interface UpdateManyWholeEntitiesRequestMetadata<EntityT extends Entity>
+  extends RequestMetadata {
   wholeEntities: ReducerData<EntityT>;
 }
 
-export interface UpdateOnePartialEntityRequestMetadata<
-  EntityT extends Entity<ReducerEdges>
-> extends RequestMetadata {
+export interface UpdateOnePartialEntityRequestMetadata<EntityT extends Entity>
+  extends RequestMetadata {
   entityPk: string;
   partialEntity: Partial<EntityT>;
 }
 
 export interface UpdateManyPartialEntitiesRequestMetadata<
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 > extends RequestMetadata {
   partialEntities: ReducerPartialData<EntityT>;
 }

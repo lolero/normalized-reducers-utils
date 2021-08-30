@@ -1,16 +1,15 @@
-export type PkSchemaFields<EntityT extends Entity<ReducerEdges>> = Exclude<
+export type PkSchemaFields<EntityT extends Entity> = Exclude<
   keyof EntityT,
   '__edges__'
 >[];
 
-export type PkSchemaEdges<
-  EntityT extends Entity<ReducerEdges>
-> = (keyof EntityT['__edges__'])[];
+export type PkSchemaEdges<EntityT extends Entity> =
+  (keyof EntityT['__edges__'])[];
 
 export type PkSchema<
-  EntityT extends Entity<ReducerEdges>,
+  EntityT extends Entity,
   FieldsT extends PkSchemaFields<EntityT>,
-  EdgesT extends PkSchemaEdges<EntityT>
+  EdgesT extends PkSchemaEdges<EntityT>,
 > = {
   fields: FieldsT;
   edges: EdgesT;
@@ -19,12 +18,12 @@ export type PkSchema<
 };
 
 export type DestructedPk<
-  EntityT extends Entity<ReducerEdges>,
+  EntityT extends Entity,
   PkSchemaT extends PkSchema<
     EntityT,
     PkSchemaFields<EntityT>,
     PkSchemaEdges<EntityT>
-  >
+  >,
 > = {
   fields: { [field in PkSchemaT['fields'][number]]: string };
   edges: { [edge in PkSchemaT['edges'][number]]: EntityT['__edges__'][edge] };
@@ -58,33 +57,51 @@ export type Request = {
   subRequests?: SubRequest[];
 };
 
+export type Entity = {
+  [fieldKey: string]: unknown;
+  __edges__?: {
+    [edgeName: string]: string[] | null;
+  };
+};
+
 export enum EdgeSide {
   slave,
   master,
 }
 
-export type ReducerEdge = {
-  nodeReducerPath: string[];
-  edgeReducerPath?: string[];
+export type ReducerEdgeTypeMetadata = {
+  nodeReducerPath: readonly string[];
+  edgeReducerPath: readonly string[] | null;
+};
+
+export type ReducerEdge<
+  NodeReducerPathT extends ReducerEdgeTypeMetadata['nodeReducerPath'],
+  EdgeReducerPathT extends ReducerEdgeTypeMetadata['edgeReducerPath'] | null,
+> = {
+  nodeReducerPath: NodeReducerPathT;
+  edgeReducerPath?: EdgeReducerPathT;
   edgeSide?: EdgeSide;
 };
 
-export type ReducerEdges = {
-  [edgeName: string]: ReducerEdge;
+export type ReducerEdgesTypeMetadata<EntityT extends Entity> = {
+  [edgeName in keyof EntityT['__edges__']]: ReducerEdgeTypeMetadata;
 };
 
-export type Entity<ReducerEdgesT extends ReducerEdges> = {
-  [fieldKey: string]: unknown;
-  __edges__?: {
-    [edgeName in keyof ReducerEdgesT]: string[] | null;
-  };
+export type ReducerEdges<
+  EntityT extends Entity,
+  ReducerEdgesTypeMetadataT extends ReducerEdgesTypeMetadata<EntityT>,
+> = {
+  [edgeName in keyof EntityT['__edges__']]: ReducerEdge<
+    ReducerEdgesTypeMetadataT[keyof EntityT['__edges__']]['nodeReducerPath'],
+    ReducerEdgesTypeMetadataT[keyof EntityT['__edges__']]['edgeReducerPath']
+  >;
 };
 
-export type ReducerData<EntityT extends Entity<ReducerEdges>> = {
+export type ReducerData<EntityT extends Entity> = {
   [entityPk: string]: EntityT;
 };
 
-export type ReducerPartialData<EntityT extends Entity<ReducerEdges>> = {
+export type ReducerPartialData<EntityT extends Entity> = {
   [entityPk: string]: Partial<
     Omit<EntityT, '__edges__'> & {
       __edges__?: Partial<EntityT['__edges__']>;
@@ -107,7 +124,7 @@ export type ReducerConfig = {
 
 export type Reducer<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 > = {
   requests: { [requestId: string]: Request };
   metadata: ReducerMetadataT;
@@ -117,8 +134,8 @@ export type Reducer<
 
 export type ReducerGroup<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>,
-  ReducerPathT extends string[]
+  EntityT extends Entity,
+  ReducerPathT extends string[],
 > = {
   [reducerOrGroup in ReducerPathT[number]]?:
     | Reducer<ReducerMetadataT, EntityT>

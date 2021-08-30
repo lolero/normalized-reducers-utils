@@ -4,7 +4,6 @@ import {
   Entity,
   PkSchemaFields,
   PkSchemaEdges,
-  ReducerEdges,
 } from '../types/reducers.types';
 import { getPkOfEntity } from './pk.utils';
 
@@ -17,12 +16,12 @@ import { getPkOfEntity } from './pk.utils';
  * @returns {ReducerData} Normalized entities object
  */
 export function normalizeEntityArrayByPk<
-  EntityT extends Entity<ReducerEdges>,
+  EntityT extends Entity,
   PkSchemaT extends PkSchema<
     EntityT,
     PkSchemaFields<EntityT>,
     PkSchemaEdges<EntityT>
-  >
+  >,
 >(pkSchema: PkSchemaT, entityArray: EntityT[]): ReducerData<EntityT> {
   const normalizedByPk = entityArray.reduce(
     (normalizedByPkTemp: ReducerData<EntityT>, entity) => ({

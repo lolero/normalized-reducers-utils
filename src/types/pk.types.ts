@@ -4,18 +4,17 @@ import {
   PkSchema,
   PkSchemaEdges,
   PkSchemaFields,
-  ReducerEdges,
   ReducerMetadata,
 } from './reducers.types';
 
 export type ReducerPkUtils<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>,
+  EntityT extends Entity,
   PkSchemaT extends PkSchema<
     EntityT,
     PkSchemaFields<EntityT>,
     PkSchemaEdges<EntityT>
-  >
+  >,
 > = {
   pkSchema: PkSchemaT;
   getPkOfEntity: (entity: EntityT) => string;

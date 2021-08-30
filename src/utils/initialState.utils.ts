@@ -3,7 +3,6 @@ import {
   Reducer,
   ReducerConfig,
   ReducerData,
-  ReducerEdges,
   ReducerMetadata,
 } from '../types/reducers.types';
 
@@ -27,7 +26,7 @@ export const defaultReducerConfig: ReducerConfig = {
  */
 export function createInitialState<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 >(
   initialReducerMetadata: ReducerMetadataT,
   initialReducerData: ReducerData<EntityT>,

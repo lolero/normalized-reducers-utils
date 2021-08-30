@@ -8,12 +8,7 @@ import {
   SavePartialReducerMetadataAction,
   SaveWholeEntitiesAction,
 } from '../types/actions.types';
-import {
-  Entity,
-  Reducer,
-  ReducerEdges,
-  ReducerMetadata,
-} from '../types/reducers.types';
+import { Entity, Reducer, ReducerMetadata } from '../types/reducers.types';
 
 /**
  * Duplicates the state object with shallow copies of the 'data', 'metadata',
@@ -32,7 +27,7 @@ import {
 export function duplicateState<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 >(
   state: Reducer<ReducerMetadataT, EntityT>,
   action: // @typescript-eslint/no-explicit-any disabled because the
@@ -98,7 +93,7 @@ export function duplicateState<
 export function handleCommonProps<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 >(
   newState: Reducer<ReducerMetadataT, EntityT>,
   action:
@@ -132,10 +127,12 @@ export function handleCommonProps<
     };
 
     if (newState.config.requestsPrettyTimestamps) {
-      (newState.requests[action.requestId].completedAt as {
-        unixMilliseconds: number;
-        formattedString?: string;
-      }).formattedString = completedDate.toISOString();
+      (
+        newState.requests[action.requestId].completedAt as {
+          unixMilliseconds: number;
+          formattedString?: string;
+        }
+      ).formattedString = completedDate.toISOString();
     }
 
     if ('wholeEntities' in action) {
@@ -172,7 +169,7 @@ export function handleCommonProps<
  */
 export function updateCompletedRequestsCache<
   ReducerMetadataT extends ReducerMetadata,
-  EntityT extends Entity<ReducerEdges>
+  EntityT extends Entity,
 >(newState: Reducer<ReducerMetadataT, EntityT>): void {
   if (
     newState.config.successRequestsCache === null &&
