@@ -7,6 +7,7 @@ import {
   SavePartialPatternToEntitiesAction,
   SavePartialReducerMetadataAction,
   SaveWholeEntitiesAction,
+  SaveWholeReducerMetadataAction,
 } from '../types/actions.types';
 import { Entity, Reducer, ReducerMetadata } from '../types/reducers.types';
 
@@ -15,13 +16,16 @@ import { Entity, Reducer, ReducerMetadata } from '../types/reducers.types';
  * and 'requests' props
  *
  * @param {Reducer} state - The current state of the reducer
- * @param {RequestAction
- *        | SavePartialReducerMetadataAction
- *        | SaveWholeEntitiesAction
- *        | SavePartialEntitiesAction
- *        | SavePartialPatternToEntitiesAction
- *        | DeleteEntitiesAction
- *        | FailAction} action - Action to handle
+ * @param {
+ *          | RequestAction
+ *          | SaveWholeReducerMetadataAction
+ *          | SavePartialReducerMetadataAction
+ *          | SaveWholeEntitiesAction
+ *          | SavePartialEntitiesAction
+ *          | SavePartialPatternToEntitiesAction
+ *          | DeleteEntitiesAction
+ *          | FailAction
+ *        } action - Action to handle
  * @returns {Reducer} Duplicated state object
  */
 export function duplicateState<
@@ -35,6 +39,7 @@ export function duplicateState<
   // able to take any request action regardless of its RequestMetadata
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | RequestAction<ActionTypeT, any>
+    | SaveWholeReducerMetadataAction<ActionTypeT, ReducerMetadataT>
     | SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>
     | SaveWholeEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>
     | SavePartialEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>
@@ -83,12 +88,15 @@ export function duplicateState<
  * which could result in a reduction in performance in the application.
  *
  * @param {Reducer} newState - A copy of the redux state
- * @param {SavePartialReducerMetadataAction
- *        | SaveWholeEntitiesAction
- *        | SavePartialEntitiesAction
- *        | SavePartialPatternToEntitiesAction
- *        | DeleteEntitiesAction
- *        | FailAction} action - Success or fail action
+ * @param {
+ *          | SaveWholeReducerMetadataAction
+ *          | SavePartialReducerMetadataAction
+ *          | SaveWholeEntitiesAction
+ *          | SavePartialEntitiesAction
+ *          | SavePartialPatternToEntitiesAction
+ *          | DeleteEntitiesAction
+ *          | FailAction
+ *        } action - Success or fail action
  */
 export function handleCommonProps<
   ActionTypeT extends string,
@@ -97,6 +105,7 @@ export function handleCommonProps<
 >(
   newState: Reducer<ReducerMetadataT, EntityT>,
   action:
+    | SaveWholeReducerMetadataAction<ActionTypeT, ReducerMetadataT>
     | SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>
     | SaveWholeEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>
     | SavePartialEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>

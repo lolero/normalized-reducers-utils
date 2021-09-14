@@ -441,6 +441,19 @@ function handleSavePartialPatternToEntities<
 ): Reducer<ReducerMetadataT, EntityT>;
 ```
 
+#### `handleSaveWholeReducerMetadata`
+
+```typescript
+function handleSaveWholeReducerMetadata<
+  ActionTypeT extends string,
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity,
+  >(
+  state: Reducer<ReducerMetadataT, EntityT>,
+  action: SaveWholeReducerMetadataAction<ActionTypeT, ReducerMetadataT>,
+): Reducer<ReducerMetadataT, EntityT>;
+```
+
 #### `handleSavePartialReducerMetadata`
 
 ```typescript

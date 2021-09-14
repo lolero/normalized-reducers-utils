@@ -16,6 +16,17 @@ export type RequestAction<
   requestId: string;
 };
 
+export type SaveWholeReducerMetadataAction<
+  ActionTypeT extends string,
+  ReducerMetadataT extends ReducerMetadata,
+> = {
+  type: ActionTypeT;
+  wholeReducerMetadata: ReducerMetadataT;
+  requestId?: string;
+  subRequests?: SubRequest[];
+  statusCode?: number;
+};
+
 export type SavePartialReducerMetadataAction<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,

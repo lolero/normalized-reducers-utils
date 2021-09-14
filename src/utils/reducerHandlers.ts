@@ -12,6 +12,7 @@ import {
   SavePartialPatternToEntitiesAction,
   SavePartialReducerMetadataAction,
   SaveWholeEntitiesAction,
+  SaveWholeReducerMetadataAction,
 } from '../types/actions.types';
 import {
   duplicateState,
@@ -24,12 +25,14 @@ import {
  * updateCompletedRequestsCache
  *
  * @param {Reducer} newState - A copy of the redux state
- * @param {SavePartialReducerMetadataAction
- *        | SaveWholeEntitiesAction
- *        | SavePartialEntitiesAction
- *        | SavePartialPatternToEntitiesAction
- *        | DeleteEntitiesAction
- *        | FailAction} action - Success or fail action
+ * @param {
+ *          | SavePartialReducerMetadataAction
+ *          | SaveWholeEntitiesAction
+ *          | SavePartialEntitiesAction
+ *          | SavePartialPatternToEntitiesAction
+ *          | DeleteEntitiesAction
+ *          | FailAction
+ *        } action - Success or fail action
  */
 function handleCompletedRequest<
   ActionTypeT extends string,
@@ -38,6 +41,7 @@ function handleCompletedRequest<
 >(
   newState: Reducer<ReducerMetadataT, EntityT>,
   action:
+    | SaveWholeReducerMetadataAction<ActionTypeT, ReducerMetadataT>
     | SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>
     | SaveWholeEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>
     | SavePartialEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>
@@ -82,6 +86,32 @@ export function handleRequest<
     newState.requests[action.requestId].createdAt.formattedString =
       createdDate.toISOString();
   }
+
+  return newState;
+}
+
+/**
+ * Updates a reducer's 'metadata' prop,
+ * as well as the 'requests' prop to reflect that the corresponding request
+ * has been completed successfully.
+ *
+ * @param {Reducer} state - The current state of the reducer
+ * @param {SaveWholeReducerMetadataAction} action - Save whole reducer metadata
+ *        success action
+ *
+ * @returns {Reducer} Updated reducer state
+ */
+export function handleSaveWholeReducerMetadata<
+  ActionTypeT extends string,
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity,
+>(
+  state: Reducer<ReducerMetadataT, EntityT>,
+  action: SaveWholeReducerMetadataAction<ActionTypeT, ReducerMetadataT>,
+): Reducer<ReducerMetadataT, EntityT> {
+  const newState = duplicateState(state, action);
+  newState.metadata = action.wholeReducerMetadata;
+  handleCompletedRequest(newState, action);
 
   return newState;
 }

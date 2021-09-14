@@ -16,6 +16,7 @@ import {
   SavePartialEntitiesAction,
   SavePartialReducerMetadataAction,
   SavePartialPatternToEntitiesAction,
+  SaveWholeReducerMetadataAction,
 } from '../../types/actions.types';
 import {
   createInitialState,
@@ -30,6 +31,7 @@ import {
   handleSavePartialEntities,
   handleSavePartialReducerMetadata,
   handleSavePartialPatternToEntities,
+  handleSaveWholeReducerMetadata,
 } from '../reducerHandlers';
 
 describe('reducerHandlers', () => {
@@ -124,6 +126,47 @@ describe('reducerHandlers', () => {
         expect(requestCreatedAt.formattedString).toBe(
           createdDate.toISOString(),
         );
+      });
+    });
+  });
+
+  describe('handleSaveWholeReducerMetadata', () => {
+    it('Should handle save partial reducer metadata', () => {
+      duplicatedState.metadata = {
+        reducerStatus: 'unchanged',
+        entityCount: 0,
+      };
+
+      const testSaveWholeReducerMetadataAction: SaveWholeReducerMetadataAction<
+        'testSaveWholeReducerMetadataAction',
+        TestReducer['metadata']
+      > = {
+        type: 'testSaveWholeReducerMetadataAction',
+        wholeReducerMetadata: {
+          reducerStatus: 'changed',
+          entityCount: 1,
+        },
+      };
+
+      const newState = handleSaveWholeReducerMetadata(
+        state,
+        testSaveWholeReducerMetadataAction,
+      );
+
+      expect(duplicateStateSpy).toHaveBeenCalledWith(
+        state,
+        testSaveWholeReducerMetadataAction,
+      );
+      expect(handleCommonPropsSpy).toHaveBeenCalledWith(
+        duplicatedState,
+        testSaveWholeReducerMetadataAction,
+      );
+      expect(updateCompletedRequestsCacheSpy).toHaveBeenCalledWith(
+        duplicatedState,
+      );
+      expect(newState).toEqual({
+        ...duplicatedState,
+        metadata: testSaveWholeReducerMetadataAction.wholeReducerMetadata,
       });
     });
   });
