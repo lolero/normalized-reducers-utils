@@ -11,6 +11,7 @@ export { normalizeEntityArrayByPk } from './utils/normalizer.utils';
 export { createReducerPkUtils, emptyPkSchema } from './utils/pk.utils';
 export {
   handleRequest,
+  handleSaveWholeReducerMetadata,
   handleSavePartialReducerMetadata,
   handleSaveWholeEntities,
   handleSavePartialEntities,
