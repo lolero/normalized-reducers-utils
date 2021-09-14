@@ -6,6 +6,12 @@ import {
   ReducerMetadata,
 } from './reducers.types';
 
+export interface UpdateWholeReducerMetadataRequestMetadata<
+  ReducerMetadataT extends ReducerMetadata,
+> extends RequestMetadata {
+  wholeReducerMetadata: ReducerMetadataT;
+}
+
 export interface UpdatePartialReducerMetadataRequestMetadata<
   ReducerMetadataT extends ReducerMetadata,
 > extends RequestMetadata {
