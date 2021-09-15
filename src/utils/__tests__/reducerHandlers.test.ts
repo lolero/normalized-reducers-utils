@@ -17,6 +17,7 @@ import {
   SavePartialReducerMetadataAction,
   SavePartialPatternToEntitiesAction,
   SaveWholeReducerMetadataAction,
+  SaveNothingAction,
 } from '../../types/actions.types';
 import {
   createInitialState,
@@ -24,14 +25,15 @@ import {
 } from '../initialState.utils';
 import * as ReducerHandlersUtils from '../reducerHandlers.utils';
 import {
-  handleDeleteEntities,
-  handleFail,
   handleRequest,
+  handleSaveNothing,
+  handleSaveWholeReducerMetadata,
+  handleSavePartialReducerMetadata,
   handleSaveWholeEntities,
   handleSavePartialEntities,
-  handleSavePartialReducerMetadata,
   handleSavePartialPatternToEntities,
-  handleSaveWholeReducerMetadata,
+  handleDeleteEntities,
+  handleFail,
 } from '../reducerHandlers';
 
 describe('reducerHandlers', () => {
@@ -127,6 +129,29 @@ describe('reducerHandlers', () => {
           createdDate.toISOString(),
         );
       });
+    });
+  });
+
+  describe('handleSaveNothing', () => {
+    it('Should handle save partial reducer metadata', () => {
+      const testSaveNothingAction: SaveNothingAction<'testSaveNothingAction'> =
+        {
+          type: 'testSaveNothingAction',
+        };
+
+      handleSaveNothing(state, testSaveNothingAction);
+
+      expect(duplicateStateSpy).toHaveBeenCalledWith(
+        state,
+        testSaveNothingAction,
+      );
+      expect(handleCommonPropsSpy).toHaveBeenCalledWith(
+        duplicatedState,
+        testSaveNothingAction,
+      );
+      expect(updateCompletedRequestsCacheSpy).toHaveBeenCalledWith(
+        duplicatedState,
+      );
     });
   });
 

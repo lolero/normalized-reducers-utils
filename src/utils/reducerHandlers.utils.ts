@@ -3,6 +3,7 @@ import {
   DeleteEntitiesAction,
   FailAction,
   RequestAction,
+  SaveNothingAction,
   SavePartialEntitiesAction,
   SavePartialPatternToEntitiesAction,
   SavePartialReducerMetadataAction,
@@ -18,6 +19,7 @@ import { Entity, Reducer, ReducerMetadata } from '../types/reducers.types';
  * @param {Reducer} state - The current state of the reducer
  * @param {
  *          | RequestAction
+ *          | SaveNothingaAction
  *          | SaveWholeReducerMetadataAction
  *          | SavePartialReducerMetadataAction
  *          | SaveWholeEntitiesAction
@@ -39,6 +41,7 @@ export function duplicateState<
   // able to take any request action regardless of its RequestMetadata
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | RequestAction<ActionTypeT, any>
+    | SaveNothingAction<ActionTypeT>
     | SaveWholeReducerMetadataAction<ActionTypeT, ReducerMetadataT>
     | SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>
     | SaveWholeEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>
@@ -89,6 +92,7 @@ export function duplicateState<
  *
  * @param {Reducer} newState - A copy of the redux state
  * @param {
+ *          | SaveNothingAction
  *          | SaveWholeReducerMetadataAction
  *          | SavePartialReducerMetadataAction
  *          | SaveWholeEntitiesAction
@@ -105,6 +109,7 @@ export function handleCommonProps<
 >(
   newState: Reducer<ReducerMetadataT, EntityT>,
   action:
+    | SaveNothingAction<ActionTypeT>
     | SaveWholeReducerMetadataAction<ActionTypeT, ReducerMetadataT>
     | SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>
     | SaveWholeEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>

@@ -16,6 +16,13 @@ export type RequestAction<
   requestId: string;
 };
 
+export type SaveNothingAction<ActionTypeT extends string> = {
+  type: ActionTypeT;
+  requestId?: string;
+  subRequests?: SubRequest[];
+  statusCode?: number;
+};
+
 export type SaveWholeReducerMetadataAction<
   ActionTypeT extends string,
   ReducerMetadataT extends ReducerMetadata,

@@ -8,6 +8,7 @@ import {
   DeleteEntitiesAction,
   FailAction,
   RequestAction,
+  SaveNothingAction,
   SavePartialEntitiesAction,
   SavePartialPatternToEntitiesAction,
   SavePartialReducerMetadataAction,
@@ -26,6 +27,8 @@ import {
  *
  * @param {Reducer} newState - A copy of the redux state
  * @param {
+ *          | SaveNothingAction
+ *          | SaveWholeReducerMetadataAction
  *          | SavePartialReducerMetadataAction
  *          | SaveWholeEntitiesAction
  *          | SavePartialEntitiesAction
@@ -41,6 +44,7 @@ function handleCompletedRequest<
 >(
   newState: Reducer<ReducerMetadataT, EntityT>,
   action:
+    | SaveNothingAction<ActionTypeT>
     | SaveWholeReducerMetadataAction<ActionTypeT, ReducerMetadataT>
     | SavePartialReducerMetadataAction<ActionTypeT, ReducerMetadataT>
     | SaveWholeEntitiesAction<ActionTypeT, ReducerMetadataT, EntityT>
@@ -86,6 +90,30 @@ export function handleRequest<
     newState.requests[action.requestId].createdAt.formattedString =
       createdDate.toISOString();
   }
+
+  return newState;
+}
+
+/**
+ * Updates nothing in the reducer's 'metadata' nor 'data' props, but updates
+ * the 'requests' prop to reflect that the corresponding request
+ * has been completed successfully.
+ *
+ * @param {Reducer} state - The current state of the reducer
+ * @param {SaveNothingAction} action - Save nothing success action
+ *
+ * @returns {Reducer} Updated reducer state
+ */
+export function handleSaveNothing<
+  ActionTypeT extends string,
+  ReducerMetadataT extends ReducerMetadata,
+  EntityT extends Entity,
+>(
+  state: Reducer<ReducerMetadataT, EntityT>,
+  action: SaveNothingAction<ActionTypeT>,
+): Reducer<ReducerMetadataT, EntityT> {
+  const newState = duplicateState(state, action);
+  handleCompletedRequest(newState, action);
 
   return newState;
 }
