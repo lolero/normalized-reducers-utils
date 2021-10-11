@@ -38,7 +38,7 @@ export type RequestMetadata = {
   [requestMetadataKey: string]: unknown;
 };
 
-export type Request = {
+export type Request<RequestMetadataT extends RequestMetadata> = {
   id: string;
   createdAt: {
     unixMilliseconds: number;
@@ -49,7 +49,7 @@ export type Request = {
     formattedString?: string;
   };
   isPending: boolean;
-  metadata: RequestMetadata;
+  metadata: RequestMetadataT;
   isOk?: boolean;
   entityPks?: string[];
   statusCode?: number;
@@ -126,7 +126,7 @@ export type Reducer<
   ReducerMetadataT extends ReducerMetadata,
   EntityT extends Entity,
 > = {
-  requests: { [requestId: string]: Request };
+  requests: { [requestId: string]: Request<RequestMetadata> };
   metadata: ReducerMetadataT;
   data: ReducerData<EntityT>;
   config: ReducerConfig;
