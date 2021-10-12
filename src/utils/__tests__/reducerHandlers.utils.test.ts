@@ -8,6 +8,7 @@ import {
   testEntity3,
   TestRequestMetadata,
   getPkOfTestEntity,
+  testReducerPath,
 } from '../tests.utils';
 import {
   createInitialState,
@@ -261,7 +262,7 @@ describe('reducerHandlers.utils', () => {
         },
         requestId: 'testSavePartialReducerMetadataActionRequestId',
         subRequests: [
-          { reducerName: 'testReducer', requestId: 'testRequestId' },
+          { reducerPath: testReducerPath, requestId: 'testRequestId' },
         ],
         statusCode: 200,
       };
@@ -332,7 +333,7 @@ describe('reducerHandlers.utils', () => {
         },
         requestId: 'testSaveWholeEntitiesActionRequestId',
         subRequests: [
-          { reducerName: 'testReducer', requestId: 'testRequestId' },
+          { reducerPath: testReducerPath, requestId: 'testRequestId' },
         ],
         statusCode: 200,
       };
@@ -391,7 +392,7 @@ describe('reducerHandlers.utils', () => {
         },
         requestId: 'testSavePartialEntitiesActionRequestId',
         subRequests: [
-          { reducerName: 'testReducer', requestId: 'testRequestId' },
+          { reducerPath: testReducerPath, requestId: 'testRequestId' },
         ],
         statusCode: 200,
       };
@@ -453,7 +454,7 @@ describe('reducerHandlers.utils', () => {
         },
         requestId: 'testSavePartialPatternToEntitiesActionRequestId',
         subRequests: [
-          { reducerName: 'testReducer', requestId: 'testRequestId' },
+          { reducerPath: testReducerPath, requestId: 'testRequestId' },
         ],
         statusCode: 200,
       };
@@ -514,7 +515,7 @@ describe('reducerHandlers.utils', () => {
         },
         requestId: 'testDeleteEntitiesActionRequestId',
         subRequests: [
-          { reducerName: 'testReducer', requestId: 'testRequestId' },
+          { reducerPath: testReducerPath, requestId: 'testRequestId' },
         ],
         statusCode: 200,
       };

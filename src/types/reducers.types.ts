@@ -30,13 +30,11 @@ export type DestructedPk<
 };
 
 export type SubRequest = {
-  reducerName: string;
+  reducerPath: string[];
   requestId: string;
 };
 
-export type RequestMetadata = {
-  [requestMetadataKey: string]: unknown;
-};
+export type RequestMetadata = Record<string, unknown>;
 
 export type Request<RequestMetadataT extends RequestMetadata> = {
   id: string;
@@ -57,11 +55,14 @@ export type Request<RequestMetadataT extends RequestMetadata> = {
   subRequests?: SubRequest[];
 };
 
-export type Entity = {
-  [fieldKey: string]: unknown;
-  __edges__?: {
-    [edgeName: string]: string[] | null;
-  };
+export type Entity = Record<string, unknown> & {
+  __edges__?: Record<string, string[] | null>;
+};
+
+export type PartialEntity<EntityT extends Entity> = Partial<
+  Omit<EntityT, '__edges__'>
+> & {
+  __edges__?: Partial<EntityT['__edges__']>;
 };
 
 export enum EdgeSide {
@@ -83,9 +84,10 @@ export type ReducerEdge<
   edgeSide?: EdgeSide;
 };
 
-export type ReducerEdgesTypeMetadata<EntityT extends Entity> = {
-  [edgeName in keyof EntityT['__edges__']]: ReducerEdgeTypeMetadata;
-};
+export type ReducerEdgesTypeMetadata<EntityT extends Entity> = Record<
+  keyof EntityT['__edges__'],
+  ReducerEdgeTypeMetadata
+>;
 
 export type ReducerEdges<
   EntityT extends Entity,
@@ -97,21 +99,14 @@ export type ReducerEdges<
   >;
 };
 
-export type ReducerData<EntityT extends Entity> = {
-  [entityPk: string]: EntityT;
-};
+export type ReducerData<EntityT extends Entity> = Record<string, EntityT>;
 
-export type ReducerPartialData<EntityT extends Entity> = {
-  [entityPk: string]: Partial<
-    Omit<EntityT, '__edges__'> & {
-      __edges__?: Partial<EntityT['__edges__']>;
-    }
-  >;
-};
+export type ReducerPartialData<EntityT extends Entity> = Record<
+  string,
+  PartialEntity<EntityT>
+>;
 
-export type ReducerMetadata = {
-  [metadataKey: string]: unknown;
-};
+export type ReducerMetadata = Record<string, unknown>;
 
 export type ReducerConfig = {
   successRequestsCache: number | null;
@@ -126,7 +121,7 @@ export type Reducer<
   ReducerMetadataT extends ReducerMetadata,
   EntityT extends Entity,
 > = {
-  requests: { [requestId: string]: Request<RequestMetadata> };
+  requests: Record<string, Request<RequestMetadata>>;
   metadata: ReducerMetadataT;
   data: ReducerData<EntityT>;
   config: ReducerConfig;

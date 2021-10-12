@@ -30,17 +30,22 @@ export interface TestEntity extends Entity {
   };
 }
 
+export const testReducerPath: ['testReducerGroup1', 'testReducer1'] = [
+  'testReducerGroup1',
+  'testReducer1',
+];
+
 const testReducerEdgesWithoutTypes = {
   parent: {
-    nodeReducerPath: ['testReducerGroup1', 'testReducer1'],
-    edgeReducerPath: ['testReducerGroup1', 'testReducer1'],
+    nodeReducerPath: testReducerPath,
+    edgeReducerPath: testReducerPath,
   },
   children: {
-    nodeReducerPath: ['testReducerGroup1', 'testReducer1'],
+    nodeReducerPath: testReducerPath,
     edgeReducerPath: null,
   },
   emergencyContacts: {
-    nodeReducerPath: ['testReducerGroup1', 'testReducer1'],
+    nodeReducerPath: testReducerPath,
     edgeReducerPath: null,
   },
 } as const;
