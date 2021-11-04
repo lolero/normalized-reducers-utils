@@ -3,7 +3,6 @@ import {
   testEntity1,
   testEntity2,
   testPkSchema,
-  TestReducer,
 } from '../tests.utils';
 import { createReducerPkUtils, destructPk, getPkOfEntity } from '../pk.utils';
 import { PkSchema } from '../../types/reducers.types';
@@ -144,7 +143,6 @@ describe('pk.utils', () => {
   describe('createReducerPkUtils', () => {
     it('Should create reducer PK utils', () => {
       const reducerPkUtils = createReducerPkUtils<
-        TestReducer['metadata'],
         TestEntity,
         typeof testPkSchema
       >(testPkSchema);

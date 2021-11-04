@@ -63,7 +63,6 @@ function handleCompletedRequest<
  *
  * @param {Reducer} state - The current state of the reducer
  * @param {RequestAction} action - Request action
- *
  * @returns {Reducer} Updated reducer state
  */
 export function handleRequest<
@@ -101,7 +100,6 @@ export function handleRequest<
  *
  * @param {Reducer} state - The current state of the reducer
  * @param {SaveNothingAction} action - Save nothing success action
- *
  * @returns {Reducer} Updated reducer state
  */
 export function handleSaveNothing<
@@ -126,7 +124,6 @@ export function handleSaveNothing<
  * @param {Reducer} state - The current state of the reducer
  * @param {SaveWholeReducerMetadataAction} action - Save whole reducer metadata
  *        success action
- *
  * @returns {Reducer} Updated reducer state
  */
 export function handleSaveWholeReducerMetadata<
@@ -152,7 +149,6 @@ export function handleSaveWholeReducerMetadata<
  * @param {Reducer} state - The current state of the reducer
  * @param {SavePartialReducerMetadataAction} action - Save partial reducer
  *        metadata success action
- *
  * @returns {Reducer} Updated reducer state
  */
 export function handleSavePartialReducerMetadata<
@@ -177,7 +173,6 @@ export function handleSavePartialReducerMetadata<
  *
  * @param {Reducer} state - The current state of the reducer
  * @param {SaveWholeEntitiesAction} action - Save whole entities success action
- *
  * @returns {Reducer} Updated reducer state
  */
 export function handleSaveWholeEntities<
@@ -207,7 +202,6 @@ export function handleSaveWholeEntities<
  * @param {Reducer} state - The current state of the reducer
  * @param {SavePartialEntitiesAction} action - Save partial entity success
  *        action
- *
  * @returns {Reducer} Updated reducer state
  */
 export function handleSavePartialEntities<
@@ -259,7 +253,6 @@ export function handleSavePartialEntities<
  * @param {Reducer} state - The current state of the reducer
  * @param {SavePartialEntitiesAction} action - Save partial entity success
  *        action
- *
  * @returns {Reducer} Updated reducer state
  */
 export function handleSavePartialPatternToEntities<
@@ -312,7 +305,6 @@ export function handleSavePartialPatternToEntities<
  *
  * @param {Reducer} state - The current state of the reducer
  * @param {DeleteEntitiesAction} action - Delete entities success action
- *
  * @returns {Reducer} Updated reducer state
  */
 export function handleDeleteEntities<
@@ -336,7 +328,6 @@ export function handleDeleteEntities<
  *
  * @param {Reducer} state - The current state of the reducer
  * @param {FailAction} action - Fail action
- *
  * @returns {Reducer} Updated reducer state
  */
 export function handleFail<

@@ -4,11 +4,9 @@ import {
   PkSchema,
   PkSchemaEdges,
   PkSchemaFields,
-  ReducerMetadata,
 } from './reducers.types';
 
 export type ReducerPkUtils<
-  ReducerMetadataT extends ReducerMetadata,
   EntityT extends Entity,
   PkSchemaT extends PkSchema<
     EntityT,

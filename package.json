@@ -16,46 +16,39 @@
     "README.md"
   ],
   "scripts": {
-    "clean": "rm -rf node_modules/ package-lock.json yarn.lock build/ coverage/ .eslintignore .prettierignore",
-    "reset": "yarn clean && ln -s .gitignore .eslintignore && ln -s .gitignore .prettierignore && yarn install",
-    "build": "tsc --declaration --noEmit false --module commonjs",
+    "reset:clean": "rm -rf node_modules/ package-lock.json yarn.lock build/ coverage/ .husky .eslintignore .prettierignore",
+    "reset:install": "ln -s .gitignore .eslintignore && ln -s .gitignore .prettierignore && yarn install",
+    "reset:reset": "yarn reset:clean && yarn reset:install",
+    "git-hooks:clean": "git config --unset core.hooksPath",
+    "git-hooks:set": "yarn husky install && yarn husky add .husky/pre-commit 'yarn lint:fix' && yarn husky add .husky/pre-commit 'yarn commitlint --edit $1'",
+    "git-hooks:reset": "yarn git-hooks:clean && yarn git-hooks:set",
+    "build:prod": "tsc --declaration --noEmit false --module commonjs",
     "test:test": "react-scripts test",
     "test:coverage": "yarn test:test -- --coverage --watchAll=false",
     "lint:check": "eslint       './**/*.{js,jsx,ts,tsx}' && prettier --list-different './**/*.{js,jsx,ts,tsx,css,scss,less,json,md,yml,yaml}'",
     "lint:fix": "  eslint --fix './**/*.{js,jsx,ts,tsx}' && prettier --write          './**/*.{js,jsx,ts,tsx,css,scss,less,json,md,yml,yaml}'"
   },
   "devDependencies": {
-    "@commitlint/cli": "^9.1.2",
-    "@commitlint/config-conventional": "^9.1.2",
-    "@commitlint/prompt": "^9.1.2",
+    "@commitlint/cli": "^14.1.0",
+    "@commitlint/config-angular": "^13.1.0",
     "@tsconfig/node12": "^1.0.7",
-    "@types/jest": "^26.0.13",
+    "@types/jest": "^27.0.2",
     "@types/lodash": "^4.14.161",
     "commitizen": "^4.2.1",
-    "eslint-config-airbnb-typescript-prettier": "^3.1.0",
-    "eslint-plugin-jest": "^24.0.0",
-    "eslint-plugin-jsdoc": "^30.3.2",
-    "husky": "^4.2.5",
+    "eslint-config-airbnb-typescript-prettier": "^4.2.0",
+    "eslint-plugin-jest": "^25.2.2",
+    "eslint-plugin-jsdoc": "^37.0.3",
+    "husky": "^7.0.4",
     "prettier": "^2.1.1",
-    "react-scripts": "^3.4.3",
+    "react-scripts": "^4.0.3",
     "redux-saga-test-plan": "^4.0.0-rc.3",
-    "semantic-release": "^17.1.1",
+    "semantic-release": "^18.0.0",
     "typescript": "^4.0.2"
   },
   "dependencies": {
     "lodash": "^4.17.20",
     "redux-saga": "^1.1.3",
-    "reselect": "^4.0.0"
-  },
-  "config": {
-    "commitizen": {
-      "path": "@commitlint/prompt"
-    }
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
+    "reselect": "^4.1.2"
   },
   "eslintConfig": {
     "extends": [

@@ -6,7 +6,6 @@ import { call, CallEffect, take, TakeEffect } from 'redux-saga/effects';
  * @param {{type: string; requestId: string}} requestAction - Request action
  * @param {string} requestAction.type - Request action type
  * @param {string} requestAction.requestId - Request action request ID
- *
  * @returns {string} Request action type prefix
  */
 export function getRequestActionTypePrefix(requestAction: {
@@ -26,7 +25,6 @@ export function getRequestActionTypePrefix(requestAction: {
  * @param {{type: string; requestId: string}} action - Action
  * @param {string} action.type - Action type
  * @param {string} action.requestId - Action request ID
- *
  * @returns {boolean} Whether or not action matches request action
  */
 export function doesActionMatchRequest(
@@ -48,7 +46,6 @@ export function doesActionMatchRequest(
  * @param {{type: string; requestId: string}} requestAction - Request action
  * @param {string} requestAction.type - Request action type
  * @param {string} requestAction.requestId - Request action request ID
- *
  * @returns {boolean} Whether or not request action was successful
  */
 export function* wasRequestSuccessful(requestAction: {
@@ -74,7 +71,6 @@ export function* wasRequestSuccessful(requestAction: {
  *
  * @param {{type: string}} myAction - Test action
  * @param {string} myAction.type - Test action type
- *
  * @returns {boolean} My saga result
  */
 export function* mySaga(myAction: {

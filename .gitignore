@@ -226,4 +226,7 @@ build/
 
 # react-scripts files
 react-app-env.d.ts
+
+# Husky hooks
+.husky/
 #endregion repo ΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛΛ

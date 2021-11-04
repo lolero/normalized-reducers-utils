@@ -16,7 +16,6 @@ import { selectReducerProp } from './selectors';
  *        object
  * @param {keyof Reducer} reducerPropKey - The key of the reducer prop for
  *        which the selector is created
- *
  * @returns {OutputSelector} Selector for the reducer props
  */
 export function createReducerPropSelector<
@@ -28,30 +27,29 @@ export function createReducerPropSelector<
 >(
   reducerPath: ReducerPathT,
   reducerPropKey: ReducerPropKey,
-): OutputSelector<
-  ReduxState,
-  Reducer<ReducerMetadataT, EntityT>[ReducerPropKey],
-  (
-    res: Reducer<ReducerMetadataT, EntityT>,
-  ) => Reducer<ReducerMetadataT, EntityT>[ReducerPropKey]
-> {
+): (state: ReduxState) => Reducer<ReducerMetadataT, EntityT>[ReducerPropKey] {
   const selector = createSelector(
-    (state: ReduxState) => {
-      let reducerGroup: ReducerGroup<ReducerMetadataT, EntityT, ReducerPathT> =
-        state;
-      reducerPath
-        .slice(0, reducerPath.length - 1)
-        .forEach((reducerGroupName) => {
-          reducerGroup = reducerGroup[
-            reducerGroupName as keyof typeof reducerGroup
-          ] as ReducerGroup<ReducerMetadataT, EntityT, ReducerPathT>;
-        });
-      const reducer = reducerGroup[
-        last(reducerPath) as keyof typeof reducerGroup
-      ] as Reducer<ReducerMetadataT, EntityT>;
+    [
+      (state: ReduxState) => {
+        let reducerGroup: ReducerGroup<
+          ReducerMetadataT,
+          EntityT,
+          ReducerPathT
+        > = state;
+        reducerPath
+          .slice(0, reducerPath.length - 1)
+          .forEach((reducerGroupName) => {
+            reducerGroup = reducerGroup[
+              reducerGroupName as keyof typeof reducerGroup
+            ] as ReducerGroup<ReducerMetadataT, EntityT, ReducerPathT>;
+          });
+        const reducer = reducerGroup[
+          last(reducerPath) as keyof typeof reducerGroup
+        ] as Reducer<ReducerMetadataT, EntityT>;
 
-      return reducer;
-    },
+        return reducer;
+      },
+    ],
     (reducer) => selectReducerProp(reducer, reducerPropKey),
   );
 
@@ -63,7 +61,6 @@ export function createReducerPropSelector<
  *
  * @param {string[]} reducerPath - The path to the reducer in the redux state
  *        object
- *
  * @returns {ReducerSelectors} Selectors for the reducer's props
  */
 export function createReducerSelectors<

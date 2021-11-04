@@ -54,8 +54,6 @@ describe('reducerHandlers', () => {
     );
     duplicateStateSpy = jest
       .spyOn(ReducerHandlersUtils, 'duplicateState')
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
       .mockImplementation(() => duplicatedState);
     handleCommonPropsSpy = jest
       .spyOn(ReducerHandlersUtils, 'handleCommonProps')

@@ -13,7 +13,7 @@ export const defaultReducerConfig: ReducerConfig = {
 
 /**
  * Creates initial state of reducer.
- * * The 'EntityT' generic type required by this function is not inferred from
+ * The 'EntityT' generic type required by this function is not inferred from
  * the function's arguments when 'initialReducerData' is an empty object,
  * therefore it is recommended that consumers declare the function's generic
  * types explicitly in function calls.
@@ -21,7 +21,6 @@ export const defaultReducerConfig: ReducerConfig = {
  * @param {ReducerMetadata} initialReducerMetadata - Initial reducer metadata
  * @param {ReducerData} initialReducerData - Initial reducer data
  * @param {ReducerConfig} [config] - Custom config params
- *
  * @returns {Reducer} Reducer's initial state
  */
 export function createInitialState<

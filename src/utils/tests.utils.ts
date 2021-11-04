@@ -69,11 +69,11 @@ export interface TestEntity4 extends Entity {
 
 export type TestReducer = Reducer<TestReducerMetadata, TestEntity>;
 
-export type TestReducer2 = Reducer<{}, TestEntity2>;
+export type TestReducer2 = Reducer<Record<string, unknown>, TestEntity2>;
 
-export type TestReducer3 = Reducer<{}, TestEntity3>;
+export type TestReducer3 = Reducer<Record<string, unknown>, TestEntity3>;
 
-export type TestReducer4 = Reducer<{}, TestEntity4>;
+export type TestReducer4 = Reducer<Record<string, unknown>, TestEntity4>;
 
 export type TestState = {
   testReducerGroup1: {
@@ -147,8 +147,4 @@ export const {
   pkSchema: testReducerPkSchema,
   getPkOfEntity: getPkOfTestEntity,
   destructPk: destructTestEntityPk,
-} = createReducerPkUtils<
-  TestReducer['metadata'],
-  TestEntity,
-  typeof testPkSchema
->(testPkSchema);
+} = createReducerPkUtils<TestEntity, typeof testPkSchema>(testPkSchema);
