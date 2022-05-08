@@ -3,12 +3,12 @@ node_js:
   - lts/*
 
 install:
-  - yarn reset:reset
+  - pnpm reset:reset
 
 script:
-  - yarn lint:fix
-  - yarn test:coverage
-  - yarn build:prod
+  - pnpm lint:fix
+  - pnpm test:coverage
+  - pnpm build:prod
 
 after_success:
   - semantic-release

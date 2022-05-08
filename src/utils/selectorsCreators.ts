@@ -1,5 +1,5 @@
 import { last } from 'lodash';
-import { createSelector, OutputSelector } from 'reselect';
+import { createSelector } from 'reselect';
 import {
   Entity,
   Reducer,
@@ -16,7 +16,7 @@ import { selectReducerProp } from './selectors';
  *        object
  * @param {keyof Reducer} reducerPropKey - The key of the reducer prop for
  *        which the selector is created
- * @returns {OutputSelector} Selector for the reducer props
+ * @returns {Function} Selector for the reducer props
  */
 export function createReducerPropSelector<
   ReducerMetadataT extends ReducerMetadata,
@@ -51,7 +51,9 @@ export function createReducerPropSelector<
       },
     ],
     (reducer) => selectReducerProp(reducer, reducerPropKey),
-  );
+  ) as unknown as (
+    state: ReduxState,
+  ) => Reducer<ReducerMetadataT, EntityT>[ReducerPropKey];
 
   return selector;
 }

@@ -1,4 +1,5 @@
 export * from './types/actions.types';
+export * from './types/hooks.types';
 export * from './types/pk.types';
 export * from './types/reducers.types';
 export * from './types/requests.types';
@@ -21,3 +22,4 @@ export {
   handleFail,
 } from './utils/reducerHandlers';
 export { createReducerSelectors } from './utils/selectorsCreators';
+export { createReducerHooks } from './utils/hooksCreators';

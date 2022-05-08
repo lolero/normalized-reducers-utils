@@ -1,17 +1,22 @@
 {
-  "extends": "@tsconfig/node12/tsconfig.json",
   "compilerOptions": {
-    "outDir": "build",
-    "allowJs": false,
-    "allowSyntheticDefaultImports": true,
     "module": "esnext",
+    "target": "esnext",
     "moduleResolution": "node",
-    "resolveJsonModule": true,
+    "strict": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react",
-    "noFallthroughCasesInSwitch": true
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "outDir": "build"
   },
-  "exclude": ["build", "coverage", "node_modules"],
+  "exclude": [
+    "build",
+    "coverage",
+    "node_modules",
+    "**/*/__tests__",
+    "**/*/*.test.*"
+  ],
   "include": ["src", ".commitlintrc.js", ".travis.yml"]
 }
