@@ -1,10 +1,10 @@
-import { createInitialState } from '../initialState.utils';
+import { createInitialState } from './initialState.utils';
 import {
   TestEntity,
   testInitialReducerMetadata,
   TestReducer,
-} from '../tests.utils';
-import { selectReducerProp } from '../selectors';
+} from './spec.utils';
+import { selectReducerProp } from './selectors';
 
 describe('selectors', () => {
   describe('selectReducerProp', () => {

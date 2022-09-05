@@ -7,7 +7,7 @@ import {
   TestReducer,
   TestRequestMetadata,
   getPkOfTestEntity,
-} from '../tests.utils';
+} from './spec.utils';
 import {
   DeleteEntitiesAction,
   FailAction,
@@ -18,12 +18,9 @@ import {
   SavePartialPatternToEntitiesAction,
   SaveWholeReducerMetadataAction,
   SaveNothingAction,
-} from '../../types/actions.types';
-import {
-  createInitialState,
-  defaultReducerConfig,
-} from '../initialState.utils';
-import * as ReducerHandlersUtils from '../reducerHandlers.utils';
+} from '../types/actions.types';
+import { createInitialState, defaultReducerConfig } from './initialState.utils';
+import * as ReducerHandlersUtils from './reducerHandlers.utils';
 import {
   handleRequest,
   handleSaveNothing,
@@ -34,7 +31,7 @@ import {
   handleSavePartialPatternToEntities,
   handleDeleteEntities,
   handleFail,
-} from '../reducerHandlers';
+} from './reducerHandlers';
 
 describe('reducerHandlers', () => {
   let state: TestReducer;

@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { renderHook } from '@testing-library/react-hooks';
-import { createInitialState } from '../initialState.utils';
+import { createInitialState } from './initialState.utils';
 import {
   getPkOfTestEntity,
   TestEntity,
@@ -17,11 +17,11 @@ import {
   TestReducer4,
   TestReducerMetadata,
   TestState,
-} from '../tests.utils';
-import { createReducerSelectors } from '../selectorsCreators';
-import { ReducerHooks } from '../../types/hooks.types';
-import { createReducerHooks } from '../hooksCreators';
-import { ReducerSelectors } from '../../types/selectors.types';
+} from './spec.utils';
+import { createReducerSelectors } from './selectorsCreators';
+import { ReducerHooks } from '../types/hooks.types';
+import { createReducerHooks } from './hooksCreators';
+import { ReducerSelectors } from '../types/selectors.types';
 
 jest.mock('react-redux');
 

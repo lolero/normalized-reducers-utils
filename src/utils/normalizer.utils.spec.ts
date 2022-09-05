@@ -1,11 +1,11 @@
-import { normalizeEntityArrayByPk } from '../normalizer.utils';
+import { normalizeEntityArrayByPk } from './normalizer.utils';
 import {
   testEntity1,
   testEntity2,
   testEntity3,
   testPkSchema,
   getPkOfTestEntity,
-} from '../tests.utils';
+} from './spec.utils';
 
 describe('normalizer.utils', () => {
   describe('normalizeEntityArrayByPk', () => {

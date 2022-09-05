@@ -3,9 +3,9 @@ import {
   testEntity1,
   testEntity2,
   testPkSchema,
-} from '../tests.utils';
-import { createReducerPkUtils, destructPk, getPkOfEntity } from '../pk.utils';
-import { PkSchema } from '../../types/reducers.types';
+} from './spec.utils';
+import { createReducerPkUtils, destructPk, getPkOfEntity } from './pk.utils';
+import { PkSchema } from '../types/reducers.types';
 
 describe('pk.utils', () => {
   describe('getPkOfEntity', () => {

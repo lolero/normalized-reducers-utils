@@ -4,7 +4,7 @@ import {
   doesActionMatchRequest,
   wasRequestSuccessful,
   mySaga,
-} from '../actions.utils';
+} from './actions.utils';
 
 describe('action.utils', () => {
   describe('getRequestActionTypePrefix', () => {

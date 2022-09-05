@@ -76,6 +76,14 @@
       "jest/globals": true
     },
     "rules": {
+      "import/no-extraneous-dependencies": [
+        "error",
+        {
+          "devDependencies": [
+            "**/*.spec.ts"
+          ]
+        }
+      ],
       "no-underscore-dangle": "off",
       "import/prefer-default-export": "off"
     }

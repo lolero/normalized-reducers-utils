@@ -1,4 +1,4 @@
-import { createInitialState } from '../initialState.utils';
+import { createInitialState } from './initialState.utils';
 import {
   TestEntity,
   TestEntity2,
@@ -10,13 +10,13 @@ import {
   TestReducer3,
   TestReducer4,
   TestState,
-} from '../tests.utils';
-import * as selectors from '../selectors';
+} from './spec.utils';
+import * as selectors from './selectors';
 import {
   createReducerPropSelector,
   createReducerSelectors,
-} from '../selectorsCreators';
-import { ReducerSelectors } from '../../types/selectors.types';
+} from './selectorsCreators';
+import { ReducerSelectors } from '../types/selectors.types';
 
 describe('selectorsCreators', () => {
   let state: TestState;

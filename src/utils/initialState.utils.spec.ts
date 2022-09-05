@@ -1,7 +1,4 @@
-import {
-  createInitialState,
-  defaultReducerConfig,
-} from '../initialState.utils';
+import { createInitialState, defaultReducerConfig } from './initialState.utils';
 import {
   testEntity1,
   testInitialReducerMetadata,
@@ -9,7 +6,7 @@ import {
   TestReducer,
   testReducerConfig,
   getPkOfTestEntity,
-} from '../tests.utils';
+} from './spec.utils';
 
 describe('initialState.utils', () => {
   describe('createInitialState', () => {
