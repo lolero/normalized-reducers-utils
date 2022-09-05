@@ -1,4 +1,4 @@
-import * as reactRedux from 'react-redux';
+import { useSelector } from 'react-redux';
 import { renderHook } from '@testing-library/react-hooks';
 import { createInitialState } from '../initialState.utils';
 import {
@@ -22,6 +22,8 @@ import { createReducerSelectors } from '../selectorsCreators';
 import { ReducerHooks } from '../../types/hooks.types';
 import { createReducerHooks } from '../hooksCreators';
 import { ReducerSelectors } from '../../types/selectors.types';
+
+jest.mock('react-redux');
 
 describe('hooksCreators', () => {
   let state: TestState;
@@ -90,7 +92,7 @@ describe('hooksCreators', () => {
       TestState
     >;
     let reducerHooks: ReducerHooks<TestReducerMetadata, TestEntity>;
-    let useSelectorSpy: jest.SpyInstance;
+    const useSelectorMock = jest.mocked(useSelector);
 
     beforeEach(() => {
       reducerPropSelectors = createReducerSelectors<
@@ -101,10 +103,6 @@ describe('hooksCreators', () => {
       >(['testReducerGroup1', 'testReducer1']);
 
       reducerHooks = createReducerHooks(reducerPropSelectors);
-    });
-
-    afterEach(() => {
-      useSelectorSpy?.mockRestore();
     });
 
     it('Should create reducer hooks', () => {
@@ -119,9 +117,9 @@ describe('hooksCreators', () => {
     });
 
     it("Should retrieve a single request from the reducer's requests prop", () => {
-      useSelectorSpy = jest
-        .spyOn(reactRedux, 'useSelector')
-        .mockImplementation(() => reducerPropSelectors.selectRequests(state));
+      useSelectorMock.mockImplementation(() =>
+        reducerPropSelectors.selectRequests(state),
+      );
 
       const {
         result: { current },
@@ -133,9 +131,9 @@ describe('hooksCreators', () => {
     });
 
     it("Should retrieve multiple requests from the reducer's requests prop", () => {
-      useSelectorSpy = jest
-        .spyOn(reactRedux, 'useSelector')
-        .mockImplementation(() => reducerPropSelectors.selectRequests(state));
+      useSelectorMock.mockImplementation(() =>
+        reducerPropSelectors.selectRequests(state),
+      );
 
       const {
         result: { current },
@@ -150,9 +148,9 @@ describe('hooksCreators', () => {
     });
 
     it("Should retrieve the reducer's requests prop", () => {
-      useSelectorSpy = jest
-        .spyOn(reactRedux, 'useSelector')
-        .mockImplementation(() => reducerPropSelectors.selectRequests(state));
+      useSelectorMock.mockImplementation(() =>
+        reducerPropSelectors.selectRequests(state),
+      );
 
       const {
         result: { current },
@@ -162,9 +160,9 @@ describe('hooksCreators', () => {
     });
 
     it("Should retrieve the reducer's metadata prop", () => {
-      useSelectorSpy = jest
-        .spyOn(reactRedux, 'useSelector')
-        .mockImplementation(() => reducerPropSelectors.selectMetadata(state));
+      useSelectorMock.mockImplementation(() =>
+        reducerPropSelectors.selectMetadata(state),
+      );
 
       const {
         result: { current },
@@ -174,9 +172,9 @@ describe('hooksCreators', () => {
     });
 
     it("Should retrieve a single entity from the reducer's data prop", () => {
-      useSelectorSpy = jest
-        .spyOn(reactRedux, 'useSelector')
-        .mockImplementation(() => reducerPropSelectors.selectData(state));
+      useSelectorMock.mockImplementation(() =>
+        reducerPropSelectors.selectData(state),
+      );
 
       const {
         result: { current },
@@ -188,9 +186,9 @@ describe('hooksCreators', () => {
     });
 
     it("Should retrieve multiple entities from the reducer's data prop", () => {
-      useSelectorSpy = jest
-        .spyOn(reactRedux, 'useSelector')
-        .mockImplementation(() => reducerPropSelectors.selectData(state));
+      useSelectorMock.mockImplementation(() =>
+        reducerPropSelectors.selectData(state),
+      );
 
       const {
         result: { current },
@@ -207,9 +205,9 @@ describe('hooksCreators', () => {
     });
 
     it("Should retrieve the reducer's data prop", () => {
-      useSelectorSpy = jest
-        .spyOn(reactRedux, 'useSelector')
-        .mockImplementation(() => reducerPropSelectors.selectData(state));
+      useSelectorMock.mockImplementation(() =>
+        reducerPropSelectors.selectData(state),
+      );
 
       const {
         result: { current },
@@ -219,9 +217,9 @@ describe('hooksCreators', () => {
     });
 
     it("Should retrieve the reducer's config prop", () => {
-      useSelectorSpy = jest
-        .spyOn(reactRedux, 'useSelector')
-        .mockImplementation(() => reducerPropSelectors.selectConfig(state));
+      useSelectorMock.mockImplementation(() =>
+        reducerPropSelectors.selectConfig(state),
+      );
 
       const {
         result: { current },

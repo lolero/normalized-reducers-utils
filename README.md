@@ -522,14 +522,14 @@ function createReducerHooks<
   EntityT extends Entity,
   ReducerPathT extends string[],
   ReduxState extends ReducerGroup<ReducerMetadataT, EntityT, ReducerPathT>,
-  >(
+>(
   reducerSelectors: ReducerSelectors<
     ReducerMetadataT,
     EntityT,
     ReducerPathT,
     ReduxState
-    >,
-): ReducerHooks<ReducerMetadataT, EntityT>
+  >,
+): ReducerHooks<ReducerMetadataT, EntityT>;
 ```
 
 Creates an object that contains
@@ -948,10 +948,10 @@ retribution. You are welcome and encouraged to use it free of charge but if it
 serves your purpose and you want to contribute to the project, any amount of
 donation is greatly appreciated!
 
-|                                                                    Paypal                                                                    |                                                                     BTC                                                                      |                                                                     ETH                                                                      |
-|:--------------------------------------------------------------------------------------------------------------------------------------------:| :------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------: |
-|       <a href="https://paypal.me/pools/c/8t2WvAATaG"><img src="https://www.paypalobjects.com/en_US/NL/i/btn/btn_donateCC_LG.gif"></a>        | <img src="https://raw.githubusercontent.com/lolero/normalized-reducers-utils/master/readme-assets/btc-address.png" height="128" width="128"> | <img src="https://raw.githubusercontent.com/lolero/normalized-reducers-utils/master/readme-assets/eth-address.png" height="128" width="128"> |
-|                                                     https://paypal.me/pools/c/8t2WvAATaG                                                     |                                                  bc1q7gq4crnt2t47nk9fnzc8vh488ekmns7l8ufj7z                                                  |                                                  0x220E622eBF471F9b12203DC8E2107b5be1171AA8                                                  |
+|                                                             Paypal                                                              |                                                                     BTC                                                                      |                                                                     ETH                                                                      |
+| :-----------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------: |
+| <a href="https://paypal.me/pools/c/8t2WvAATaG"><img src="https://www.paypalobjects.com/en_US/NL/i/btn/btn_donateCC_LG.gif"></a> | <img src="https://raw.githubusercontent.com/lolero/normalized-reducers-utils/master/readme-assets/btc-address.png" height="128" width="128"> | <img src="https://raw.githubusercontent.com/lolero/normalized-reducers-utils/master/readme-assets/eth-address.png" height="128" width="128"> |
+|                                              https://paypal.me/pools/c/8t2WvAATaG                                               |                                                  bc1q7gq4crnt2t47nk9fnzc8vh488ekmns7l8ufj7z                                                  |                                                  0x220E622eBF471F9b12203DC8E2107b5be1171AA8                                                  |
 
 ## Acknowledgments
 

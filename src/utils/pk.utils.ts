@@ -91,7 +91,7 @@ export function destructPk<
  * Create reducer PK utils
  *
  * @param {PkSchema} pkSchema - PK schema of reducer's entities
- * @returns {Object} PK utils
+ * @returns {object} PK utils
  */
 export function createReducerPkUtils<
   EntityT extends Entity,

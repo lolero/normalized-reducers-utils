@@ -126,7 +126,7 @@ export function createReducerHooks<
   /**
    * React hook to retrieve a reducer's config prop.
    *
-   * @returns {Object} The reducer's config
+   * @returns {object} The reducer's config
    */
   function useReducerConfig() {
     const reducerConfig = useSelector(selectConfig);
